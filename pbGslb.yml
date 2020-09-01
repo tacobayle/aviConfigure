@@ -79,7 +79,7 @@
       tags:
         - gslb
       when:
-        - gslbsiteopsOutput is defined
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
 
     - name: Enable the GSLB config
@@ -95,8 +95,8 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
-        - gslbsiteopsOutput is defined
 
     - name: Enable GSLB profile
       avi_gslbgeodbprofile:
@@ -107,9 +107,10 @@
         name: "{{ item.name }}"
         entries: "{{ item.entries }}"
       loop: "{{ avi_gslbgeodbprofile }}"
+      ignore_errors: yes
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbgeodbprofile is defined
-        - gslbsiteopsOutput is defined

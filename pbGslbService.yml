@@ -18,9 +18,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
 
     - name: Gather local vs
@@ -36,9 +36,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the local vs
       debug:
@@ -46,9 +46,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Set Local Vs details
       set_fact:
@@ -58,10 +58,10 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
         - item.name == avi_gslbservice.name
-        - gslbsiteopsOutput is defined
 
     - name: Debug the local vs uuid
       debug:
@@ -69,9 +69,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Gather local vsvip
       avi_api_session:
@@ -86,9 +86,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the local vs IP
       debug:
@@ -96,9 +96,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the local vs IP
       debug:
@@ -106,9 +106,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Set creds dict for remote site
       set_fact:
@@ -120,9 +120,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the remote cluster creds
       debug:
@@ -130,9 +130,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Gather remote vs
       avi_api_session:
@@ -147,9 +147,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the remote vs
       debug:
@@ -157,9 +157,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     # - name: Debug the remote vsvip
     #   debug:
@@ -178,9 +178,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - item.name == avi_gslbservice.name
-        - gslbsiteopsOutput is defined
 
     - name: Debug the remote vsvip uuid
       debug:
@@ -188,9 +188,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Gather remote vsvip
       avi_api_session:
@@ -205,9 +205,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Debug the remote vsvip floating ip
       debug:
@@ -216,9 +216,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Create a GSLB service
       avi_gslbservice:
@@ -251,9 +251,9 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
 
     - name: Update a GSLB service with new pool and pool members
       avi_gslbservice_patch_member:
@@ -279,6 +279,6 @@
       tags:
         - gslb
       when:
+        - gslbsiteopsOutput.obj is defined
         - avi_gslb is defined
         - avi_gslbservice is defined
-        - gslbsiteopsOutput is defined
