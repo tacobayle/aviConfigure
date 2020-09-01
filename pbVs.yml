@@ -421,6 +421,15 @@
         - vsDns
         - vs
 
+    - name: Update system config with DNS VS
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        dns_virtualservice_refs: "/api/virtualservice/?name={{ avi_virtualservice.dns.0.name }}"
+      tags:
+        - vsDns
+        - vs
+
     - name: Debug
       debug:
         msg: "{{ outputVsDns }}"
