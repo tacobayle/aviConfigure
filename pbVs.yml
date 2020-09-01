@@ -233,7 +233,7 @@
           - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs }}"
         servers:
           - ip:
-              addr: "{{ item.0 }}"
+              addr: "{{ item }}"
               type: 'V4'
       loop: "{{ avi_servers }}"
       when:
