@@ -40,6 +40,7 @@
       tags:
         - vsVip
         - vsDns
+        - vs
 
     - name: Create vsvip for dns VS (Vcenter)
       avi_vsvip:
@@ -171,6 +172,7 @@
       tags:
         - vsvip
         - vsHttp
+        - vs
 
 #
 # HM creation
@@ -201,6 +203,7 @@
         - vsHttp
         - hm
         - pool
+        - vs
 
 #
 # Pool creation
@@ -220,6 +223,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: Create pool without server
       avi_pool:
@@ -234,6 +238,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: update pool with servers (Vcenter)
       avi_pool:
@@ -259,6 +264,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: update pool with servers (NSXT)
       avi_pool:
@@ -285,6 +291,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: update pool with servers (AWS or GCP)
       avi_pool:
@@ -310,6 +317,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: Create pool without server for OpenCart
       avi_pool:
@@ -324,6 +332,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
     - name: update pool with servers for OpenCart (Vcenter)
       avi_pool:
@@ -350,6 +359,7 @@
       tags:
         - pool
         - vsHttp
+        - vs
 
 #
 # VS creation
@@ -387,6 +397,7 @@
       register: outputVsHttp
       tags:
         - vsHttp
+        - vs
 
     - name: Create DNS Virtualservice
       avi_virtualservice:
@@ -408,6 +419,7 @@
       register: outputVsDns
       tags:
         - vsDns
+        - vs
 
     - name: Debug
       debug:
@@ -433,3 +445,4 @@
       ignore_errors: yes
       tags:
         - vsHttp
+        - vs
