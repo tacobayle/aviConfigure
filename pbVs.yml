@@ -327,7 +327,7 @@
         cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        lb_algorithm_hash: "{{ avi_pool_open_cart.lb_algorithm_hash | default('LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS') }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
       when:
         - avi_pool_open_cart is defined
         - avi_cloud.vtype == "CLOUD_VCENTER"
@@ -346,7 +346,7 @@
         cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        lb_algorithm_hash: "{{ avi_pool_open_cart.lb_algorithm_hash | default('LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS') }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ avi_pool_open_cart.health_monitor_refs }}"
         servers:
