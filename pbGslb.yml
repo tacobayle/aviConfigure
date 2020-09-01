@@ -79,8 +79,8 @@
       tags:
         - gslb
       when:
-        - avi_gslb is defined
         - gslbsiteopsOutput is defined
+        - avi_gslb is defined
 
     - name: Enable the GSLB config
       avi_gslb:
