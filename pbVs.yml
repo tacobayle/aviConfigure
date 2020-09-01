@@ -433,7 +433,6 @@
         - vs
         - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_GCP" or avi_cloud.vtype == "CLOUD_NSXT"
 
-
     - name: Debug
       debug:
         msg: "{{ outputVsDns }}"
