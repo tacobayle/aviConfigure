@@ -463,7 +463,7 @@
         api_version: "{{ avi_credentials.api_version }}"
         internal_profile:
           usable_network_refs:
-            - "/api/network/{{ networkOutput.obj.uuid }}"
+            - "/api/network/{{ networkOutput.obj.uuid | default(networkVipUuid) }}"
         name: "{{ ipam.name | default('ipam-avi') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
