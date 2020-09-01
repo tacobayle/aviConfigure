@@ -20,6 +20,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_cloud.transportZone is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -32,6 +33,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_cloud.tier1 is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -42,6 +44,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_cloud is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -54,6 +57,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_network_vip.tier1 is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -64,6 +68,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_network_vip.tier1 is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -76,6 +81,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_cloud.network is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -86,6 +92,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_cloud.network is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -122,6 +129,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_network_backend.name is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
@@ -132,6 +140,7 @@
         - cloud
         - nsxtApi
         - debugnsxt
+        - vs
       when:
         - avi_network_backend.name is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
