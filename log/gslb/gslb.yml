@@ -1,0 +1,49 @@
+---
+count: 1
+results:
+- url: https://192.168.142.135/api/gslb/gslb-11ee26f7-eedf-40fe-9fde-72eff564a0aa
+  uuid: gslb-11ee26f7-eedf-40fe-9fde-72eff564a0aa
+  name: Default
+  is_federated: true
+  tenant_ref: https://192.168.142.135/api/tenant/admin
+  _last_modified: '1598766591440738'
+  dns_configs:
+  - domain_name: gslb.avidemo.fr
+  sites:
+  - cluster_uuid: cluster-873cee4d-2322-476d-b12f-5f22af87a0ad
+    name: local_controller
+    ip_addresses:
+    - addr: 192.168.142.135
+      type: V4
+    port: 443
+    username: ansible
+    password: "<sensitive>"
+    member_type: GSLB_ACTIVE_MEMBER
+    enabled: true
+    dns_vses:
+    - dns_vs_uuid: virtualservice-9833970d-4c1c-4f8b-b037-056e12281307
+      domain_names:
+      - gslb.avidemo.fr
+    hm_shard_enabled: false
+    suspend_mode: false
+  - cluster_uuid: cluster-992ca926-61c4-4cf6-811f-b3d63cf77d4e
+    name: aws
+    ip_addresses:
+    - addr: 34.248.23.188
+      type: V4
+    port: 443
+    username: admin
+    password: "<sensitive>"
+    member_type: GSLB_PASSIVE_MEMBER
+    enabled: true
+    hm_shard_enabled: false
+    suspend_mode: false
+  leader_cluster_uuid: cluster-873cee4d-2322-476d-b12f-5f22af87a0ad
+  send_interval: 15
+  clear_on_max_retries: 20
+  view_id: 0
+  async_interval: 0
+  error_resync_interval: 300
+  replication_policy:
+    replication_mode: REPLICATION_MODE_CONTINUOUS
+  maintenance_mode: false

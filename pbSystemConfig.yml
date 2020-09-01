@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # vars_files:
+  #   - "../vars/fromTerraform.yml"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - debug
+
+    - name: Create BackupConfiguration object
+      avi_backupconfiguration:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        state: present
+        backup_passphrase: "{{ avi_credentials.password }}"
+        name: Backup-Configuration
+        save_local: true
+      tags:
+        - system
+
+    - name: Configure Avi System parameters
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        global_tenant_config: "{{ avi_systemconfiguration.global_tenant_config }}"
+        dns_configuration: "{{ avi_systemconfiguration.dns_configuration }}"
+        ntp_configuration: "{{ avi_systemconfiguration.ntp_configuration }}"
+        email_configuration: "{{ avi_systemconfiguration.email_configuration }}"
+        welcome_workflow_complete: "{{ avi_systemconfiguration.welcome_workflow_complete }}"
+      when: avi_systemconfiguration is defined
+      tags:
+        - system

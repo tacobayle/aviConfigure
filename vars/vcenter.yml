@@ -1,0 +1,173 @@
+---
+controller:
+  environment: VMWARE
+  username: admin
+  version: 20.1.1
+  password: *****
+  floatingIp: 10.206.112.58
+  count: 1
+
+avi_systemconfiguration:
+  global_tenant_config:
+    se_in_provider_context: false
+    tenant_access_to_provider_se: true
+    tenant_vrf: false
+  welcome_workflow_complete: true
+  ntp_configuration:
+    ntp_servers:
+      - server:
+          type: V4
+          addr: 95.81.173.155
+  dns_configuration:
+    search_domain: ''
+    server_list:
+      - type: V4
+        addr: 8.8.8.8
+  email_configuration:
+    from_email: test@avicontroller.net
+    smtp_type: SMTP_LOCAL_HOST
+
+avi_cloud:
+  name: CloudVmw
+  vtype: CLOUD_VCENTER
+  network: vxw-dvs-34-virtualwire-3-sid-6120002-wdc-06-vc12-avi-mgmt
+  networkDhcpEnabled: true
+  networkExcludeDiscoveredSubnets: true
+  networkVcenterDvs: true
+  dhcp_enabled: true
+  vcenter_configuration:
+    username: aviuser6
+    password: AviUser1234!.
+    vcenter_url: wdc-06-vc12.oc.vmware.com
+    privilege: WRITE_ACCESS
+    datacenter: wdc-06-vc12
+    management_network: "/api/vimgrnwruntime/?name=vxw-dvs-34-virtualwire-3-sid-6120002-wdc-06-vc12-avi-mgmt"
+
+serviceEngineGroup:
+  - name: &segroup0 Default-Group
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 2
+    buffer_se: 1
+    extra_shared_config_memory: 0
+    vcenter_folder: NicolasTf
+    vcpus_per_se: 2
+    memory_per_se: 4096
+    disk_per_se: 25
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup1 seGroupCpuAutoScale
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 2
+    extra_shared_config_memory: 0
+    vcenter_folder: NicolasTf
+    vcpus_per_se: 1
+    memory_per_se: 2048
+    disk_per_se: 25
+    auto_rebalance: true
+    auto_rebalance_interval: 30
+    auto_rebalance_criteria:
+    - SE_AUTO_REBALANCE_CPU
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup2 seGroupGslb
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    extra_shared_config_memory: 2000
+    vcenter_folder: NicolasTf
+    vcpus_per_se: 2
+    memory_per_se: 8192
+    disk_per_se: 25
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+
+domain:
+  name: vmw.avidemo.fr
+
+avi_network_vip:
+  name: vxw-dvs-34-virtualwire-120-sid-6120119-wdc-06-vc12-avi-dev116
+  dhcp_enabled: no
+  exclude_discovered_subnets: true
+  vcenter_dvs: true
+  subnet:
+    - prefix:
+        mask: "24"
+        ip_addr:
+          type: "V4"
+          addr: "100.64.133.0"
+      static_ranges:
+        - begin:
+            type: "V4"
+            addr: "100.64.133.50"
+          end:
+            type: "V4"
+            addr: "100.64.133.99"
+
+avi_network_backend:
+  name: vxw-dvs-34-virtualwire-116-sid-6120115-wdc-06-vc12-avi-dev112
+  dhcp_enabled: yes
+  exclude_discovered_subnets: true
+  vcenter_dvs: true
+  subnet:
+    - prefix:
+        mask: "24"
+        ip_addr:
+          type: "V4"
+          addr: "100.64.129.0"
+
+avi_servers:
+- - "100.64.129.15"
+  - "fe80::250:56ff:feaa:1f36"
+- - "100.64.129.13"
+  - "fe80::250:56ff:feaa:a8b6"
+- - "100.64.129.19"
+  - "fe80::250:56ff:feaa:9224"
+
+
+avi_healthmonitor:
+  - name: &hm0 hm1
+    receive_timeout: 1
+    failed_checks: 2
+    send_interval: 1
+    successful_checks: 2
+    type: HEALTH_MONITOR_HTTP
+    http_request: "HEAD / HTTP/1.0"
+    http_response_code:
+      - HTTP_2XX
+      - HTTP_3XX
+      - HTTP_5XX
+
+avi_pool:
+  name: &pool0 pool1
+  lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+  health_monitor_refs: *hm0
+
+avi_virtualservice:
+  http:
+    - name: &vs0 app1
+      services:
+        - port: 80
+          enable_ssl: false
+        - port: 443
+          enable_ssl: true
+      pool_ref: *pool0
+      enable_rhi: false
+    - name: &vs1 app2-se-cpu-auto-scale-out
+      services:
+        - port: 443
+          enable_ssl: true
+      pool_ref: pool1
+      enable_rhi: false
+      se_group_ref: *segroup1
+  dns:
+    - name: app3-dns
+      services:
+        - port: 53
+    - name: app4-gslb
+      services:
+        - port: 53
+      se_group_ref: *segroup2

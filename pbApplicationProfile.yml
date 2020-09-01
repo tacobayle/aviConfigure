@@ -1,0 +1,76 @@
+---
+- hosts: localhost
+  connection: local
+
+  # vars_files:
+    # - "vars/fromTerraform.yml"
+    #- "vars/creds.json"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Create an Application Profile for HTTP application enabled for SSL traffic
+      avi_applicationprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type | default('APPLICATION_PROFILE_TYPE_HTTP') }}"
+        http_profile:
+          # cache_config:
+          #   age_header: true
+          #   aggressive: false
+          #   date_header: true
+          #   default_expire: 600
+          #   enabled: false
+          #   heuristic_expire: false
+          #   max_cache_size: 0
+          #   max_object_size: 4194304
+          #   mime_types_group_refs:
+          #   - admin:System-Cacheable-Resource-Types
+          #   min_object_size: 100
+          #   query_cacheable: false
+          #   xcache_header: true
+          # client_body_timeout: 0
+          # client_header_timeout: 10000
+          # client_max_body_size: 0
+          # client_max_header_size: 12
+          # client_max_request_size: 48
+          # compression_profile:
+          #   compressible_content_ref: admin:System-Compressible-Content-Types
+          #   compression: false
+          #   remove_accept_encoding_header: true
+          #   type: AUTO_COMPRESSION
+          connection_multiplexing_enabled: "{{ item.connection_multiplexing_enabled | default('true') }}"
+          hsts_enabled: "{{ item.hsts_enabled | default('true') }}"
+          hsts_max_age: "{{ item.hsts_max_age | default('365') }}"
+          http_to_https: "{{ item.http_to_https | default('true') }}"
+          httponly_enabled: "{{ item.httponly_enabled | default('true') }}"
+          # keepalive_header: false
+          # keepalive_timeout: 30000
+          # max_bad_rps_cip: 0
+          # max_bad_rps_cip_uri: 0
+          # max_bad_rps_uri: 0
+          # max_rps_cip: 0
+          # max_rps_cip_uri: 0
+          # max_rps_unknown_cip: 0
+          # max_rps_unknown_uri: 0
+          # max_rps_uri: 0
+          # post_accept_timeout: 30000
+          secure_cookie_enabled: "{{ item.secure_cookie_enabled | default('true') }}"
+          server_side_redirect_to_https: "{{ item.server_side_redirect_to_https | default('true') }}"
+          #spdy_enabled: false # spdy_enabled' was deprecated in 18.2.8
+          # spdy_fwd_proxy_mode: false # 'spdy_fwd_proxy_mode' was deprecated in 18.2.8
+          ssl_client_certificate_mode: "{{ item.ssl_client_certificate_mode | default('SSL_CLIENT_CERTIFICATE_NONE') }}"
+          #ssl_everywhere_enabled: true
+          websockets_enabled: "{{ item.websockets_enabled | default('true') }}"
+          x_forwarded_proto_enabled: "{{ item.x_forwarded_proto_enabled | default('true') }}"
+          xff_alternate_name: "{{ item.xff_alternate_name | default('X-Forwarded-For') }}"
+          xff_enabled: "{{ item.xff_enabled | default('true') }}"
+      loop: "{{ avi_applicationprofile.http }}"
+      when:
+        - avi_applicationprofile.http is defined
+      tags:
+        - applicationProfile
+        - applicationProfileHttp

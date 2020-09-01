@@ -1,0 +1,84 @@
+---
+count: 4
+results:
+- url: https://10.0.0.201/api/network/network-a3eea714-19dc-4241-8de8-4a81d6e77dc3
+  uuid: network-a3eea714-19dc-4241-8de8-4a81d6e77dc3
+  name: N1-T1_Segment-AVI-SE-Mgt_10.7.3.0-24
+  vrf_context_ref: https://10.0.0.201/api/vrfcontext/vrfcontext-79efb47c-423e-42c6-bd9a-aca4f9497256
+  tenant_ref: https://10.0.0.201/api/tenant/admin
+  cloud_ref: https://10.0.0.201/api/cloud/cloud-16355d06-a89a-4d12-84f4-0dcd6e5c3926
+  _last_modified: '1598602017968651'
+  vcenter_dvs: true
+  dhcp_enabled: false
+  exclude_discovered_subnets: false
+  synced_from_se: true
+  ip6_autocfg_enabled: true
+  attrs:
+  - key: segmentid
+    value: 21d5d2e0-d091-43f7-bae5-21e4064a8de3
+  - key: autocreated
+    value: CloudNsxt
+  - key: cloudnetworkmode
+    value: static
+- url: https://10.0.0.201/api/network/network-2838e10a-7058-44af-a88f-6e8d1ec9a918
+  uuid: network-2838e10a-7058-44af-a88f-6e8d1ec9a918
+  name: N1-T1_Segment-VIP-A_10.7.4.0-24
+  vrf_context_ref: https://10.0.0.201/api/vrfcontext/vrfcontext-79efb47c-423e-42c6-bd9a-aca4f9497256
+  tenant_ref: https://10.0.0.201/api/tenant/admin
+  cloud_ref: https://10.0.0.201/api/cloud/cloud-16355d06-a89a-4d12-84f4-0dcd6e5c3926
+  _last_modified: '1598602080133752'
+  vcenter_dvs: true
+  dhcp_enabled: false
+  exclude_discovered_subnets: true
+  configured_subnets:
+  - prefix:
+      ip_addr:
+        addr: 10.7.4.0
+        type: V4
+      mask: 24
+    static_ranges:
+    - begin:
+        addr: 10.7.4.11
+        type: V4
+      end:
+        addr: 10.7.4.99
+        type: V4
+  synced_from_se: true
+  ip6_autocfg_enabled: true
+- url: https://10.0.0.201/api/network/network-68d9cc44-09ff-434b-a3a6-c8cc938ea25a
+  uuid: network-68d9cc44-09ff-434b-a3a6-c8cc938ea25a
+  name: N1-T1_Segment-Backend_10.7.6.0-24
+  vrf_context_ref: https://10.0.0.201/api/vrfcontext/vrfcontext-79efb47c-423e-42c6-bd9a-aca4f9497256
+  tenant_ref: https://10.0.0.201/api/tenant/admin
+  cloud_ref: https://10.0.0.201/api/cloud/cloud-16355d06-a89a-4d12-84f4-0dcd6e5c3926
+  _last_modified: '1598602143777400'
+  vcenter_dvs: true
+  dhcp_enabled: false
+  exclude_discovered_subnets: true
+  configured_subnets:
+  - prefix:
+      ip_addr:
+        addr: 10.7.6.0
+        type: V4
+      mask: 24
+  synced_from_se: false
+  ip6_autocfg_enabled: true
+- url: https://10.0.0.201/api/network/network-ecc775bb-726e-4ba6-8de1-ae63c5ddee4f
+  uuid: network-ecc775bb-726e-4ba6-8de1-ae63c5ddee4f
+  name: N1-T1_Segment-VIP-A_10.7.4.0-24
+  vrf_context_ref: https://10.0.0.201/api/vrfcontext/vrfcontext-1be125d8-13d1-4c43-86b3-a26f5ac6af52
+  tenant_ref: https://10.0.0.201/api/tenant/admin
+  cloud_ref: https://10.0.0.201/api/cloud/cloud-16355d06-a89a-4d12-84f4-0dcd6e5c3926
+  _last_modified: '1598602649517617'
+  vcenter_dvs: true
+  dhcp_enabled: false
+  exclude_discovered_subnets: false
+  synced_from_se: true
+  ip6_autocfg_enabled: true
+  attrs:
+  - key: segmentid
+    value: e1df9706-b347-49d3-98c3-0b8b0cbd0fd3
+  - key: autocreated
+    value: CloudNsxt
+  - key: cloudnetworkmode
+    value: static

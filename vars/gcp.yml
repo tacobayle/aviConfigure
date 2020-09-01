@@ -1,0 +1,182 @@
+---
+controller:
+  environment: GCP
+  username: admin
+  version: 20.1.1
+  password: *****
+  count: 1
+
+googleDriveId: *****
+
+avi_systemconfiguration:
+  global_tenant_config:
+    se_in_provider_context: false
+    tenant_access_to_provider_se: true
+    tenant_vrf: false
+  welcome_workflow_complete: true
+  ntp_configuration:
+    ntp_servers:
+      - server:
+          type: V4
+          addr: 95.81.173.155
+  dns_configuration:
+    search_domain: ''
+    server_list:
+      - type: V4
+        addr: 8.8.8.8
+  email_configuration:
+    from_email: test@avicontroller.net
+    smtp_type: SMTP_LOCAL_HOST
+
+bucketAvi: bucket-avi
+
+googleEmail: *****
+
+googleProject: *****
+
+domain:
+  name: gcp.avidemo.fr
+
+network:
+  name: net-avi
+  dhcp_enabled: no
+  subnet:
+    - prefix:
+        mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.10.0
+      static_ranges:
+        - begin:
+            type: V4
+            addr: 192.168.10.51
+          end:
+            type: V4
+            addr: 192.168.10.100
+
+avi_cloud:
+  name: cloudGcp
+  vtype: CLOUD_GCP
+  gcp_configuration:
+    gcs_bucket_name: bucket-avi
+    region_name: *****
+    zones:
+    - *****
+    - *****
+    - *****
+    se_project_id: *****
+    firewall_target_tags:
+    - avi-fw-tag
+    network_config:
+      config: INBAND_MANAGEMENT
+      inband:
+        vpc_subnet_name: subnet-vip
+        vpc_network_name: vpc-avi
+        vpc_project_id: *****
+
+serviceEngineGroup:
+  - name: &segroup0 Default-Group
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    instance_flavor: n1-standard-2
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup1 seGroupCpuAutoScale
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    instance_flavor: n1-standard-1
+    extra_shared_config_memory: 0
+    auto_rebalance: true
+    auto_rebalance_interval: 30
+    auto_rebalance_criteria:
+    - SE_AUTO_REBALANCE_CPU
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup2 seGroupGslb
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    instance_flavor: n1-standard-2
+    extra_shared_config_memory: 2000
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+
+avi_servers:
+- "192.168.1.4"
+- "192.168.1.3"
+- "192.168.1.2"
+
+
+avi_healthmonitor:
+  - name: &hm0 hm1
+    receive_timeout: 1
+    failed_checks: 2
+    send_interval: 1
+    successful_checks: 2
+    type: HEALTH_MONITOR_HTTP
+    http_request: "HEAD / HTTP/1.0"
+    http_response_code:
+      - HTTP_2XX
+      - HTTP_3XX
+      - HTTP_5XX
+
+avi_pool:
+  name: &pool0 pool1
+  lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+  health_monitor_refs: *hm0
+
+avi_virtualservice:
+  http:
+    - name: &vs0 app1
+      pool_ref: *pool0
+      services:
+        - port: 80
+          enable_ssl: false
+        - port: 443
+          enable_ssl: true
+      vip:
+        - ipam_network_subnet:
+            network_ref: "{{ listNetworkUuid.0 }}"
+            subnet:
+              mask: "{{ network.subnet.0.prefix.mask }}"
+              ip_addr:
+                type: "{{ network.subnet.0.prefix.ip_addr.type }}"
+                addr: "{{ network.subnet.0.prefix.ip_addr.addr }}"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+  dns:
+    - name: app3-dns
+      services:
+        - port: 53
+      vip:
+      - ipam_network_subnet:
+          network_ref: "{{ listNetworkUuid.0 }}"
+          subnet:
+            mask: "{{ network.subnet.0.prefix.mask }}"
+            ip_addr:
+              type: "{{ network.subnet.0.prefix.ip_addr.type }}"
+              addr: "{{ network.subnet.0.prefix.ip_addr.addr }}"
+        avi_allocated_fip: true
+        auto_allocate_ip: true
+        auto_allocate_floating_ip: true
+    - name: app4-gslb
+      services:
+        - port: 53
+      vip:
+      - ipam_network_subnet:
+          network_ref: "{{ listNetworkUuid.0 }}"
+          subnet:
+            mask: "{{ network.subnet.0.prefix.mask }}"
+            ip_addr:
+              type: "{{ network.subnet.0.prefix.ip_addr.type }}"
+              addr: "{{ network.subnet.0.prefix.ip_addr.addr }}"
+        avi_allocated_fip: true
+        auto_allocate_ip: true
+        auto_allocate_floating_ip: true
+        se_group_ref: *segroup2

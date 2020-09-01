@@ -1,0 +1,115 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # vars_files:
+  #   - "vars/fromTerraform.yml"
+  #   #-"vars/creds.json"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug the Avi credentials
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+
+    - name: Gather local cluster uuid
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: cluster
+        tenant: "{{ tenant | default('admin') }}"
+      register: outputCluster
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+
+    - name: Debug the local cluster uuid
+      debug:
+        msg: "{{ outputCluster.obj.uuid }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+
+    - name: Debug the ip of the remote cluster
+      debug:
+        msg: "{{ lookup('dig', 'controller.aws.avidemo.fr' ) }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+
+    - name: Gather remote cluster uuid
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: post
+        timeout: 300
+        path: gslbsiteops/verify
+        data:
+          username: "{{ avi_gslb.sites.1.username }}"
+          password: "{{ avi_gslb.sites.1.password }}"
+          port: 443
+          ip_addresses:
+            - addr: "{{ avi_gslb.sites.1.ip_addresses.0.addr }}"
+              type: "V4"
+        params:
+          page_size: -1
+      register: gslbsiteopsOutput
+      ignore_errors: yes
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+
+    - name: Debug the remote cluster uuid
+      debug:
+        msg: "{{ gslbsiteopsOutput.obj.rx_uuid }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Enable the GSLB config
+      avi_gslb:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        name: "Default"
+        leader_cluster_uuid: "{{ outputCluster.obj.uuid }}"
+        sites: "{{ avi_gslb.sites }}"
+        dns_configs: "{{ avi_gslb.dns_configs }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Enable GSLB profile
+      avi_gslbgeodbprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        name: "{{ item.name }}"
+        entries: "{{ item.entries }}"
+      loop: "{{ avi_gslbgeodbprofile }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbgeodbprofile is defined
+        - gslbsiteopsOutput is defined

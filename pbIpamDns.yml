@@ -1,0 +1,93 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    listNetworkUuid: []
+
+  # vars_files:
+  #   - "../ansibleVars/fromTerraform.yml"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Create Avi DNS provider setting (for GCP or Vcenter)
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        internal_profile:
+          dns_service_domain:
+          - domain_name: "{{ domain.name }}"
+            num_dns_ip: 1
+            pass_through: true
+            record_ttl: 100
+          ttl: 300
+        name: "{{ dns.name | default('dns-avi')}}"
+        type: IPAMDNS_TYPE_INTERNAL_DNS
+      when:
+        - avi_cloud.vtype == "CLOUD_GCP" or avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_NSXT"
+      tags:
+        - dns
+
+    - name: Create Network for IPAM
+      avi_network:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ network.name }}"
+        configured_subnets: "{{ network.subnet }}"
+        dhcp_enabled: "{{ network.dhcp_enabled }}"
+      when:
+        - network is defined
+        - avi_cloud.vtype == "CLOUD_GCP"
+      tags:
+        - ipam
+
+    - name: get Networks to retrieve Uuid
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: network
+      register: networkUuid
+      when:
+        - network is defined
+        - avi_cloud.vtype == "CLOUD_GCP"
+      tags:
+        - ipam
+
+    - name: Append Network uuid to the list
+      set_fact:
+        listNetworkUuid: "{{ listNetworkUuid }} + [ '{{ item.uuid }}' ]"
+      loop: "{{ networkUuid.obj.results }}"
+      loop_control:
+       label: "{{ item.uuid }}"
+      when:
+        - network is defined
+        - avi_cloud.vtype == "CLOUD_GCP"
+      tags:
+        - ipam
+
+
+    # - debug:
+    #     msg: "/api/network/{{ listNetworkUuid.0 }}"
+
+    - name: Create Avi IPAM
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        internal_profile:
+          usable_network_refs:
+            - "/api/network/{{ listNetworkUuid.0 }}"
+        name: "{{ ipam.name | default('ipam-avi') }}"
+        type: IPAMDNS_TYPE_INTERNAL
+      when:
+        - network is defined
+        - avi_cloud.vtype == "CLOUD_GCP"
+      tags:
+        - ipam
+
+# this works only if one subnet is configured (network is not a list)

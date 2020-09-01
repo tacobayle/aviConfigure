@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # vars_files:
+  #   - "../vars/fromTerraform.yml"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - debug
+      when:
+        - avi_cloud.vtype == "CLOUD_NSXT"
+
+    - name: Create a Cloud connector user for NSX-T
+      avi_cloudconnectoruser:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: credsNsxt
+        nsxt_credentials:
+          username: "{{ nsx.username }}"
+          password: "{{ nsx.password }}"
+      register: nsxtUserOutput
+      tags:
+        - cloud
+      when:
+        - avi_cloud.vtype == "CLOUD_NSXT"
+
+    - name: Create a Cloud connector user for NSX-T (vccenter)
+      avi_cloudconnectoruser:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: credsVcenter
+        vcenter_credentials:
+          username: "{{ vcenter.username }}"
+          password: "{{ vcenter.password }}"
+      register: vcenterUserOutput
+      tags:
+        - cloud
+        - vcenter
+      when:
+        - avi_cloud.vtype == "CLOUD_NSXT"
+
+    - name: Debug
+      debug:
+        msg: "{{ nsxtUserOutput.obj.uuid }}"
+      tags:
+        - debug
+      when:
+        - avi_cloud.vtype == "CLOUD_NSXT"
+
+    - name: Debug
+      debug:
+        msg: "{{ vcenterUserOutput.obj.uuid }}"
+      tags:
+        - debug
+      when:
+        - avi_cloud.vtype == "CLOUD_NSXT"

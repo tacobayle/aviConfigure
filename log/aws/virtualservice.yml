@@ -1,0 +1,236 @@
+---
+count: 2
+results:
+- _last_modified: '1598816153656280'
+  active_standby_se_tag: ACTIVE_STANDBY_SE_1
+  advertise_down_vs: false
+  allow_invalid_client_cert: false
+  analytics_profile_ref: https://54.78.62.223/api/analyticsprofile/analyticsprofile-7597e823-e7f3-464a-948b-e57189688f5d
+  application_profile_ref: https://54.78.62.223/api/applicationprofile/applicationprofile-89590132-2f74-42b6-92e3-a3dc0726e8a3
+  bulk_sync_kvcache: false
+  close_client_conn_on_config_update: false
+  cloud_ref: https://54.78.62.223/api/cloud/cloud-5cda797e-2ece-4a1e-9005-1753ba778222
+  cloud_type: CLOUD_AWS
+  delay_fairness: false
+  east_west_placement: false
+  enable_autogw: true
+  enabled: true
+  flow_dist: LOAD_AWARE
+  flow_label_type: NO_LABEL
+  ign_pool_net_reach: false
+  limit_doser: false
+  marked_for_delete: false
+  max_cps_per_client: 0
+  name: opencart
+  network_profile_ref: https://54.78.62.223/api/networkprofile/networkprofile-d1936c86-a725-48b4-ab78-49ad035c8e0b
+  pool_ref: https://54.78.62.223/api/pool/pool-461abd5e-a807-48b8-8d64-25014c734646
+  redis_db: 8
+  redis_port: 5025
+  remove_listening_port_on_vs_down: false
+  scaleout_ecmp: false
+  se_group_ref: https://54.78.62.223/api/serviceenginegroup/serviceenginegroup-ab47adc7-05bd-41d2-8386-06aa991cf2fc
+  self_se_election: false
+  services:
+  - enable_http2: false
+    enable_ssl: true
+    port: 443
+    port_range_end: 443
+  ssl_key_and_certificate_refs:
+  - https://54.78.62.223/api/sslkeyandcertificate/sslkeyandcertificate-41c4cfb7-09cc-4a7c-8903-70f6b8844b57
+  ssl_profile_ref: https://54.78.62.223/api/sslprofile/sslprofile-d5113101-1cb1-487d-bd65-e4fe866b8c64
+  ssl_sess_cache_avg_size: 1024
+  tenant_ref: https://54.78.62.223/api/tenant/admin
+  tls_ticket_key:
+  - aes_key: IdlMaG7GSnETO/Y1Esx6sQ==
+    hmac_key: ZWBoRKahEkPy3M3A05l3IQ==
+    name: add5663e-9c3d-4581-80ec-fffc7242ff9e
+  - aes_key: MNMYfvalm2E4HKjVovI/nQ==
+    hmac_key: qcN3vrp9w8hx72K53wn8gA==
+    name: 61b7e977-f4b4-4464-be75-f1518efbf2bb
+  - aes_key: LrU6KdsPDf93nrv4k2ObMQ==
+    hmac_key: xvQUr+XCx+warUjs1XYgPQ==
+    name: e9a7702b-f4b1-4e96-b658-0ee3da89e92f
+  traffic_enabled: true
+  type: VS_TYPE_NORMAL
+  url: https://54.78.62.223/api/virtualservice/virtualservice-13ae7c5c-66cf-4eb6-b641-6a349d73baf1
+  use_bridge_ip_as_vip: false
+  use_vip_as_snat: false
+  uuid: virtualservice-13ae7c5c-66cf-4eb6-b641-6a349d73baf1
+  version: '5'
+  vip_runtime:
+  - first_se_assigned_time:
+      secs: '1598816929'
+      usecs: '993027'
+    num_additional_se: 0
+    requested_resource:
+      num_se: 1
+      num_standby_se: 0
+    se_list:
+    - admin_down_requested: false
+      attach_ip_status: Programming Network reachability to the Virtual Service IP
+        in the Cloud
+      attach_ip_success: true
+      delete_in_progress: false
+      incarnation: 2020-0830 19:48:49.993242
+      is_portchannel: false
+      is_primary: true
+      is_standby: false
+      memory: 963
+      scaleout_in_progress: false
+      se_ref: https://54.78.62.223/api/serviceengine/se-i-02a236e0d593c0bee
+      sec_idx: 0
+      vcpus: 2
+      vip6_subnet_mask: 128
+      vip_intf_list:
+      - is_portchannel: false
+        vip_intf_ip:
+          addr: 192.168.11.109
+          type: V4
+        vip_intf_mac: 02:6f:0c:e4:52:9b
+        vlan_id: 0
+      vip_intf_mac: 02:6f:0c:e4:52:9b
+      vip_subnet_mask: 32
+      vlan_id: 0
+      vnic:
+      - mac: 02:6f:0c:e4:52:9b
+        type: VNIC_TYPE_FE
+      - mac: 02:6f:0c:e4:52:9b
+        type: VNIC_TYPE_BE
+    vip_id: '1'
+  - first_se_assigned_time:
+      secs: '1598816925'
+      usecs: '26246'
+    num_additional_se: 0
+    requested_resource:
+      num_se: 1
+      num_standby_se: 0
+    se_list:
+    - admin_down_requested: false
+      attach_ip_status: Programming Network reachability to the Virtual Service IP
+        in the Cloud
+      attach_ip_success: true
+      delete_in_progress: false
+      incarnation: 2020-0830 19:48:45.026459
+      is_portchannel: false
+      is_primary: true
+      is_standby: false
+      memory: 963
+      scaleout_in_progress: false
+      se_ref: https://54.78.62.223/api/serviceengine/se-i-0a9b1828fb9b7158e
+      sec_idx: 0
+      vcpus: 2
+      vip6_subnet_mask: 128
+      vip_intf_list:
+      - is_portchannel: false
+        vip_intf_ip:
+          addr: 192.168.12.124
+          type: V4
+        vip_intf_mac: 06:df:b2:2c:5c:15
+        vlan_id: 0
+      vip_intf_mac: 06:df:b2:2c:5c:15
+      vip_subnet_mask: 32
+      vlan_id: 0
+      vnic:
+      - mac: 06:df:b2:2c:5c:15
+        type: VNIC_TYPE_FE
+      - mac: 06:df:b2:2c:5c:15
+        type: VNIC_TYPE_BE
+    vip_id: '2'
+  vrf_context_ref: https://54.78.62.223/api/vrfcontext/vrfcontext-33bbb526-3deb-4d32-8fb5-09f11bdb065f
+  vsvip_ref: https://54.78.62.223/api/vsvip/vsvip-06861ece-e7c7-4f75-89bc-90a82485098b
+  weight: 1
+- _last_modified: '1598816154453759'
+  active_standby_se_tag: ACTIVE_STANDBY_SE_1
+  advertise_down_vs: false
+  allow_invalid_client_cert: false
+  analytics_profile_ref: https://54.78.62.223/api/analyticsprofile/analyticsprofile-7597e823-e7f3-464a-948b-e57189688f5d
+  application_profile_ref: https://54.78.62.223/api/applicationprofile/applicationprofile-6f6af5af-073b-4d1c-be63-1a2f8cd546b6
+  bulk_sync_kvcache: false
+  close_client_conn_on_config_update: false
+  cloud_ref: https://54.78.62.223/api/cloud/cloud-5cda797e-2ece-4a1e-9005-1753ba778222
+  cloud_type: CLOUD_AWS
+  delay_fairness: false
+  east_west_placement: false
+  enable_autogw: true
+  enabled: true
+  flow_dist: LOAD_AWARE
+  flow_label_type: NO_LABEL
+  ign_pool_net_reach: false
+  limit_doser: false
+  marked_for_delete: false
+  max_cps_per_client: 0
+  name: gslb.aws.avidemo.fr
+  network_profile_ref: https://54.78.62.223/api/networkprofile/networkprofile-2d14cb16-f13d-4311-8c33-c6b0b86ce0e3
+  redis_db: 13
+  redis_port: 5026
+  remove_listening_port_on_vs_down: false
+  scaleout_ecmp: false
+  se_group_ref: https://54.78.62.223/api/serviceenginegroup/serviceenginegroup-40da60ad-e0a4-4305-87e6-0bd5a5bfa704
+  self_se_election: false
+  services:
+  - enable_http2: false
+    enable_ssl: false
+    port: 53
+    port_range_end: 53
+  ssl_sess_cache_avg_size: 1024
+  tenant_ref: https://54.78.62.223/api/tenant/admin
+  tls_ticket_key:
+  - aes_key: 5WgPmqui4By50/p9ybDTLw==
+    hmac_key: 62+9AQkjXLBv8Y0jaIJ3rQ==
+    name: 4db2a863-c9aa-4889-957d-dca4df0931d3
+  - aes_key: 2BtC61c3ifebiWmsnNa78Q==
+    hmac_key: re7XSTeBr2/FPNL4S4IILQ==
+    name: 7f15ea65-8078-4af1-b1d8-71924c67c12b
+  - aes_key: "/zjmkzlWUmaN1gtZnLJKbw=="
+    hmac_key: "+oZGIVx/xzzWvSKijtOqpQ=="
+    name: df971442-ff67-400b-8be2-87c51fad9f53
+  traffic_enabled: true
+  type: VS_TYPE_NORMAL
+  url: https://54.78.62.223/api/virtualservice/virtualservice-71d2e407-325a-4308-b1ef-cb8a13d4436b
+  use_bridge_ip_as_vip: false
+  use_vip_as_snat: false
+  uuid: virtualservice-71d2e407-325a-4308-b1ef-cb8a13d4436b
+  version: '13'
+  vip_runtime:
+  - first_se_assigned_time:
+      secs: '1598816895'
+      usecs: '579450'
+    num_additional_se: 0
+    requested_resource:
+      num_se: 1
+      num_standby_se: 0
+    se_list:
+    - admin_down_requested: false
+      attach_ip_status: Programming Network reachability to the Virtual Service IP
+        in the Cloud
+      attach_ip_success: true
+      delete_in_progress: false
+      incarnation: 2020-0830 19:48:15.579801
+      is_portchannel: false
+      is_primary: true
+      is_standby: false
+      memory: 7881
+      scaleout_in_progress: false
+      se_ref: https://54.78.62.223/api/serviceengine/se-i-0d67275a74fe5d965
+      sec_idx: 0
+      vcpus: 2
+      vip6_subnet_mask: 128
+      vip_intf_list:
+      - is_portchannel: false
+        vip_intf_ip:
+          addr: 192.168.11.191
+          type: V4
+        vip_intf_mac: 02:46:34:e4:ee:1b
+        vlan_id: 0
+      vip_intf_mac: 02:46:34:e4:ee:1b
+      vip_subnet_mask: 32
+      vlan_id: 0
+      vnic:
+      - mac: 02:46:34:e4:ee:1b
+        type: VNIC_TYPE_FE
+      - mac: 02:46:34:e4:ee:1b
+        type: VNIC_TYPE_BE
+    vip_id: '1'
+  vrf_context_ref: https://54.78.62.223/api/vrfcontext/vrfcontext-33bbb526-3deb-4d32-8fb5-09f11bdb065f
+  vsvip_ref: https://54.78.62.223/api/vsvip/vsvip-73cb84e3-75ed-4e59-9099-5e63ff45aecf
+  weight: 1

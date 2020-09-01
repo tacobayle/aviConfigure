@@ -1,0 +1,197 @@
+---
+controller:
+  environment: AWS
+  username: admin
+  password: *****
+  name: Avi-Controller-20.1.1-9071-ad51eb59-8ccb-43f7-9a40-9c18fc0ecd61-ami-0e758cccfbf7049fd.4
+  count: 1
+
+avi_systemconfiguration:
+  global_tenant_config:
+    se_in_provider_context: false
+    tenant_access_to_provider_se: true
+    tenant_vrf: false
+  welcome_workflow_complete: true
+  ntp_configuration:
+    ntp_servers:
+      - server:
+          type: V4
+          addr: 95.81.173.155
+  dns_configuration:
+    search_domain: ''
+    server_list:
+      - type: V4
+        addr: 8.8.8.8
+  email_configuration:
+    from_email: test@avicontroller.net
+    smtp_type: SMTP_LOCAL_HOST
+
+domain:
+  name: aws.avidemo.fr
+
+avi_cloud:
+  name: cloudAws
+  vtype: CLOUD_AWS
+  aws_configuration:
+    region: *****
+    secret_access_key: *****
+    access_key_id: *****
+    route53_integration: true
+    vpc_id: vpc-0028f5c2333698ce1
+    zones:
+      - mgmt_network_uuid: subnet-0e034807690865dd5
+        availability_zone: eu-west-1a
+        mgmt_network_name: 192.168.40.0/24
+      - mgmt_network_uuid: subnet-05202453ebf17256c
+        availability_zone: eu-west-1b
+        mgmt_network_name: 192.168.50.0/24
+      - mgmt_network_uuid: subnet-061f77b71827a6d14
+        availability_zone: eu-west-1c
+        mgmt_network_name: 192.168.60.0/24
+
+serviceEngineGroup:
+  - name: &segroup0 Default-Group
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    instance_flavor: t3.large
+    extra_shared_config_memory: 0
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup1 seGroupCpuAutoScale
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 1
+    instance_flavor: t2.micro
+    extra_shared_config_memory: 0
+    auto_rebalance: true
+    auto_rebalance_interval: 30
+    auto_rebalance_criteria:
+    - SE_AUTO_REBALANCE_CPU
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup2 seGroupGslb
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    instance_flavor: t3.large
+    extra_shared_config_memory: 2000
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+
+avi_servers:
+- "192.168.4.131"
+- "192.168.5.197"
+- "192.168.6.140"
+
+
+avi_healthmonitor:
+  - name: &hm0 hm1
+    receive_timeout: 1
+    failed_checks: 2
+    send_interval: 1
+    successful_checks: 2
+    type: HEALTH_MONITOR_HTTP
+    http_request: "HEAD / HTTP/1.0"
+    http_response_code:
+      - HTTP_2XX
+      - HTTP_3XX
+      - HTTP_5XX
+
+avi_pool:
+  name: &pool0 pool1
+  lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+  health_monitor_refs: *hm0
+
+avi_virtualservice:
+  http:
+    - name: &vs0 app1
+      pool_ref: *pool0
+      services:
+        - port: 80
+          enable_ssl: false
+        - port: 443
+          enable_ssl: true
+      vip:
+        - subnet:
+          ipam_network_subnet:
+            subnet_uuid: subnet-097ba2c3cf27431a6
+            subnet:
+              mask: "24"
+              ip_addr:
+                type: V4
+                addr: "192.168.11.0"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+          vip_id: 1
+        - subnet:
+          ipam_network_subnet:
+            subnet_uuid: subnet-0da7269d04873c422
+            subnet:
+              mask: "24"
+              ip_addr:
+                type: V4
+                addr: "192.168.12.0"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+          vip_id: 2
+        - subnet:
+          ipam_network_subnet:
+            subnet_uuid: subnet-0cb4f0a6eea6b9ef3
+            subnet:
+              mask: "24"
+              ip_addr:
+                type: V4
+                addr: "192.168.13.0"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+          vip_id: 3
+  dns:
+    - name: app3-dns
+      services:
+        - port: 53
+      vip:
+        - subnet:
+          ipam_network_subnet:
+            subnet_uuid: subnet-097ba2c3cf27431a6
+            subnet:
+              mask: "24"
+              ip_addr:
+                type: V4
+                addr: "192.168.11.0"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+    - name: app4-gslb
+      services:
+        - port: 53
+      vip:
+        - subnet:
+          ipam_network_subnet:
+            subnet_uuid: subnet-097ba2c3cf27431a6
+            subnet:
+              mask: "24"
+              ip_addr:
+                type: V4
+                addr: "192.168.11.0"
+          avi_allocated_fip: true
+          auto_allocate_ip: true
+          auto_allocate_floating_ip: true
+      se_group_ref: *segroup2
+
+authProfile:
+  - name: authProfile1
+    type: AUTH_PROFILE_SAML
+    saml:
+      sp:
+        saml_entity_type: AUTH_SAML_APP_VS
+
+ssoPolicy:
+  - name: ssoPolicy1
+    type: SSO_TYPE_SAML

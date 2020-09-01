@@ -1,0 +1,13 @@
+---
+count: 1
+results:
+- url: https://10.206.112.65/api/vcenterserver/vcenterserver-7bd2a3ef-b3ff-4afb-a270-7464cc657107
+  uuid: vcenterserver-7bd2a3ef-b3ff-4afb-a270-7464cc657107
+  name: rc-vcenter
+  tenant_ref: https://10.206.112.65/api/tenant/admin
+  cloud_ref: https://10.206.112.65/api/cloud/cloud-72bfb74d-0107-453f-a9b6-1ebe19992b14
+  _last_modified: '1597862543510996'
+  vcenter_url: 100.64.66.248
+  content_lib:
+    id: b19f4ed2-36a3-470d-ab34-f499711e0901
+  vcenter_credentials_ref: https://10.206.112.65/api/cloudconnectoruser/cloudconnectoruser-3ecd4c1f-e9c0-47e5-83fe-91d5d9c04bb5

@@ -1,0 +1,79 @@
+---
+url: https://54.78.62.223/api/vsvip/vsvip-06861ece-e7c7-4f75-89bc-90a82485098b
+uuid: vsvip-06861ece-e7c7-4f75-89bc-90a82485098b
+name: vsvip-opencart
+vrf_context_ref: https://54.78.62.223/api/vrfcontext/vrfcontext-33bbb526-3deb-4d32-8fb5-09f11bdb065f
+tenant_ref: https://54.78.62.223/api/tenant/admin
+cloud_ref: https://54.78.62.223/api/cloud/cloud-5cda797e-2ece-4a1e-9005-1753ba778222
+_last_modified: '1598816129248024'
+vip:
+- vip_id: '1'
+  ip_address:
+    addr: 192.168.11.103
+    type: V4
+  enabled: true
+  port_uuid: eni-0c64efa8672ce85e7
+  subnet_uuid: subnet-0a6f44f9ce7758a8a
+  subnet:
+    ip_addr:
+      addr: 192.168.11.0
+      type: V4
+    mask: 24
+  availability_zone: eu-west-1a
+  auto_allocate_ip: true
+  floating_ip:
+    addr: 52.18.119.106
+    type: V4
+  auto_allocate_floating_ip: true
+  avi_allocated_vip: true
+  avi_allocated_fip: true
+  ipam_network_subnet:
+    subnet:
+      ip_addr:
+        addr: 192.168.11.0
+        type: V4
+      mask: 24
+    subnet_uuid: subnet-0a6f44f9ce7758a8a
+    network_ref: https://54.78.62.223/api/network/subnet-0a6f44f9ce7758a8a
+  auto_allocate_ip_type: V4_ONLY
+  prefix_length: 32
+  network_ref: https://54.78.62.223/api/network/subnet-0a6f44f9ce7758a8a
+- vip_id: '2'
+  ip_address:
+    addr: 192.168.12.217
+    type: V4
+  enabled: true
+  port_uuid: eni-0cd9c933fcc25b297
+  subnet_uuid: subnet-00f21d6c2eea0b1f1
+  subnet:
+    ip_addr:
+      addr: 192.168.12.0
+      type: V4
+    mask: 24
+  availability_zone: eu-west-1b
+  auto_allocate_ip: true
+  floating_ip:
+    addr: 54.75.163.41
+    type: V4
+  auto_allocate_floating_ip: true
+  avi_allocated_vip: true
+  avi_allocated_fip: true
+  ipam_network_subnet:
+    subnet:
+      ip_addr:
+        addr: 192.168.12.0
+        type: V4
+      mask: 24
+    subnet_uuid: subnet-00f21d6c2eea0b1f1
+    network_ref: https://54.78.62.223/api/network/subnet-00f21d6c2eea0b1f1
+  auto_allocate_ip_type: V4_ONLY
+  prefix_length: 32
+  network_ref: https://54.78.62.223/api/network/subnet-00f21d6c2eea0b1f1
+dns_info:
+- fqdn: opencart.aws.avidemo.fr
+  type: DNS_RECORD_A
+  num_records_in_response: 1
+  algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+east_west_placement: false
+vs_refs:
+- https://54.78.62.223/api/virtualservice/virtualservice-13ae7c5c-66cf-4eb6-b641-6a349d73baf1

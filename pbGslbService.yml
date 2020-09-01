@@ -1,0 +1,284 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # vars_files:
+  #   - "vars/fromTerraform.yml"
+  #   #-"vars/creds.json"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug the Avi credentials
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+
+    - name: Gather local vs
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice
+        params:
+          page_size: -1
+      register: gslbLocalVs
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the local vs
+      debug:
+        msg: "{{ gslbLocalVs }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Set Local Vs details
+      set_fact:
+        localVsUuid: "{{ item.uuid }}"
+        localVsVipRef: "{{ item.vsvip_ref }}"
+      loop: "{{ gslbLocalVs.obj.results }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - item.name == avi_gslbservice.name
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the local vs uuid
+      debug:
+        msg: "{{ localVsUuid }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Gather local vsvip
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: "vsvip/{{ localVsVipRef.split('/vsvip/')[1] }}"
+        params:
+          page_size: -1
+      register: gslbLocalVsvip
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the local vs IP
+      debug:
+        msg: "{{ gslbLocalVsvip }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the local vs IP
+      debug:
+        msg: "{{ gslbLocalVsvip.obj.vip.0.ip_address.addr }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Set creds dict for remote site
+      set_fact:
+        avi_credentialsRemote:
+          username: "{{ avi_gslb.sites.1.username }}"
+          password: "{{ avi_gslb.sites.1.password }}"
+          controller: "{{ avi_gslb.sites.1.ip_addresses.0.addr }}"
+          api_version: "{{ gslbsiteopsOutput.obj.rx_sw_version.split('(')[0] }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the remote cluster creds
+      debug:
+        msg: "{{ avi_credentialsRemote }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Gather remote vs
+      avi_api_session:
+        avi_credentials: "{{ avi_credentialsRemote }}"
+        api_version: "{{ avi_credentialsRemote.api_version }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice
+        params:
+          page_size: -1
+      register: gslbRemoteVs
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the remote vs
+      debug:
+        msg: "{{ gslbRemoteVs }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    # - name: Debug the remote vsvip
+    #   debug:
+    #     msg: "{{ gslbRemoteVsvip }}"
+    #   tags:
+    #     - gslb
+    #   when:
+    #     - avi_gslb is defined
+
+
+    - name: Set Remote Vs details
+      set_fact:
+        remoteVsUuid: "{{ item.uuid }}"
+        remoteVsVipRef: "{{ item.vsvip_ref }}"
+      loop: "{{ gslbRemoteVs.obj.results }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - item.name == avi_gslbservice.name
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the remote vsvip uuid
+      debug:
+        msg: "{{ remoteVsUuid }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Gather remote vsvip
+      avi_api_session:
+        avi_credentials: "{{ avi_credentialsRemote }}"
+        api_version: "{{ avi_credentialsRemote.api_version }}"
+        http_method: get
+        timeout: 300
+        path: "vsvip/{{ remoteVsVipRef.split('/vsvip/')[1] }}"
+        params:
+          page_size: -1
+      register: gslbRemoteVsvip
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Debug the remote vsvip floating ip
+      debug:
+        msg: "{{ item.floating_ip.addr }}" # "{{ item.floating_ip.type }}"
+      loop: "{{ gslbRemoteVsvip.obj.vip }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Create a GSLB service
+      avi_gslbservice:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        name: "{{ avi_gslbservice.name }}"
+        #health_monitor_refs:
+        #- "/api/healthmonitor?name={{ item.health_monitor_refs | default('System-GSLB-HTTPS') }}"
+        domain_names:
+          - "{{ avi_gslbservice.name }}.{{ avi_gslb.dns_configs.0.domain_name }}"
+        groups:
+          - name: localGroup
+            priority: "{{ avi_gslbservice.localPoolPriority | default('10') }}"
+            algorithm: "{{ avi_gslbservice.localPoolAlgorithm | default('GSLB_ALGORITHM_ROUND_ROBIN') }}"
+            members:
+            - cluster_uuid: "{{ outputCluster.obj.uuid }}"
+              vs_uuid: "{{ localVsUuid }}"
+              ip:
+                addr: "{{ gslbLocalVsvip.obj.vip.0.ip_address.addr }}"
+                type: "{{ gslbLocalVsvip.obj.vip.0.ip_address.type }}"
+              ratio: 1
+              enabled: true
+              resolve_fqdn_to_v6: false
+            enabled: true
+        site_persistence_enabled: "{{ avi_gslbservice.site_persistence_enabled }}"
+        health_monitor_scope: "{{ avi_gslbservice.health_monitor_scope }}"
+        pool_algorithm: "{{ avi_gslbservice.pool_algorithm }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
+
+    - name: Update a GSLB service with new pool and pool members
+      avi_gslbservice_patch_member:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        name: "{{ avi_gslbservice.name }}"
+        data:
+          group:
+            name: remoteGroup
+            priority: "{{ avi_gslbservice.remotePoolPriority | default('10') }}"
+            algorithm: "{{ avi_gslbservice.remotePoolAlgorithm | default('GSLB_ALGORITHM_ROUND_ROBIN') }}"
+            members:
+            - cluster_uuid: "{{ gslbsiteopsOutput.obj.rx_uuid }}"
+              vs_uuid: "{{ remoteVsUuid }}"
+              ip:
+                addr: "{{ item.floating_ip.addr }}"
+                type: "{{ item.floating_ip.type }}"
+              ratio: 1
+              enabled: true
+              resolve_fqdn_to_v6: false
+      loop: "{{ gslbRemoteVsvip.obj.vip }}"
+      tags:
+        - gslb
+      when:
+        - avi_gslb is defined
+        - avi_gslbservice is defined
+        - gslbsiteopsOutput is defined
