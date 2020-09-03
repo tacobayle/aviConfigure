@@ -208,6 +208,78 @@
 #
 # Pool creation
 #
+    # - name: get Network details (ansible bug get/post related to nsxt object)
+    #   avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     api_version: "{{ avi_credentials.api_version }}"
+    #     http_method: post
+    #     timeout: 300
+    #     path: nsxt/groups
+    #     data:
+    #       cloud_uuid: "{{ aviCloudUuid }}"
+    #     params:
+    #       page_size: -1
+    #   register: nsxtgroupsOutput
+      # when:
+      #   - avi_pool_nsxtGroup is defined
+      #   - avi_cloud.vtype == "CLOUD_NSXT"
+      # tags:
+      #   - pool
+      #   - vsHttp
+      #   - vs
+
+    - name: retrieve NsxT details for avi_pool_nsxtGroup
+      command: python3 python/retrieveNsxtGroups.py ../vars/creds.json "{{ aviCloudUuid }}"
+      ignore_errors: no
+      register: nsxtGroupsJson
+      when:
+        - avi_pool_nsxtGroup is defined
+        - avi_cloud.vtype == "CLOUD_NSXT"
+      tags:
+        - pool
+        - vsHttp
+        - vs
+        - avi_pool_nsxtGroup
+
+    - name: save NsxT details for avi_pool_nsxtGroup
+      set_fact:
+        nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
+      when:
+        - avi_pool_nsxtGroup is defined
+        - avi_cloud.vtype == "CLOUD_NSXT"
+      tags:
+        - pool
+        - vsHttp
+        - vs
+        - avi_pool_nsxtGroup
+
+    - name: create pool with servers (NSXT) based on NSXT group
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.0.name }}"
+        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
+        nsx_securitygroup:
+          - "{{ item.1.id }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.0.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
+        health_monitor_refs:
+          - "/api/healthmonitor?name={{ item.0.health_monitor_refs }}"
+      with_nested:
+        - "{{ avi_pool_nsxtGroup }}"
+        - "{{ nsxtGroups.resource.nsxt_groups }}"
+      when:
+        - item.0.groupName == item.1.name
+        - avi_pool_nsxtGroup is defined
+        - avi_cloud.vtype == "CLOUD_NSXT"
+      tags:
+        - pool
+        - vsHttp
+        - vs
+        - avi_pool_nsxtGroup
+
 
     - name: Create pool without server (NSX-T)
       avi_pool:
