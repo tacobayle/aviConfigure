@@ -270,10 +270,11 @@
       with_nested:
         - "{{ avi_pool_nsxtGroup }}"
         - "{{ nsxtGroups.resource.nsxt_groups }}"
+      ignore_errors: yes
       when:
-        - item.0.groupName == item.1.name
         - avi_pool_nsxtGroup is defined
         - avi_cloud.vtype == "CLOUD_NSXT"
+        - item.0.groupName == item.1.name
       tags:
         - pool
         - vsHttp
