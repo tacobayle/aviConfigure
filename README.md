@@ -88,18 +88,20 @@ A sample variable file per cloud type is defined in the var directory:
 - vars/vcenter.yml
 
 ## Use the the ansible playbook to:
-1. Wait the portal to be active (https port open)
-2. Bootstrap the controller with a password
-3. Configure the controller cluster (Vcenter or NSX environment only)
-4. Create a backup backup_passphrase
-5. Configure system configuration (global, DNS, NTP, email config)
-6. Configure Cloud
-7. Configure SE group
-8. Create a Health Monitor
-9. Create a Pool (based on the Health Monitor previously created)
-10. Create VS(s) based on vs-vip
-11. Enable a GSLB config (with a local controller and a remote controller)
-12. Create a GSLB service config
+- Wait the portal to be active (https port open)
+- Bootstrap the controller with a password
+- Configure the controller cluster (Vcenter or NSX environment only)
+- Create a backup backup_passphrase
+- Configure system configuration (global, DNS, NTP, email config)
+- Configure Cloud
+- Configure SE group
+- Create a Health Monitor
+- Create a Pool (based on the Health Monitor previously created) -  based on servers IP
+- Create a Pool (based on the Health Monitor previously created) -  based on NSXT Group
+- Create a Pool (based on the Health Monitor previously created) -  based on AWS ASG
+- Create VS(s) based on vs-vip
+- Enable a GSLB config (with a local controller and a remote controller)
+- Create a GSLB service config
 
 ## Run the playbook:
 ```
