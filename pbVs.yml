@@ -282,6 +282,29 @@
         - avi_pool_nsxtGroup
 
 
+    - name: create pool with servers (AWS) based on Auto Scaling Group
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        external_autoscale_groups:
+          - "{{ item.external_autoscale_groups }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
+        health_monitor_refs:
+          - "/api/healthmonitor?name={{ item.health_monitor_refs }}"
+      loop: "{{ avi_pool_awsGroup }}"
+      when:
+        - avi_pool_awsGroup is defined
+        - avi_cloud.vtype == "CLOUD_AWS"
+      tags:
+        - pool
+        - vsHttp
+        - vs
+        - avi_pool_awsGroup
+
     - name: Create pool without server (NSX-T)
       avi_pool:
         avi_credentials: "{{ avi_credentials }}"
