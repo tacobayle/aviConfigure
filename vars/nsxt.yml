@@ -1,0 +1,175 @@
+
+controller:
+  environment: VMWARE
+  username: admin
+  version: 20.1.1
+  floatingIp: 10.0.0.200
+  count: 1
+  password: *******
+
+avi_systemconfiguration:
+  global_tenant_config:
+    se_in_provider_context: false
+    tenant_access_to_provider_se: true
+    tenant_vrf: false
+  welcome_workflow_complete: true
+  ntp_configuration:
+    ntp_servers:
+      - server:
+          type: V4
+          addr: 172.18.0.15
+  dns_configuration:
+    search_domain: ''
+    server_list:
+      - type: V4
+        addr: 172.18.0.15
+  email_configuration:
+    from_email: test@avicontroller.net
+    smtp_type: SMTP_LOCAL_HOST
+
+nsx:
+  username: admin
+  password: *******
+  server: 10.0.0.20
+
+vcenter:
+  username: *******
+  password: *******
+  server: 10.0.0.10
+
+avi_cloud:
+  name: cloudNsxt
+  vtype: CLOUD_NSXT
+  transportZone: TZ_nested_nsx-overlay
+  tier1: N1-T1_AVI-SE-Mgmt
+  dhcp_enabled: false
+  network: N1-T1_Segment-AVI-SE-Mgt_10.7.3.0-24
+  networkType: V4
+  networkRangeBegin: 11
+  networkRangeEnd: 50
+  networkVrf: management
+  vcenterContentLibrary: Avi Content Library
+  obj_name_prefix: NSXTCLOUD
+
+serviceEngineGroup:
+  - name: &segroup0 Default-Group
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 2
+    buffer_se: 1
+    extra_shared_config_memory: 0
+    vcenter_folder: N1-AVI
+    vcpus_per_se: 1
+    memory_per_se: 2048
+    disk_per_se: 25
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup1 seGroupCpuAutoScale
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 2
+    buffer_se: 0
+    extra_shared_config_memory: 0
+    vcenter_folder: N1-AVI
+    vcpus_per_se: 1
+    memory_per_se: 2048
+    disk_per_se: 25
+    auto_rebalance: true
+    auto_rebalance_interval: 30
+    auto_rebalance_criteria:
+    - SE_AUTO_REBALANCE_CPU
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+  - name: &segroup2 seGroupGslb
+    ha_mode: HA_MODE_SHARED
+    min_scaleout_per_vs: 1
+    buffer_se: 0
+    extra_shared_config_memory: 2000
+    vcenter_folder: N1-AVI
+    vcpus_per_se: 2
+    memory_per_se: 8192
+    disk_per_se: 25
+    realtime_se_metrics:
+      enabled: true
+      duration: 0
+
+domain:
+  name: avi.avidemo.fr
+
+avi_network_vip:
+  name: N1-T1_Segment-VIP-A_10.7.4.0-24
+  tier1: N1-T1_AVI-VIP-A
+  dhcp_enabled: false
+  exclude_discovered_subnets: true
+  vcenter_dvs: true
+  type: V4
+  networkRangeBegin: 11
+  networkRangeEnd: 50
+  gwAddr: 1
+
+avi_network_backend:
+  name: N1-T1_Segment-Backend_10.7.6.0-24
+  dhcp_enabled: false
+  exclude_discovered_subnets: true
+  vcenter_dvs: true
+  type: V4
+
+avi_servers:
+- "10.7.6.10"
+- "10.7.6.11"
+
+
+avi_healthmonitor:
+  - name: &hm0 hm1
+    receive_timeout: 1
+    failed_checks: 2
+    send_interval: 1
+    successful_checks: 2
+    type: HEALTH_MONITOR_HTTP
+    http_request: "HEAD / HTTP/1.0"
+    http_response_code:
+      - HTTP_2XX
+      - HTTP_3XX
+      - HTTP_5XX
+
+avi_pool:
+  name: &pool0 pool1
+  lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+  health_monitor_refs: *hm0
+
+avi_pool_nsxtGroup:
+  - name: &pool1 pool2BasedOnNsxtGroup
+    groupName: n1-avi-backend-servers-01
+    health_monitor_refs: *hm0
+
+avi_virtualservice:
+  http:
+    - name: &vs0 app1
+      services:
+        - port: 80
+          enable_ssl: false
+        - port: 443
+          enable_ssl: true
+      pool_ref: *pool0
+      enable_rhi: false
+    - name: &vs1 app2-se-cpu-auto-scale-out
+      services:
+        - port: 443
+          enable_ssl: true
+      pool_ref: *pool0
+      enable_rhi: false
+      se_group_ref: *segroup1
+    - name: &vs2 app3-nsxtGroupBased
+      services:
+        - port: 443
+          enable_ssl: true
+      pool_ref: *pool1
+      enable_rhi: false
+  dns:
+    - name: app3-dns
+      services:
+        - port: 53
+    - name: app4-gslb
+      services:
+        - port: 53
+      se_group_ref: *segroup2
