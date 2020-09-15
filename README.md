@@ -80,7 +80,10 @@ avisdk 18.2.9
 
 ### Avi Environment
 
-- VMware (V-center 6.7.0, ESXi, 6.7.0, 15160138)
+- VMware (V-center 6.7.0, ESXi, 6.7.0, 15160138) - with a single controller VM or a cluster of three controller VMs
+- AWS
+- NSX-T
+- GCP
 
 ## Input/Parameters:
 
