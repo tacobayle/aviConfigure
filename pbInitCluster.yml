@@ -35,7 +35,7 @@
       tags:
         - creds
       when:
-        - controller.environment == "VMWARE" or controller.environment == "GCP"
+        - controller.environment == "VMWARE" or controller.environment == "GCP" or controller.environment == "AWS"
 
     - set_fact:
         avi_credentials: >
@@ -48,16 +48,16 @@
       when:
         - controller.environment == "LSC"
 
-    - set_fact:
-        avi_credentials: >
-                          {'api_version': "{{ controller.name.split('-')[2] }}",
-                           'controller': "{{ outputRaw | json_query('controller') }}",
-                           'password': "{{ controller.password }}",
-                           'username': "{{ controller.username }}"}
-      tags:
-        - creds
-      when:
-        - controller.environment == "AWS"
+    # - set_fact:
+    #     avi_credentials: >
+    #                       {'api_version': "{{ controller.name.split('-')[2] }}",
+    #                        'controller': "{{ outputRaw | json_query('controller') }}",
+    #                        'password': "{{ controller.password }}",
+    #                        'username': "{{ controller.username }}"}
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "AWS"
 
     # - name: Debug
     #   debug:
