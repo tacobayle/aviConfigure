@@ -262,7 +262,7 @@
     - name: Change Avi Credentials if cluster config has been done - with floating cluster IP - if cluster has been configured
       set_fact:
         avi_credentials: >
-                          {'api_version': "{{ aviVersion.split('-')[0] }}",
+                          {'api_version': "{{ controller.version }}",
                            'controller': "{{ controller.floatingIp }}",
                            'password': "{{ my_pass.0 }}",
                            'username': "{{ aviUser.0.name }}"}
