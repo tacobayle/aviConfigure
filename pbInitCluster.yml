@@ -137,7 +137,7 @@
         - controller.environment == "AWS"
 
     - name: Retrieve IP fo follower controllers - if cluster has been configured
-      command: python3 python/retrieveIpFollowers.py hosts
+      command: python3 python/retrieveIpFollowers.py ../hosts
       ignore_errors: no
       when:
         - controller.count == 3
