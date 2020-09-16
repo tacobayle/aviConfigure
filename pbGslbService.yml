@@ -19,7 +19,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
 
@@ -37,7 +37,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Debug the local vs
@@ -47,7 +47,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Set Local Vs details
@@ -59,7 +59,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
         - item.name == avi_gslbservice.name
 
@@ -70,7 +70,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Gather local vsvip
@@ -87,7 +87,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Debug the local vs IP
@@ -97,7 +97,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Debug the local vs IP
@@ -107,7 +107,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Set creds dict for remote site
@@ -121,7 +121,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Debug the remote cluster creds
@@ -131,7 +131,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Gather remote vs
@@ -148,7 +148,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     - name: Debug the remote vs
@@ -158,7 +158,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbservice is defined
 
     # - name: Debug the remote vsvip

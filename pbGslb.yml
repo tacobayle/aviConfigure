@@ -18,7 +18,7 @@
       tags:
         - gslb
       when:
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Gather local cluster uuid
       avi_api_session:
@@ -32,7 +32,7 @@
       tags:
         - gslb
       when:
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Debug the local cluster uuid
       debug:
@@ -40,15 +40,7 @@
       tags:
         - gslb
       when:
-        - avi_gslb is defined
-
-    - name: Debug the ip of the remote cluster
-      debug:
-        msg: "{{ lookup('dig', 'controller.aws.avidemo.fr' ) }}"
-      tags:
-        - gslb
-      when:
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Gather remote cluster uuid
       avi_api_session:
@@ -71,7 +63,7 @@
       tags:
         - gslb
       when:
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Debug the remote cluster uuid
       debug:
@@ -80,7 +72,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Enable the GSLB config
       avi_gslb:
@@ -96,7 +88,7 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
 
     - name: Enable GSLB profile
       avi_gslbgeodbprofile:
@@ -112,5 +104,5 @@
         - gslb
       when:
         - gslbsiteopsOutput.obj is defined
-        - avi_gslb is defined
+        - avi_gslb.sites is defined
         - avi_gslbgeodbprofile is defined
