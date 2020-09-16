@@ -60,14 +60,12 @@ ubuntu@jump:~$
 ### Ansible version
 
 ```
-ubuntu@jump:~$ ansible --version
 ansible 2.9.12
   config file = None
-  configured module search path = [u'/home/ubuntu/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
-  ansible python module location = /usr/local/lib/python2.7/dist-packages/ansible
-  executable location = /usr/local/bin/ansible
-  python version = 2.7.17 (default, Jul 20 2020, 15:37:01) [GCC 7.5.0]
-ubuntu@jump:~$
+  configured module search path = ['/home/nic/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /home/nic/.local/lib/python3.8/site-packages/ansible
+  executable location = /home/nic/.local/bin/ansible
+  python version = 3.8.2 (default, Jul 16 2020, 14:00:26) [GCC 9.3.0]
 ```
 
 ### Avi version
