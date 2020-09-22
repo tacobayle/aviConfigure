@@ -625,7 +625,7 @@
       register: aviCloudSecondaryOutput
       when:
         - avi_cloud_second is defined
-        - avi_cloud.vtype == "CLOUD_AWS"
+        - avi_cloud_second.vtype == "CLOUD_AWS"
       tags:
         - cloud
 
