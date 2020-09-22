@@ -615,6 +615,27 @@
       tags:
         - cloud
 
+    - name: Configure Avi Cloud for AWS (as a secondary cloud)
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ avi_cloud_second.name }}"
+        vtype: "{{ avi_cloud_second.vtype }}"
+        aws_configuration: "{{ avi_cloud_second.aws_configuration }}"
+      register: aviCloudSecondaryOutput
+      when:
+        - avi_cloud_second is defined
+        - avi_cloud.vtype == "CLOUD_AWS"
+      tags:
+        - cloud
+
+    - set_fact:
+        aviCloudUuid: "{{ aviCloudSecondaryOutput.obj.uuid }}"
+      when:
+        - avi_cloud_second is defined
+      tags:
+        - cloud
+
     - set_fact:
         aviCloudUuid: "{{ aviCloudOutput.obj.uuid }}"
       when:
