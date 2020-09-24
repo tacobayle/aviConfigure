@@ -76,8 +76,8 @@
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
                            'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
-                           'password': "{{ lookup('env','TF_VAR_avi_password') }}",
-                           'username': "{{ lookup('env','TF_VAR_avi_user') }}"}
+                           'password': "{{ controller.password }}",
+                           'username': "{{ controller.username }}"}
       tags:
         - creds
       when:
@@ -94,11 +94,11 @@
     #   when:
     #     - controller.environment == "AWS"
 
-    # - name: Debug
-    #   debug:
-    #     msg: "{{ avi_credentials }}"
-    #   tags:
-    #     - creds
+    - name: Debug
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - creds
 
     - name: Update user admin password
       avi_useraccount:
@@ -163,7 +163,7 @@
       set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
-                          'controller': "{{ outputRaw | json_query('controller') }}",
+                           'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
                           'password': "{{ my_pass.0 }}",
                           'username': "{{ aviUser.0.name }}"}
       tags:
