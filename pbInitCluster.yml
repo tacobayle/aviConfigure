@@ -74,7 +74,7 @@
 
     - set_fact:
         avi_credentials: >
-                          {'api_version': "{{ api_version }}",
+                          {'api_version': "{{ controller.version }}",
                            'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
                            'password': "{{ lookup('env','TF_VAR_avi_password') }}",
                            'username': "{{ lookup('env','TF_VAR_avi_user') }}"}
@@ -162,7 +162,7 @@
     - name: Change Avi Credentials - with Ansible user
       set_fact:
         avi_credentials: >
-                          {'api_version': "{{ controller.name.split('-')[2] }}",
+                          {'api_version': "{{ controller.version }}",
                           'controller': "{{ outputRaw | json_query('controller') }}",
                           'password': "{{ my_pass.0 }}",
                           'username': "{{ aviUser.0.name }}"}
