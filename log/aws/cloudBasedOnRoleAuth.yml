@@ -1,0 +1,64 @@
+---
+count: 2
+results:
+- url: https://18.202.167.8/api/cloud/cloud-f248ffdb-94e4-48d8-bb4f-5adde14b6693
+  uuid: cloud-f248ffdb-94e4-48d8-bb4f-5adde14b6693
+  name: Default-Cloud
+  tenant_ref: https://18.202.167.8/api/tenant/admin
+  _last_modified: '1600961897237233'
+  vtype: CLOUD_NONE
+  apic_mode: false
+  dhcp_enabled: false
+  mtu: 1500
+  prefer_static_routes: false
+  enable_vip_static_routes: false
+  license_type: LIC_CORES
+  state_based_dns_registration: true
+  ip6_autocfg_enabled: false
+  dns_resolution_on_se: false
+  enable_vip_on_all_interfaces: false
+  license_tier: ENTERPRISE
+  autoscale_polling_interval: 60
+- url: https://18.202.167.8/api/cloud/cloud-e1631c53-ac2f-42e2-a8ce-5c272a9c0ef9
+  uuid: cloud-e1631c53-ac2f-42e2-a8ce-5c272a9c0ef9
+  name: cloudAws
+  tenant_ref: https://18.202.167.8/api/tenant/admin
+  _last_modified: '1600964234872762'
+  vtype: CLOUD_AWS
+  aws_configuration:
+    region: eu-west-1
+    vpc: vpc-0c849a0211b95b108
+    vpc_id: vpc-0c849a0211b95b108
+    zones:
+    - availability_zone: eu-west-1a
+      mgmt_network_name: 192.168.4.0/24
+      mgmt_network_uuid: subnet-07bae88d77b0c08b3
+    - availability_zone: eu-west-1b
+      mgmt_network_name: 192.168.5.0/24
+      mgmt_network_uuid: subnet-06ddd682df7d85ea2
+    - availability_zone: eu-west-1c
+      mgmt_network_name: 192.168.6.0/24
+      mgmt_network_uuid: subnet-0d034fb75bfd3fc9e
+    route53_integration: false
+    free_elasticips: true
+    use_iam_roles: true
+    ttl: 60
+    use_sns_sqs: false
+    asg_poll_interval: 60
+    ebs_encryption:
+      mode: AWS_ENCRYPTION_MODE_NONE
+    s3_encryption:
+      mode: AWS_ENCRYPTION_MODE_NONE
+    publish_vip_to_public_zone: false
+  apic_mode: false
+  dhcp_enabled: true
+  mtu: 1500
+  prefer_static_routes: false
+  enable_vip_static_routes: false
+  license_type: LIC_CORES
+  state_based_dns_registration: true
+  ip6_autocfg_enabled: false
+  dns_resolution_on_se: false
+  enable_vip_on_all_interfaces: false
+  license_tier: ENTERPRISE
+  autoscale_polling_interval: 60
