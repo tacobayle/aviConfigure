@@ -14,17 +14,52 @@
 
   tasks:
 
+    - name: Register Dynamic Inventory list for the controller group
+      shell: ansible-inventory -i /opt/ansible/inventory/aws_ec2.yaml --list | jq .aws_group_controller
+      ignore_errors: no
+      register: dynamicInventoryOutputJson
+      when:
+        - controller.environment == "AWS"
+      tags:
+        - creds
+
+    - set_fact:
+        dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
+      when:
+        - controller.environment == "AWS"
+      tags:
+        - creds
+
+    - set_fact:
+        dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
+      when:
+        - controller.environment == "AWS"
+      tags:
+        - creds
+
+    - name: Debug
+      debug:
+        msg: "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}"
+      when:
+        - controller.environment == "AWS"
+      tags:
+        - creds
+
     - name: Register JSON variables for credentials and cluster
       command: python3 python/generateJson.py ../hosts
       ignore_errors: no
       register: outputJson
       tags:
         - creds
+      when:
+        - controller.environment != "AWS"
 
     - set_fact:
         outputRaw: "{{ outputJson.stdout | from_json }}"
       tags:
         - creds
+      when:
+        - controller.environment != "AWS"
 
     - set_fact:
         avi_credentials: >
@@ -35,18 +70,18 @@
       tags:
         - creds
       when:
-        - controller.environment == "VMWARE" or controller.environment == "GCP" or controller.environment == "AWS"
+        - controller.environment != "AWS"
 
     - set_fact:
         avi_credentials: >
                           {'api_version': "{{ api_version }}",
-                           'controller': "{{ outputRaw | json_query('controller') }}",
+                           'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
                            'password': "{{ lookup('env','TF_VAR_avi_password') }}",
                            'username': "{{ lookup('env','TF_VAR_avi_user') }}"}
       tags:
         - creds
       when:
-        - controller.environment == "LSC"
+        - controller.environment == "AWS"
 
     # - set_fact:
     #     avi_credentials: >
