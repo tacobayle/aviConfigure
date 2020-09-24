@@ -1,0 +1,80 @@
+{
+  "count": 2,
+  "results": [
+    {
+      "uuid": "cloud-de22a6dc-3f4f-49e2-b453-9748e3eedec0",
+      "dhcp_enabled": false,
+      "vtype": "CLOUD_NONE",
+      "license_tier": "ENTERPRISE_18",
+      "_last_modified": "1590760711922190",
+      "url": "https://192.168.36.137/api/cloud/cloud-de22a6dc-3f4f-49e2-b453-9748e3eedec0",
+      "ip6_autocfg_enabled": false,
+      "tenant_ref": "https://192.168.36.137/api/tenant/admin",
+      "dns_resolution_on_se": false,
+      "enable_vip_static_routes": false,
+      "prefer_static_routes": false,
+      "autoscale_polling_interval": 60,
+      "license_type": "LIC_CORES",
+      "mtu": 1500,
+      "apic_mode": false,
+      "state_based_dns_registration": true,
+      "name": "Default-Cloud"
+    },
+    {
+      "uuid": "cloud-10b38ce3-d779-4fed-bae8-1ae162ffcea2",
+      "vtype": "CLOUD_AWS",
+      "license_tier": "ENTERPRISE_18",
+      "_last_modified": "1591186894767428",
+      "enable_vip_static_routes": false,
+      "url": "https://192.168.36.137/api/cloud/cloud-10b38ce3-d779-4fed-bae8-1ae162ffcea2",
+      "ip6_autocfg_enabled": false,
+      "tenant_ref": "https://192.168.36.137/api/tenant/admin",
+      "dns_resolution_on_se": false,
+      "dhcp_enabled": true,
+      "autoscale_polling_interval": 60,
+      "prefer_static_routes": false,
+      "aws_configuration": {
+        "use_iam_roles": false,
+        "publish_vip_to_public_zone": false,
+        "ebs_encryption": {
+          "mode": "AWS_ENCRYPTION_MODE_NONE"
+        },
+        "route53_integration": false,
+        "region": "eu-west-1",
+        "s3_encryption": {
+          "mode": "AWS_ENCRYPTION_MODE_NONE"
+        },
+        "secret_access_key": "<sensitive>",
+        "vpc_id": "vpc-09fd7f30ddb5ebc43",
+        "zones": [
+          {
+            "mgmt_network_name": "192.168.40.0/24",
+            "mgmt_network_uuid": "subnet-055afbc4a8562125a",
+            "availability_zone": "eu-west-1a"
+          },
+          {
+            "mgmt_network_name": "192.168.50.0/24",
+            "mgmt_network_uuid": "subnet-04358adec6c2b25cd",
+            "availability_zone": "eu-west-1b"
+          },
+          {
+            "mgmt_network_name": "192.168.60.0/24",
+            "mgmt_network_uuid": "subnet-0d0ea7b3ab7c44c6f",
+            "availability_zone": "eu-west-1c"
+          }
+        ],
+        "asg_poll_interval": 600,
+        "use_sns_sqs": false,
+        "vpc": "vpc-09fd7f30ddb5ebc43",
+        "ttl": 60,
+        "free_elasticips": true,
+        "access_key_id": "<sensitive>"
+      },
+      "license_type": "LIC_CORES",
+      "mtu": 1500,
+      "apic_mode": false,
+      "state_based_dns_registration": true,
+      "name": "test"
+    }
+  ]
+}

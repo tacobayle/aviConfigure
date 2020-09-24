@@ -1,0 +1,407 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "network_profile_ref": "https://54.216.203.17/api/networkprofile/networkprofile-4e332d82-bdd5-4390-8144-766b3b51d21f",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 963,
+              "vip_intf_mac": "02:0b:f2:67:df:34",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "02:0b:f2:67:df:34",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "02:0b:f2:67:df:34",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0628 18:08:27.823083",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "192.168.11.6"
+                  },
+                  "vip_intf_mac": "02:0b:f2:67:df:34",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://54.216.203.17/api/serviceengine/se-i-0dfc7e17a644e936d",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1593367707",
+            "usecs": "822892"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        },
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 963,
+              "vip_intf_mac": "06:fe:ec:a4:e0:b8",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "06:fe:ec:a4:e0:b8",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "06:fe:ec:a4:e0:b8",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0628 18:08:26.713651",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "192.168.12.235"
+                  },
+                  "vip_intf_mac": "06:fe:ec:a4:e0:b8",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://54.216.203.17/api/serviceengine/se-i-0cba869ad5887c323",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1593367706",
+            "usecs": "713486"
+          },
+          "vip_id": "2",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        },
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 963,
+              "vip_intf_mac": "0a:0d:b8:ad:1e:84",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "0a:0d:b8:ad:1e:84",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "0a:0d:b8:ad:1e:84",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0628 18:08:25.609005",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "192.168.13.231"
+                  },
+                  "vip_intf_mac": "0a:0d:b8:ad:1e:84",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://54.216.203.17/api/serviceengine/se-i-018859f910dc19b11",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1593367705",
+            "usecs": "608747"
+          },
+          "vip_id": "3",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://54.216.203.17/api/tenant/admin",
+      "flow_dist": "LOAD_AWARE",
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "192.168.11.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-west-1a",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "52.214.170.68"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-0426f1a03499474ab",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-0426f1a03499474ab",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "192.168.11.0"
+              }
+            },
+            "network_ref": "https://54.216.203.17/api/network/subnet-0426f1a03499474ab"
+          },
+          "avi_allocated_vip": true,
+          "port_uuid": "eni-028e7aab7d4c6ebac",
+          "network_ref": "https://54.216.203.17/api/network/subnet-0426f1a03499474ab",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "192.168.11.45"
+          }
+        },
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "192.168.12.0"
+            }
+          },
+          "vip_id": "2",
+          "availability_zone": "eu-west-1b",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "34.251.13.136"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-0b96aa7fa8e56ce68",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-0b96aa7fa8e56ce68",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "192.168.12.0"
+              }
+            },
+            "network_ref": "https://54.216.203.17/api/network/subnet-0b96aa7fa8e56ce68"
+          },
+          "avi_allocated_vip": true,
+          "port_uuid": "eni-0614664774f87d485",
+          "network_ref": "https://54.216.203.17/api/network/subnet-0b96aa7fa8e56ce68",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "192.168.12.216"
+          }
+        },
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "192.168.13.0"
+            }
+          },
+          "vip_id": "3",
+          "availability_zone": "eu-west-1c",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "52.16.210.110"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-0a747a8d7f51ddbc0",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-0a747a8d7f51ddbc0",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "192.168.13.0"
+              }
+            },
+            "network_ref": "https://54.216.203.17/api/network/subnet-0a747a8d7f51ddbc0"
+          },
+          "avi_allocated_vip": true,
+          "port_uuid": "eni-0cd7c23414a07876e",
+          "network_ref": "https://54.216.203.17/api/network/subnet-0a747a8d7f51ddbc0",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "192.168.13.156"
+          }
+        }
+      ],
+      "url": "https://54.216.203.17/api/virtualservice/virtualservice-2632cffc-0d09-40d8-9f6d-7984b5775c0c",
+      "marked_for_delete": false,
+      "dns_info": [
+        {
+          "num_records_in_response": 1,
+          "type": "DNS_RECORD_A",
+          "fqdn": "vs1.aws.avidemo.fr",
+          "algorithm": "DNS_RECORD_RESPONSE_CONSISTENT_HASH"
+        }
+      ],
+      "vrf_context_ref": "https://54.216.203.17/api/vrfcontext/vrfcontext-7130706c-d532-4938-947e-074fdfe531d6",
+      "vsvip_ref": "https://54.216.203.17/api/vsvip/vsvip-a144a402-ff5b-4903-af79-32a0c8b66bd1",
+      "analytics_profile_ref": "https://54.216.203.17/api/analyticsprofile/analyticsprofile-b6260e26-67ef-47a3-98e3-6dcdbba1b959",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1593370127309879",
+      "cloud_ref": "https://54.216.203.17/api/cloud/cloud-89dc82bd-2ee6-4c70-a7d1-fc182269d003",
+      "saml_sp_config": {
+        "entity_id": "SAML_app",
+        "sp_metadata": "<?xml version='1.0' encoding='UTF-8'?>\n<md:EntityDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" entityID=\"SAML_app\"><md:SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"true\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified</md:NameIDFormat><md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://vs1.aws.avidemo.fr/sso/acs/\" index=\"1\" /></md:SPSSODescriptor></md:EntityDescriptor>",
+        "cookie_name": "My-cookie",
+        "single_signon_url": "https://vs1.aws.avidemo.fr/sso/acs/",
+        "key": [
+          {
+            "name": "c6df45d1-fd2f-42de-915a-85597a18cbff",
+            "aes_key": "abD0PZOU585B5dPWaWl3La3Z/I04juy01mBwwtri3V8="
+          }
+        ],
+        "cookie_timeout": 60
+      },
+      "ssl_profile_ref": "https://54.216.203.17/api/sslprofile/sslprofile-f2f178b8-7e87-43a1-83a5-fab662af5b88",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 1,
+      "version": "6",
+      "se_group_ref": "https://54.216.203.17/api/serviceenginegroup/serviceenginegroup-b9cbc961-9897-41c0-90e8-dbc81da8d1f1",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "ssl_key_and_certificate_refs": [
+        "https://54.216.203.17/api/sslkeyandcertificate/sslkeyandcertificate-b5e589c3-76c5-46d4-beac-d0a2c97908ab"
+      ],
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://54.216.203.17/api/httppolicyset/httppolicyset-80d6375e-e05d-469e-bcad-bd93f362d224"
+        }
+      ],
+      "application_profile_ref": "https://54.216.203.17/api/applicationprofile/applicationprofile-7a48eeaf-8c9b-48a2-ba8a-3321f2041dae",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": false,
+          "port_range_end": 80,
+          "port": 80
+        },
+        {
+          "enable_ssl": true,
+          "port_range_end": 443,
+          "port": 443
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://54.216.203.17/api/pool/pool-54aff399-3849-44fd-a0ad-dfcbd6defdbf",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-2632cffc-0d09-40d8-9f6d-7984b5775c0c",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "vs1",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "remove_listening_port_on_vs_down": false,
+      "network_security_policy_ref": "https://54.216.203.17/api/networksecuritypolicy/networksecuritypolicy-6a4b601a-92fc-4231-8c35-2b8e0e2d7e3e",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "Y+VbK0vPz1UypRBwVfLvMw==",
+          "name": "dca3f841-176d-422e-925d-528ed5bd2cfb",
+          "aes_key": "nWXfCwN0KAT9GZlQsLdgLw=="
+        },
+        {
+          "hmac_key": "CkI/+Zxl2ZDuln0XBQIBxw==",
+          "name": "d46c9ccd-3262-40cb-b7a9-913435b661a5",
+          "aes_key": "28GFQImv6pYDbJV2p40XIw=="
+        },
+        {
+          "hmac_key": "+SWq0e0efFiRmy46fkgz5g==",
+          "name": "d12bd1e3-9d5a-43c9-b01a-7a9d95a3306c",
+          "aes_key": "GtLb1v98zT9M4JEVU1prpA=="
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 10,
+        "full_client_logs": {
+          "duration": 30,
+          "throttle": 10,
+          "enabled": false
+        },
+        "metrics_realtime_update": {
+          "duration": 30,
+          "enabled": false
+        },
+        "significant_log_throttle": 10,
+        "client_insights": "NO_INSIGHTS",
+        "all_headers": false
+      },
+      "redis_port": 5028,
+      "sso_policy_ref": "https://54.216.203.17/api/ssopolicy/ssopolicy-d3369254-4bbb-4fe6-a03d-ffb82dc8df23",
+      "flow_label_type": "NO_LABEL"
+    }
+  ]
+}

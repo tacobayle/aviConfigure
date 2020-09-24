@@ -1,0 +1,200 @@
+---
+count: 2
+results:
+- lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+  use_service_port: false
+  rewrite_host_header_to_server_name: false
+  host_check_enabled: false
+  enabled: true
+  rewrite_host_header_to_sni: false
+  delete_server_on_dns_refresh: true
+  capacity_estimation: false
+  servers:
+  - hostname: 192.168.4.10
+    ratio: 1
+    availability_zone: eu-west-1a
+    ip:
+      type: V4
+      addr: 192.168.4.10
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.4.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-07728a5408d7f55d5
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    rewrite_host_header: false
+  - hostname: 192.168.5.145
+    ratio: 1
+    availability_zone: eu-west-1b
+    ip:
+      type: V4
+      addr: 192.168.5.145
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.5.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-09790874f1c146eca
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    rewrite_host_header: false
+  - hostname: 192.168.6.205
+    ratio: 1
+    availability_zone: eu-west-1c
+    ip:
+      type: V4
+      addr: 192.168.6.205
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.6.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-0d48f30ccbce05814
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    rewrite_host_header: false
+  fewest_tasks_feedback_delay: 10
+  capacity_estimation_ttfb_thresh: 0
+  lookup_server_by_name: false
+  lb_algorithm_hash: LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS
+  analytics_profile_ref: https://controller.aws.avidemo.fr/api/analyticsprofile/analyticsprofile-04b5d9e6-f606-4506-a835-484625d50832
+  _last_modified: '1595925491847656'
+  cloud_ref: https://controller.aws.avidemo.fr/api/cloud/cloud-2411e2b0-1dbb-433e-bbe4-160c02eab733
+  lb_algorithm_core_nonaffinity: 2
+  vrf_ref: https://controller.aws.avidemo.fr/api/vrfcontext/vrfcontext-93abd7ef-6fbf-4fd0-a45c-08b28268ae7c
+  inline_health_monitor: true
+  default_server_port: 80
+  request_queue_depth: 128
+  graceful_disable_timeout: 1
+  sni_enabled: true
+  server_timeout: 0
+  request_queue_enabled: false
+  name: pool1
+  max_concurrent_connections_per_server: 0
+  url: https://controller.aws.avidemo.fr/api/pool/pool-011161b8-eeb6-4fde-b468-afcb95d4931c
+  tenant_ref: https://controller.aws.avidemo.fr/api/tenant/admin
+  uuid: pool-011161b8-eeb6-4fde-b468-afcb95d4931c
+  health_monitor_refs:
+  - https://controller.aws.avidemo.fr/api/healthmonitor/healthmonitor-e6a5f96e-7571-405e-b4ee-06388be928a3
+  connection_ramp_duration: 10
+- lb_algorithm: LB_ALGORITHM_LEAST_CONNECTIONS
+  use_service_port: false
+  rewrite_host_header_to_server_name: false
+  host_check_enabled: false
+  conn_pool_properties:
+    upstream_connpool_conn_idle_tmo: 60000
+    upstream_connpool_conn_life_tmo: 600000
+    upstream_connpool_conn_max_reuse: 0
+    upstream_connpool_server_max_cache: 0
+  rewrite_host_header_to_sni: false
+  delete_server_on_dns_refresh: true
+  capacity_estimation: false
+  servers:
+  - hostname: i-05d03a1be946c4994
+    ratio: 1
+    availability_zone: eu-west-1a
+    autoscaling_group_name: tf-asg-2020072808283824300000000a
+    ip:
+      type: V4
+      addr: 192.168.4.151
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.4.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-07728a5408d7f55d5
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    prst_hdr_val: ''
+    rewrite_host_header: false
+    external_uuid: i-05d03a1be946c4994
+  - hostname: i-012cd9c8c9f87a5aa
+    ratio: 1
+    availability_zone: eu-west-1b
+    autoscaling_group_name: tf-asg-2020072808283824300000000a
+    ip:
+      type: V4
+      addr: 192.168.5.245
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.5.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-09790874f1c146eca
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    prst_hdr_val: ''
+    rewrite_host_header: false
+    external_uuid: i-012cd9c8c9f87a5aa
+  - hostname: i-02c22208a648f21d0
+    ratio: 1
+    availability_zone: eu-west-1c
+    autoscaling_group_name: tf-asg-2020072808283824300000000a
+    ip:
+      type: V4
+      addr: 192.168.6.87
+    discovered_networks:
+    - subnet:
+      - mask: 24
+        ip_addr:
+          type: V4
+          addr: 192.168.6.0
+      network_ref: https://controller.aws.avidemo.fr/api/network/subnet-0d48f30ccbce05814
+    enabled: true
+    verify_network: false
+    static: false
+    resolve_server_by_dns: false
+    prst_hdr_val: ''
+    rewrite_host_header: false
+    external_uuid: i-02c22208a648f21d0
+  fewest_tasks_feedback_delay: 10
+  capacity_estimation_ttfb_thresh: 0
+  fail_action:
+    type: FAIL_ACTION_CLOSE_CONN
+  lookup_server_by_name: false
+  lb_algorithm_hash: LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS
+  analytics_profile_ref: https://controller.aws.avidemo.fr/api/analyticsprofile/analyticsprofile-04b5d9e6-f606-4506-a835-484625d50832
+  _last_modified: '1595926939917256'
+  cloud_ref: https://controller.aws.avidemo.fr/api/cloud/cloud-2411e2b0-1dbb-433e-bbe4-160c02eab733
+  lb_algorithm_core_nonaffinity: 2
+  server_reselect:
+    retry_nonidempotent: false
+    num_retries: 4
+    retry_timeout: 0
+    enabled: false
+  vrf_ref: https://controller.aws.avidemo.fr/api/vrfcontext/vrfcontext-93abd7ef-6fbf-4fd0-a45c-08b28268ae7c
+  inline_health_monitor: true
+  default_server_port: 80
+  request_queue_depth: 128
+  graceful_disable_timeout: 1
+  enabled: true
+  sni_enabled: true
+  server_timeout: 0
+  request_queue_enabled: false
+  name: grp-pool
+  max_concurrent_connections_per_server: 0
+  url: https://controller.aws.avidemo.fr/api/pool/pool-7d14a840-7954-496a-9b20-e4c739b2de18
+  tenant_ref: https://controller.aws.avidemo.fr/api/tenant/admin
+  uuid: pool-7d14a840-7954-496a-9b20-e4c739b2de18
+  connection_ramp_duration: 10
+  analytics_policy:
+    enable_realtime_metrics: false
+  external_autoscale_groups:
+  - tf-asg-2020072808283824300000000a

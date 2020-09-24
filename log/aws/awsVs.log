@@ -1,0 +1,813 @@
+{
+  "count": 4,
+  "results": [
+    {
+      "network_profile_ref": "https://emea-controller.demo.awsavi.net/api/networkprofile/networkprofile-4bdb6e77-f8f9-44d5-9a8b-bb7e981abf4f",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 3711,
+              "vip_intf_mac": "02:a0:2d:a2:d3:84",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "02:a0:2d:a2:d3:84",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "02:a0:2d:a2:d3:84",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "",
+              "sec_idx": 1,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "10.0.11.119"
+                  },
+                  "vip_intf_mac": "02:a0:2d:a2:d3:84",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://emea-controller.demo.awsavi.net/api/serviceengine/se-i-07ddbb1e7a8eba5d6",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1553689318",
+            "usecs": "922043"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://emea-controller.demo.awsavi.net/api/tenant/tenant-ceecb9e3-4b10-4c58-b406-111994227e6f",
+      "flow_dist": "LOAD_AWARE",
+      "remove_listening_port_on_vs_down": false,
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "10.0.11.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-central-1a",
+          "avi_allocated_fip": false,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-05dc914e41075396a",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "10.0.11.0"
+              }
+            },
+            "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a"
+          },
+          "auto_allocate_floating_ip": false,
+          "subnet_uuid": "subnet-05dc914e41075396a",
+          "avi_allocated_vip": false,
+          "port_uuid": "eni-0f47a4aa373b8e769",
+          "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "10.0.11.105"
+          }
+        }
+      ],
+      "url": "https://emea-controller.demo.awsavi.net/api/virtualservice/virtualservice-233fec9e-3e07-45c7-92fc-e2cba7283bd2",
+      "marked_for_delete": false,
+      "vrf_context_ref": "https://emea-controller.demo.awsavi.net/api/vrfcontext/vrfcontext-75a6137c-e35e-488f-8bb1-1ae5a2cf80cc",
+      "sideband_profile": {
+        "sideband_max_request_body_size": 1024
+      },
+      "vsvip_ref": "https://emea-controller.demo.awsavi.net/api/vsvip/vsvip-2885157c-2df9-427f-957b-894722c5c440",
+      "analytics_profile_ref": "https://emea-controller.demo.awsavi.net/api/analyticsprofile/analyticsprofile-df265dbd-e6b7-44c7-a9e1-53bd85fb6d19",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1586884326906355",
+      "cloud_ref": "https://emea-controller.demo.awsavi.net/api/cloud/cloud-faa1f78e-bc90-49ca-9fe1-4e4cbe4dd8c1",
+      "se_group_ref": "https://emea-controller.demo.awsavi.net/api/serviceenginegroup/serviceenginegroup-2609926a-493b-4021-a282-e6fc8699f755",
+      "waf_policy_ref": "https://emea-controller.demo.awsavi.net/api/wafpolicy/wafpolicy-f97c890a-4744-43ff-b2ce-4ab309e4d902",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 2,
+      "version": "3741",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://emea-controller.demo.awsavi.net/api/httppolicyset/httppolicyset-2c6a4e07-7e9b-4868-a246-b1fb7360bc27"
+        }
+      ],
+      "application_profile_ref": "https://emea-controller.demo.awsavi.net/api/applicationprofile/applicationprofile-e65c6c4d-1b70-48fe-a285-36a95d0f7d02",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": false,
+          "port_range_end": 80,
+          "port": 80
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://emea-controller.demo.awsavi.net/api/pool/pool-79e66145-e87f-458a-9326-79baaf7ff979",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-233fec9e-3e07-45c7-92fc-e2cba7283bd2",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "multicloud_demo_app",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "content_rewrite": {
+        "rewritable_content_ref": "https://emea-controller.demo.awsavi.net/api/stringgroup/stringgroup-ec80b5a9-a9f7-4623-b915-b80d610f2ae5",
+        "response_rewrite_enabled": false,
+        "request_rewrite_enabled": false
+      },
+      "network_security_policy_ref": "https://emea-controller.demo.awsavi.net/api/networksecuritypolicy/networksecuritypolicy-e4fadd6b-2c82-498a-ba3b-219acdc3ab6b",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "ZbpcBl8PTLHxzSCXUH++bg==",
+          "name": "1089f104-9c37-4cdb-b6ac-9e8ad58ee400",
+          "aes_key": "zTTiwbuPn0IJxf/ZZekx8g=="
+        },
+        {
+          "hmac_key": "2XCZvyrWO/ex8Xdag+qWGQ==",
+          "name": "f3e33c30-02fc-4080-b5e2-4e3154a9b912",
+          "aes_key": "CiNAEEMt+UGiUoWaPhw1+g=="
+        },
+        {
+          "hmac_key": "4KJt8z5Sb1Y0G32VBp8FMg==",
+          "name": "94fe9c70-5bfd-4b8b-ad90-4fd8627fcac6",
+          "aes_key": "OTuvy9hmODoUVz4seH27vg=="
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 10,
+        "full_client_logs": {
+          "duration": 0,
+          "throttle": 10,
+          "enabled": false
+        },
+        "metrics_realtime_update": {
+          "duration": 0,
+          "enabled": false
+        },
+        "significant_log_throttle": 10,
+        "client_insights": "NO_INSIGHTS",
+        "all_headers": false
+      },
+      "redis_port": 5022,
+      "controller_ip": "node1.controller.local",
+      "flow_label_type": "NO_LABEL"
+    },
+    {
+      "network_profile_ref": "https://emea-controller.demo.awsavi.net/api/networkprofile/networkprofile-08629aae-985b-4b65-93f1-b91abf1e2fef",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 3711,
+              "vip_intf_mac": "02:d9:10:eb:51:24",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "02:d9:10:eb:51:24",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "02:d9:10:eb:51:24",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0402 11:23:26.149432",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "10.0.11.254"
+                  },
+                  "vip_intf_mac": "02:d9:10:eb:51:24",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://emea-controller.demo.awsavi.net/api/serviceengine/se-i-0853f324f246ac05e",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1585823874",
+            "usecs": "50278"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://emea-controller.demo.awsavi.net/api/tenant/tenant-ceecb9e3-4b10-4c58-b406-111994227e6f",
+      "flow_dist": "LOAD_AWARE",
+      "remove_listening_port_on_vs_down": false,
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "10.0.11.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-central-1a",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "35.156.109.94"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-05dc914e41075396a",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-05dc914e41075396a",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "10.0.11.0"
+              }
+            },
+            "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a"
+          },
+          "avi_allocated_vip": false,
+          "port_uuid": "eni-0d5aa84c1551117b4",
+          "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "10.0.11.163"
+          }
+        }
+      ],
+      "url": "https://emea-controller.demo.awsavi.net/api/virtualservice/virtualservice-eb4c56ea-a7ba-455c-bcab-205788b09593",
+      "marked_for_delete": false,
+      "dns_info": [
+        {
+          "num_records_in_response": 1,
+          "type": "DNS_RECORD_A",
+          "fqdn": "demovip-emea.demo.awsavi.net",
+          "algorithm": "DNS_RECORD_RESPONSE_CONSISTENT_HASH"
+        }
+      ],
+      "vrf_context_ref": "https://emea-controller.demo.awsavi.net/api/vrfcontext/vrfcontext-75a6137c-e35e-488f-8bb1-1ae5a2cf80cc",
+      "sideband_profile": {
+        "sideband_max_request_body_size": 1024
+      },
+      "vsvip_ref": "https://emea-controller.demo.awsavi.net/api/vsvip/vsvip-ef0d7c24-1cb2-4baf-b317-0e407a30808d",
+      "analytics_profile_ref": "https://emea-controller.demo.awsavi.net/api/analyticsprofile/analyticsprofile-c59fa2d7-0842-4bba-9b17-2db9c8ac5a5c",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1586689970604145",
+      "cloud_ref": "https://emea-controller.demo.awsavi.net/api/cloud/cloud-faa1f78e-bc90-49ca-9fe1-4e4cbe4dd8c1",
+      "se_group_ref": "https://emea-controller.demo.awsavi.net/api/serviceenginegroup/serviceenginegroup-2609926a-493b-4021-a282-e6fc8699f755",
+      "ssl_profile_ref": "https://emea-controller.demo.awsavi.net/api/sslprofile/sslprofile-95d9e17a-c67a-4acc-98f4-81bda96d55ef",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 5,
+      "version": "9980",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "ssl_key_and_certificate_refs": [
+        "https://emea-controller.demo.awsavi.net/api/sslkeyandcertificate/sslkeyandcertificate-8cf2cd74-9fe9-4287-b5ac-35c60c498b9d",
+        "https://emea-controller.demo.awsavi.net/api/sslkeyandcertificate/sslkeyandcertificate-bb20c6ff-856e-4f5d-8349-aa4d0b3388cf"
+      ],
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://emea-controller.demo.awsavi.net/api/httppolicyset/httppolicyset-30a2fb87-36d6-49fe-918d-bcc5f1469ddc"
+        }
+      ],
+      "application_profile_ref": "https://emea-controller.demo.awsavi.net/api/applicationprofile/applicationprofile-e0352560-ef21-4ff3-adaf-3924a1f3b293",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": true,
+          "port_range_end": 443,
+          "port": 443
+        },
+        {
+          "enable_ssl": false,
+          "port_range_end": 80,
+          "port": 80
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://emea-controller.demo.awsavi.net/api/pool/pool-79e66145-e87f-458a-9326-79baaf7ff979",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-eb4c56ea-a7ba-455c-bcab-205788b09593",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "DemoAvi-VS",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "content_rewrite": {
+        "rewritable_content_ref": "https://emea-controller.demo.awsavi.net/api/stringgroup/stringgroup-ec80b5a9-a9f7-4623-b915-b80d610f2ae5",
+        "response_rewrite_enabled": false,
+        "request_rewrite_enabled": false
+      },
+      "network_security_policy_ref": "https://emea-controller.demo.awsavi.net/api/networksecuritypolicy/networksecuritypolicy-44b02682-e675-4ebc-88ab-bb2f0247f586",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "h0SAh72KbeQhz6HfomFPhQ==",
+          "name": "81696edd-db55-40c8-839c-6cc486c40a88",
+          "aes_key": "B1/lPJEy4QkAhzfOCLKE7g=="
+        },
+        {
+          "hmac_key": "94nlD415iTIKIngAv8Liow==",
+          "name": "285c4d2b-d2b5-4976-9263-781c0c39a1b0",
+          "aes_key": "YA0kSs0sVEVCUfedL/aD/Q=="
+        },
+        {
+          "hmac_key": "Lv1ExYVs9zxN2Ilz+LDTbg==",
+          "name": "b72d9ac1-2b2f-4312-b007-707cf01d444a",
+          "aes_key": "iKkWTZCuVX6JQjqLRdUv8w=="
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 0,
+        "full_client_logs": {
+          "duration": 0,
+          "throttle": 0,
+          "enabled": true
+        },
+        "metrics_realtime_update": {
+          "duration": 0,
+          "enabled": true
+        },
+        "significant_log_throttle": 0,
+        "client_insights": "PASSIVE",
+        "all_headers": true
+      },
+      "redis_port": 5024,
+      "controller_ip": "node1.controller.local",
+      "flow_label_type": "NO_LABEL"
+    },
+    {
+      "network_profile_ref": "https://emea-controller.demo.awsavi.net/api/networkprofile/networkprofile-4bdb6e77-f8f9-44d5-9a8b-bb7e981abf4f",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 3711,
+              "vip_intf_mac": "02:af:9c:2b:08:96",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "02:af:9c:2b:08:96",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "02:af:9c:2b:08:96",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0429 08:50:42.378703",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "10.0.11.235"
+                  },
+                  "vip_intf_mac": "02:af:9c:2b:08:96",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://emea-controller.demo.awsavi.net/api/serviceengine/se-i-0304e2c1c73f75a67",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1578017100",
+            "usecs": "928821"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://emea-controller.demo.awsavi.net/api/tenant/tenant-ceecb9e3-4b10-4c58-b406-111994227e6f",
+      "flow_dist": "LOAD_AWARE",
+      "remove_listening_port_on_vs_down": false,
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "10.0.11.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-central-1a",
+          "avi_allocated_fip": false,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-05dc914e41075396a",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "10.0.11.0"
+              }
+            },
+            "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a"
+          },
+          "auto_allocate_floating_ip": false,
+          "subnet_uuid": "subnet-05dc914e41075396a",
+          "avi_allocated_vip": true,
+          "port_uuid": "eni-0696f24b657edb2d5",
+          "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "10.0.11.225"
+          }
+        }
+      ],
+      "url": "https://emea-controller.demo.awsavi.net/api/virtualservice/virtualservice-0ce51401-fe82-40d8-b4c9-4fa976dcd3c1",
+      "marked_for_delete": false,
+      "dns_info": [
+        {
+          "num_records_in_response": 1,
+          "type": "DNS_RECORD_A",
+          "fqdn": "scaleout-vip-emea.demo.awsavi.net",
+          "algorithm": "DNS_RECORD_RESPONSE_CONSISTENT_HASH"
+        }
+      ],
+      "vrf_context_ref": "https://emea-controller.demo.awsavi.net/api/vrfcontext/vrfcontext-75a6137c-e35e-488f-8bb1-1ae5a2cf80cc",
+      "sideband_profile": {
+        "sideband_max_request_body_size": 1024
+      },
+      "vsvip_ref": "https://emea-controller.demo.awsavi.net/api/vsvip/vsvip-8877b43c-8c1e-4089-8bae-8a4909c103f2",
+      "analytics_profile_ref": "https://emea-controller.demo.awsavi.net/api/analyticsprofile/analyticsprofile-1845c409-4177-489a-a48a-2945a100f465",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1579904141839718",
+      "cloud_ref": "https://emea-controller.demo.awsavi.net/api/cloud/cloud-faa1f78e-bc90-49ca-9fe1-4e4cbe4dd8c1",
+      "se_group_ref": "https://emea-controller.demo.awsavi.net/api/serviceenginegroup/serviceenginegroup-974c8958-be75-4d80-bd7c-df82c453ef45",
+      "ssl_profile_ref": "https://emea-controller.demo.awsavi.net/api/sslprofile/sslprofile-95d9e17a-c67a-4acc-98f4-81bda96d55ef",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 6,
+      "version": "14080",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "ssl_key_and_certificate_refs": [
+        "https://emea-controller.demo.awsavi.net/api/sslkeyandcertificate/sslkeyandcertificate-8cf2cd74-9fe9-4287-b5ac-35c60c498b9d",
+        "https://emea-controller.demo.awsavi.net/api/sslkeyandcertificate/sslkeyandcertificate-bb20c6ff-856e-4f5d-8349-aa4d0b3388cf"
+      ],
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://emea-controller.demo.awsavi.net/api/httppolicyset/httppolicyset-79a57127-6cbc-4b01-80e0-8398c8dc9174"
+        }
+      ],
+      "application_profile_ref": "https://emea-controller.demo.awsavi.net/api/applicationprofile/applicationprofile-e0352560-ef21-4ff3-adaf-3924a1f3b293",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": true,
+          "port_range_end": 443,
+          "port": 443
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://emea-controller.demo.awsavi.net/api/pool/pool-035d95fd-c720-44c3-9717-a2bcdae1edc1",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-0ce51401-fe82-40d8-b4c9-4fa976dcd3c1",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "Scaleout-VS",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "content_rewrite": {
+        "rewritable_content_ref": "https://emea-controller.demo.awsavi.net/api/stringgroup/stringgroup-ec80b5a9-a9f7-4623-b915-b80d610f2ae5",
+        "response_rewrite_enabled": false,
+        "request_rewrite_enabled": false
+      },
+      "network_security_policy_ref": "https://emea-controller.demo.awsavi.net/api/networksecuritypolicy/networksecuritypolicy-493541c4-4427-4d70-9be4-24bf5018ba2c",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "Q5THYdskqHwH8gIPdidsXw==",
+          "name": "8ce3ecd2-006e-4f73-83e3-aedf49b12e6e",
+          "aes_key": "vdMX4gBnNZELFLLSG4F5IA=="
+        },
+        {
+          "hmac_key": "O7ZaB4vpazld+5c/FhrdxA==",
+          "name": "6f62e603-0c00-4e71-8739-a0555e25b0b4",
+          "aes_key": "/7NJKQt4QQYCr2j1hbqTJA=="
+        },
+        {
+          "hmac_key": "pIYOCvrUqMG5E5p+Y+G+zg==",
+          "name": "fac09dad-fa4c-4e7b-a808-b6a1d6e44c8f",
+          "aes_key": "FV3dh7lGLaEAZuDPuxkk0g=="
+        }
+      ],
+      "vs_datascripts": [
+        {
+          "index": 1,
+          "vs_datascript_set_ref": "https://emea-controller.demo.awsavi.net/api/vsdatascriptset/vsdatascriptset-0f60a8da-9cc2-4bb5-9c1c-f49c9ab0bdfa"
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 10,
+        "full_client_logs": {
+          "duration": 0,
+          "throttle": 10,
+          "enabled": true
+        },
+        "metrics_realtime_update": {
+          "duration": 0,
+          "enabled": true
+        },
+        "significant_log_throttle": 10,
+        "client_insights": "NO_INSIGHTS",
+        "all_headers": false
+      },
+      "redis_port": 5024,
+      "controller_ip": "node1.controller.local",
+      "flow_label_type": "NO_LABEL"
+    },
+    {
+      "network_profile_ref": "https://emea-controller.demo.awsavi.net/api/networkprofile/networkprofile-4bdb6e77-f8f9-44d5-9a8b-bb7e981abf4f",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 3711,
+              "vip_intf_mac": "02:a0:2d:a2:d3:84",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "02:a0:2d:a2:d3:84",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "02:a0:2d:a2:d3:84",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0419 10:18:41.956625",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "10.0.11.119"
+                  },
+                  "vip_intf_mac": "02:a0:2d:a2:d3:84",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://emea-controller.demo.awsavi.net/api/serviceengine/se-i-07ddbb1e7a8eba5d6",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1587291521",
+            "usecs": "956485"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://emea-controller.demo.awsavi.net/api/tenant/tenant-ceecb9e3-4b10-4c58-b406-111994227e6f",
+      "flow_dist": "LOAD_AWARE",
+      "remove_listening_port_on_vs_down": false,
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "10.0.11.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-central-1a",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "3.126.19.21"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-05dc914e41075396a",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-05dc914e41075396a",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "10.0.11.0"
+              }
+            },
+            "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a"
+          },
+          "avi_allocated_vip": false,
+          "port_uuid": "eni-009d975507037c582",
+          "network_ref": "https://emea-controller.demo.awsavi.net/api/network/subnet-05dc914e41075396a",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "10.0.11.232"
+          }
+        }
+      ],
+      "url": "https://emea-controller.demo.awsavi.net/api/virtualservice/virtualservice-dfa7e27f-770c-41b7-bd00-f246168700f5",
+      "marked_for_delete": false,
+      "vrf_context_ref": "https://emea-controller.demo.awsavi.net/api/vrfcontext/vrfcontext-75a6137c-e35e-488f-8bb1-1ae5a2cf80cc",
+      "sideband_profile": {
+        "sideband_max_request_body_size": 1024
+      },
+      "vsvip_ref": "https://emea-controller.demo.awsavi.net/api/vsvip/vsvip-327c54f4-a6fe-4998-87ad-16b380016b34",
+      "analytics_profile_ref": "https://emea-controller.demo.awsavi.net/api/analyticsprofile/analyticsprofile-df265dbd-e6b7-44c7-a9e1-53bd85fb6d19",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1591187884023978",
+      "cloud_ref": "https://emea-controller.demo.awsavi.net/api/cloud/cloud-faa1f78e-bc90-49ca-9fe1-4e4cbe4dd8c1",
+      "se_group_ref": "https://emea-controller.demo.awsavi.net/api/serviceenginegroup/serviceenginegroup-2609926a-493b-4021-a282-e6fc8699f755",
+      "waf_policy_ref": "https://emea-controller.demo.awsavi.net/api/wafpolicy/wafpolicy-39f81bb2-61eb-490c-8c33-d9edcdd91cce",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 7,
+      "version": "16914",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "error_page_profile_ref": "https://emea-controller.demo.awsavi.net/api/errorpageprofile/errorpageprofile-420f9e37-d426-46c3-b418-ce471604d4da",
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://emea-controller.demo.awsavi.net/api/httppolicyset/httppolicyset-7c576e51-4435-43f3-9b8f-0c82884e1802"
+        }
+      ],
+      "application_profile_ref": "https://emea-controller.demo.awsavi.net/api/applicationprofile/applicationprofile-e65c6c4d-1b70-48fe-a285-36a95d0f7d02",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": false,
+          "port_range_end": 80,
+          "port": 80
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://emea-controller.demo.awsavi.net/api/pool/pool-588b29bc-e505-413e-8c5a-03b8809c3c6c",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-dfa7e27f-770c-41b7-bd00-f246168700f5",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "WAF-VS",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "content_rewrite": {
+        "rewritable_content_ref": "https://emea-controller.demo.awsavi.net/api/stringgroup/stringgroup-ec80b5a9-a9f7-4623-b915-b80d610f2ae5",
+        "response_rewrite_enabled": false,
+        "request_rewrite_enabled": false
+      },
+      "network_security_policy_ref": "https://emea-controller.demo.awsavi.net/api/networksecuritypolicy/networksecuritypolicy-f261d182-594a-44d2-b0e4-69af8ddf2e62",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "UQrC9fE8wXu/Dy+MaJdvqg==",
+          "name": "69f1188d-dc60-47ee-9287-e89bf7c13d79",
+          "aes_key": "1a2iY2fKWgC1ocpe6UBAhg=="
+        },
+        {
+          "hmac_key": "bctVM8hs6GlmNAF7gJ8tDA==",
+          "name": "73cc6b8b-f65b-4493-96f4-dfb64265dbd1",
+          "aes_key": "l01ByriPq05D9hnTeTGXcg=="
+        },
+        {
+          "hmac_key": "QZuUAVBJGZiRi3f+ORD5zQ==",
+          "name": "0331d74c-63dc-41b4-98e9-89c72cd8f6bf",
+          "aes_key": "CbWJTt9otGVbD2THqfYYrA=="
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 0,
+        "full_client_logs": {
+          "duration": 0,
+          "throttle": 0,
+          "enabled": true
+        },
+        "metrics_realtime_update": {
+          "duration": 0,
+          "enabled": true
+        },
+        "significant_log_throttle": 0,
+        "client_insights": "ACTIVE",
+        "all_headers": true
+      },
+      "redis_port": 5025,
+      "controller_ip": "node1.controller.local",
+      "flow_label_type": "NO_LABEL"
+    }
+  ]
+}

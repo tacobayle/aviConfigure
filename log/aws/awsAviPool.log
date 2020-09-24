@@ -1,0 +1,147 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "lb_algorithm": "LB_ALGORITHM_ROUND_ROBIN",
+      "use_service_port": false,
+      "rewrite_host_header_to_server_name": false,
+      "host_check_enabled": false,
+      "conn_pool_properties": {
+        "upstream_connpool_conn_idle_tmo": 60000,
+        "upstream_connpool_conn_life_tmo": 600000,
+        "upstream_connpool_conn_max_reuse": 0,
+        "upstream_connpool_server_max_cache": 0
+      },
+      "rewrite_host_header_to_sni": false,
+      "delete_server_on_dns_refresh": true,
+      "capacity_estimation": false,
+      "servers": [
+        {
+          "hostname": "192.168.4.149",
+          "ratio": 1,
+          "availability_zone": "eu-west-1a",
+          "ip": {
+            "type": "V4",
+            "addr": "192.168.4.149"
+          },
+          "discovered_networks": [
+            {
+              "subnet": [
+                {
+                  "mask": 24,
+                  "ip_addr": {
+                    "type": "V4",
+                    "addr": "192.168.4.0"
+                  }
+                }
+              ],
+              "network_ref": "https://34.242.191.221/api/network/subnet-043dbf0c7a2a90ade"
+            }
+          ],
+          "enabled": true,
+          "verify_network": false,
+          "static": false,
+          "resolve_server_by_dns": false,
+          "prst_hdr_val": "",
+          "rewrite_host_header": false
+        },
+        {
+          "hostname": "192.168.5.58",
+          "ratio": 1,
+          "availability_zone": "eu-west-1b",
+          "ip": {
+            "type": "V4",
+            "addr": "192.168.5.58"
+          },
+          "discovered_networks": [
+            {
+              "subnet": [
+                {
+                  "mask": 24,
+                  "ip_addr": {
+                    "type": "V4",
+                    "addr": "192.168.5.0"
+                  }
+                }
+              ],
+              "network_ref": "https://34.242.191.221/api/network/subnet-08753ca120692c1cc"
+            }
+          ],
+          "enabled": true,
+          "verify_network": false,
+          "static": false,
+          "resolve_server_by_dns": false,
+          "prst_hdr_val": "",
+          "rewrite_host_header": false
+        },
+        {
+          "hostname": "192.168.6.152",
+          "ratio": 1,
+          "availability_zone": "eu-west-1c",
+          "ip": {
+            "type": "V4",
+            "addr": "192.168.6.152"
+          },
+          "discovered_networks": [
+            {
+              "subnet": [
+                {
+                  "mask": 24,
+                  "ip_addr": {
+                    "type": "V4",
+                    "addr": "192.168.6.0"
+                  }
+                }
+              ],
+              "network_ref": "https://34.242.191.221/api/network/subnet-0e3e96cd75d8f4a68"
+            }
+          ],
+          "enabled": true,
+          "verify_network": false,
+          "static": false,
+          "resolve_server_by_dns": false,
+          "prst_hdr_val": "",
+          "rewrite_host_header": false
+        }
+      ],
+      "fewest_tasks_feedback_delay": 10,
+      "capacity_estimation_ttfb_thresh": 0,
+      "fail_action": {
+        "type": "FAIL_ACTION_CLOSE_CONN"
+      },
+      "lookup_server_by_name": false,
+      "lb_algorithm_hash": "LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS",
+      "analytics_profile_ref": "https://34.242.191.221/api/analyticsprofile/analyticsprofile-523311a2-014d-4403-a452-55476bbc04bc",
+      "_last_modified": "1591358993920201",
+      "cloud_ref": "https://34.242.191.221/api/cloud/cloud-4f5b63d6-67a3-4f5d-9cf8-d7dd73f4f1bc",
+      "lb_algorithm_core_nonaffinity": 2,
+      "server_reselect": {
+        "retry_nonidempotent": false,
+        "num_retries": 4,
+        "retry_timeout": 0,
+        "enabled": false
+      },
+      "vrf_ref": "https://34.242.191.221/api/vrfcontext/vrfcontext-fe747098-57d7-410e-be00-15d1c37f95fe",
+      "inline_health_monitor": true,
+      "default_server_port": 80,
+      "request_queue_depth": 128,
+      "graceful_disable_timeout": 1,
+      "enabled": true,
+      "sni_enabled": true,
+      "server_timeout": 0,
+      "request_queue_enabled": false,
+      "name": "test-pool",
+      "max_concurrent_connections_per_server": 0,
+      "url": "https://34.242.191.221/api/pool/pool-f3d93141-d701-4b7d-b8ba-5aa7c461ebf1",
+      "tenant_ref": "https://34.242.191.221/api/tenant/admin",
+      "uuid": "pool-f3d93141-d701-4b7d-b8ba-5aa7c461ebf1",
+      "health_monitor_refs": [
+        "https://34.242.191.221/api/healthmonitor/healthmonitor-b96c39f7-6d5a-4c3d-80af-42eddfbd28f8"
+      ],
+      "connection_ramp_duration": 10,
+      "analytics_policy": {
+        "enable_realtime_metrics": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - "vars/fromTerraform.yml"
+    #- "vars/creds.json"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ virtualservice.http.0.vip }}"
+      tags:
+        - debug
+
+    - name: Create HTTP health monitor
+      avi_healthmonitor:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        http_monitor:
+          http_request: "{{ item.http_request }}"
+          http_response_code: "{{ item.http_response_code }}"
+        receive_timeout: "{{ item.receive_timeout }}"
+        failed_checks: "{{ item.failed_checks }}"
+        send_interval: "{{ item.send_interval }}"
+        successful_checks: "{{ item.successful_checks }}"
+        type: "{{ item.type }}"
+      loop: "{{ avi_healthmonitor }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: item.type == "HEALTH_MONITOR_HTTP"
+
+    - name: Create pool (VM based)
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.lb_algorithm }}"
+        health_monitor_refs:
+          - "/api/healthmonitor?name={{ item.health_monitor_refs }}"
+        servers: "{{ item.servers }}"
+      loop: "{{ avi_pool }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: item.servers
+
+
+    - name: Create Virtualservice (HTTP)
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        services:
+          - port: "{{ item.port }}"
+            enable_ssl: "{{ item.enable_ssl }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref }}"
+        vip: "{{ item.vip }}"
+      loop: "{{ virtualservice.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Create Virtualservice (HTTPS)
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services:
+          - port: "{{ item.port }}"
+            enable_ssl: "{{ item.enable_ssl }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref }}"
+        vip: "{{ item.vip }}"
+      loop: "{{ virtualservice.https }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    # - name: Wait for each VS to be ready
+    #   avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     api_version: "{{ avi_credentials.api_version }}"
+    #     http_method: get
+    #     timeout: 300
+    #     path: virtualservice-inventory
+    #     tenant: "{{ item.tenant_ref | default('admin') }}"
+    #   register: statusVs
+    #   until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
+    #   retries: 120
+    #   delay: 10
+    #   loop: "{{ virtualservice }}"
+    #   loop_control:
+    #     label: "{{ item.name }}"
+    #   when: virtualservice is defined

@@ -1,0 +1,198 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "network_profile_ref": "https://3.249.4.89/api/networkprofile/networkprofile-9498cac0-95eb-48fa-950c-facaaf5e9b05",
+      "vip_runtime": [
+        {
+          "se_list": [
+            {
+              "attach_ip_success": true,
+              "memory": 963,
+              "vip_intf_mac": "06:77:fb:8a:86:ea",
+              "is_portchannel": false,
+              "attach_ip_status": "Programming Network reachability to the Virtual Service IP in the Cloud",
+              "delete_in_progress": false,
+              "admin_down_requested": false,
+              "vnic": [
+                {
+                  "mac": "06:77:fb:8a:86:ea",
+                  "type": "VNIC_TYPE_FE"
+                },
+                {
+                  "mac": "06:77:fb:8a:86:ea",
+                  "type": "VNIC_TYPE_BE"
+                }
+              ],
+              "incarnation": "2020-0605 15:49:56.975660",
+              "sec_idx": 0,
+              "scaleout_in_progress": false,
+              "vip_intf_list": [
+                {
+                  "vip_intf_ip": {
+                    "type": "V4",
+                    "addr": "192.168.0.14"
+                  },
+                  "vip_intf_mac": "06:77:fb:8a:86:ea",
+                  "is_portchannel": false,
+                  "vlan_id": 0
+                }
+              ],
+              "is_standby": false,
+              "vip_subnet_mask": 32,
+              "vcpus": 2,
+              "se_ref": "https://3.249.4.89/api/serviceengine/se-i-0c065711271cfc678",
+              "is_primary": true,
+              "vip6_subnet_mask": 128,
+              "vlan_id": 0
+            }
+          ],
+          "first_se_assigned_time": {
+            "secs": "1591372196",
+            "usecs": "975459"
+          },
+          "vip_id": "1",
+          "num_additional_se": 0,
+          "requested_resource": {
+            "num_se": 1,
+            "num_standby_se": 0
+          }
+        }
+      ],
+      "weight": 1,
+      "tenant_ref": "https://3.249.4.89/api/tenant/admin",
+      "flow_dist": "LOAD_AWARE",
+      "remove_listening_port_on_vs_down": false,
+      "delay_fairness": false,
+      "vip": [
+        {
+          "subnet": {
+            "mask": 24,
+            "ip_addr": {
+              "type": "V4",
+              "addr": "192.168.0.0"
+            }
+          },
+          "vip_id": "1",
+          "availability_zone": "eu-west-1b",
+          "avi_allocated_fip": true,
+          "auto_allocate_ip": true,
+          "enabled": true,
+          "floating_ip": {
+            "type": "V4",
+            "addr": "34.251.162.15"
+          },
+          "auto_allocate_floating_ip": true,
+          "subnet_uuid": "subnet-01ef597899abde6f3",
+          "ipam_network_subnet": {
+            "subnet_uuid": "subnet-01ef597899abde6f3",
+            "subnet": {
+              "mask": 24,
+              "ip_addr": {
+                "type": "V4",
+                "addr": "192.168.0.0"
+              }
+            },
+            "network_ref": "https://3.249.4.89/api/network/subnet-01ef597899abde6f3"
+          },
+          "avi_allocated_vip": true,
+          "port_uuid": "eni-0c9f5d313a569a5d6",
+          "network_ref": "https://3.249.4.89/api/network/subnet-01ef597899abde6f3",
+          "auto_allocate_ip_type": "V4_ONLY",
+          "ip_address": {
+            "type": "V4",
+            "addr": "192.168.0.152"
+          }
+        }
+      ],
+      "url": "https://3.249.4.89/api/virtualservice/virtualservice-c46971cc-23e9-4152-9cb8-5f9eb0cfc457",
+      "marked_for_delete": false,
+      "vrf_context_ref": "https://3.249.4.89/api/vrfcontext/vrfcontext-3df8346f-2c2a-4143-93f7-9071802c287f",
+      "sideband_profile": {
+        "sideband_max_request_body_size": 1024
+      },
+      "vsvip_ref": "https://3.249.4.89/api/vsvip/vsvip-74391be1-4f3b-4dd4-8dea-8536e528e9bd",
+      "analytics_profile_ref": "https://3.249.4.89/api/analyticsprofile/analyticsprofile-9c1076df-9a22-46d1-9d95-cc190752a6d9",
+      "cloud_type": "CLOUD_AWS",
+      "_last_modified": "1591371731177208",
+      "cloud_ref": "https://3.249.4.89/api/cloud/cloud-8bf33884-f3a4-431a-a528-f41d71a2692f",
+      "se_group_ref": "https://3.249.4.89/api/serviceenginegroup/serviceenginegroup-bcd82c13-ae76-4453-bd5b-0252831296fe",
+      "scaleout_ecmp": false,
+      "max_cps_per_client": 0,
+      "redis_db": 9,
+      "version": "4",
+      "traffic_enabled": true,
+      "ssl_sess_cache_avg_size": 1024,
+      "use_bridge_ip_as_vip": false,
+      "allow_invalid_client_cert": false,
+      "bulk_sync_kvcache": false,
+      "http_policies": [
+        {
+          "index": 11,
+          "http_policy_set_ref": "https://3.249.4.89/api/httppolicyset/httppolicyset-1ac0b139-862a-4438-80bb-8d5f0159b08c"
+        }
+      ],
+      "application_profile_ref": "https://3.249.4.89/api/applicationprofile/applicationprofile-39452e98-feaf-4a63-9e8b-899d79520652",
+      "active_standby_se_tag": "ACTIVE_STANDBY_SE_1",
+      "use_vip_as_snat": false,
+      "services": [
+        {
+          "enable_ssl": false,
+          "port_range_end": 80,
+          "port": 80
+        }
+      ],
+      "self_se_election": false,
+      "pool_ref": "https://3.249.4.89/api/pool/pool-11111385-48f4-423e-b883-c088756ad000",
+      "ign_pool_net_reach": false,
+      "uuid": "virtualservice-c46971cc-23e9-4152-9cb8-5f9eb0cfc457",
+      "east_west_placement": false,
+      "limit_doser": false,
+      "name": "test1",
+      "close_client_conn_on_config_update": false,
+      "type": "VS_TYPE_NORMAL",
+      "enable_autogw": true,
+      "enabled": true,
+      "content_rewrite": {
+        "rewritable_content_ref": "https://3.249.4.89/api/stringgroup/stringgroup-535443cb-5f10-4c08-942a-4c99a3ef0d75",
+        "response_rewrite_enabled": false,
+        "request_rewrite_enabled": false
+      },
+      "network_security_policy_ref": "https://3.249.4.89/api/networksecuritypolicy/networksecuritypolicy-941b311d-93c2-43bd-b8b8-dc11dbe26405",
+      "tls_ticket_key": [
+        {
+          "hmac_key": "EFm5x600Ta9c/u9h/UTTbw==",
+          "name": "67c8204a-372b-40d8-b6e7-9f0d979eb59d",
+          "aes_key": "4qjYUHfNIQ2tGbD32k9HWA=="
+        },
+        {
+          "hmac_key": "QeY9+nxd0hFp9K1SAWKs1A==",
+          "name": "d770cffd-c6e6-476a-a9a7-a6a325aedabd",
+          "aes_key": "9cbj36TE8r8edIZgwdqLVg=="
+        },
+        {
+          "hmac_key": "rf6YIPQkFGAJ+RqYBGNsqg==",
+          "name": "9123f2a2-358c-42ee-91cc-374b2b158616",
+          "aes_key": "5Y1/rIjGXE3KFGkHNxrCXw=="
+        }
+      ],
+      "analytics_policy": {
+        "udf_log_throttle": 10,
+        "full_client_logs": {
+          "duration": 30,
+          "throttle": 10,
+          "enabled": true
+        },
+        "metrics_realtime_update": {
+          "duration": 30,
+          "enabled": true
+        },
+        "significant_log_throttle": 10,
+        "client_insights": "NO_INSIGHTS",
+        "all_headers": false
+      },
+      "redis_port": 5027,
+      "flow_label_type": "NO_LABEL"
+    }
+  ]
+}
