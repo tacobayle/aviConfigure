@@ -426,7 +426,7 @@
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
       when:
         - avi_pool_open_cart is defined
-        - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_AWS"
+        - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_AWS" or avi_cloud.vtype == "CLOUD_GCP"
       tags:
         - pool
         - vsHttp
@@ -453,7 +453,7 @@
       when:
         - avi_servers_open_cart is defined
         - avi_pool_open_cart is defined
-        - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_AWS"
+        - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_AWS" or avi_cloud.vtype == "CLOUD_GCP"
       tags:
         - pool
         - vsHttp
