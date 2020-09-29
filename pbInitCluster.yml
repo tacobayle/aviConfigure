@@ -265,17 +265,18 @@
     #   tags:
     #     - cluster
 
-    - name: Get main Cluster Information - if cluster has been configured
+    # - name: Get main Cluster Information - if cluster has been configured
+    - name: Get main Cluster Information
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
-        api_version: "{{ avi_credentials.api_version }}"
+        # api_version: "{{ avi_credentials.api_version }}"
         http_method: get
         path: cluster
       register: clusterInfo
-      when:
-        - controller.count == 3
-        - controller.floatingIp is defined
-        - controller.environment == "VMWARE"
+      # when:
+      #   - controller.count == 3
+      #   - controller.floatingIp is defined
+      #   - controller.environment == "VMWARE"
       tags:
         - cluster
 
@@ -348,6 +349,45 @@
         - controller.environment == "VMWARE"
       tags:
         - cluster
+
+    - name: Configure Cluster without HA with Controller Public IP
+      avi_cluster:
+        avi_credentials: "{{ avi_credentials }}"
+        nodes:
+            - name: "{{ avi_credentials.controller }}"
+              ip:
+                type: V4
+                addr: "{{ avi_credentials.controller }}"
+              public_ip_or_name:
+                addr: "{{ controller.publicIp }}"
+                type: V4
+        name: cluster-0-1
+        uuid: "{{ clusterInfo['obj'].uuid }}"
+      when:
+        - controller.publicIp is defined
+      tags:
+        - cluster
+
+    - name: Wait for the Controller cluster to be up
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        # api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: cluster/runtime
+      register: statusCluster
+      ignore_errors: yes
+      until:
+        - statusCluster.obj.cluster_state.state == "CLUSTER_UP_NO_HA" or statusCluster.obj.cluster_state.state == "CLUSTER_UP_HA_ACTIVE"
+      retries: 120
+      delay: 10
+      # when:
+      #   - controller.count == 3
+      #   - controller.floatingIp is defined
+      #   - controller.environment == "VMWARE"
+      tags:
+        - cluster
+
 
     - name: Change Avi Credentials if cluster config has been done - with floating cluster IP - if cluster has been configured
       set_fact:

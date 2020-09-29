@@ -1,0 +1,827 @@
+curl -k https://34.107.53.239/api/cluster/runtime/
+
+---
+cloud: azure
+node_info:
+  uuid: avi-controller
+  ip: node1.controller.local
+  mgmt_ip: 192.168.0.3
+  version: 20.1.1(9071) 2020-07-28 22:28:06 UTC
+  vm_uuid: avi-controller
+  vm_mor: ''
+  cluster_uuid: cluster-eba7a573-04c1-4ac9-80b4-1649e02508ff
+node_states:
+- state: CLUSTER_ACTIVE
+  name: 192.168.0.3
+  mgmt_ip: 192.168.0.3
+  role: CLUSTER_LEADER
+  up_since: '2020-09-29 09:46:27'
+cluster_state:
+  up_since: '2020-09-29 09:46:27'
+  state: CLUSTER_UP_NO_HA
+  progress: 100
+service_states:
+- name: remote_site_watcher
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_se_upgrade
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: avi-statecachemgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portalconnector
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_rpc_proxy
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_grpc_auth_server
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: security_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: stats_collector
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: indexer
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: db
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: maintenanceportal
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: cluster_services_watcher
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_datastore
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_notifications
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_resource_monitor
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: log_rsync
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: cloud_metrics_agent
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: read_res_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: avi-autoscalemgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: vi_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: setup_system
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: avipythoncontroller
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: state_cache
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: datastore_locks_and_refs
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_shared_db
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: analyticsportal
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_resource_monitor_worker
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: res_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: db_cache
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: systemportal
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: taskqueue
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: avi-health
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: se_controller_intf
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: federated_datastore
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: metrics_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: vcenter_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_se_upgrade_worker
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: license_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: datastore_objects
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: tech_support_handler
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: scheduler
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: metricsapi_server
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: virtualservice
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: cloud_connector
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: shard_server
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: snmpd
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: federation_checkpoint_service
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: snmpagent
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_apic_agent
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: shard_orchestrator
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: job_manager
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: api_perf_metrics
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: diff_compactor
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_nsx_agent
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: glb_remote_worker
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: metrics_db
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: statecache_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: portal_network_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: redis_5001
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: generic_conf_handler
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: glb_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: avicontrollermetrics
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: cloudconnectorgo
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: glb_local_worker
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []
+- name: log_mgr
+  roles:
+  - SERVICE_ROLE_LEADER
+  cluster_nodes:
+  - name: 192.168.0.3
+    ip:
+      addr: 192.168.0.3
+      type: V4
+  state: CLUSTER_ACTIVE
+  detailed_state:
+  - {}
+  - []

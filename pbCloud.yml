@@ -615,6 +615,14 @@
       tags:
         - cloud
 
+    - set_fact:
+        aviCloudUuid: "{{ aviCloudOutput.obj.uuid }}"
+      when:
+        - avi_cloud is defined
+        - avi_cloud.vtype == "CLOUD_AWS"
+      tags:
+        - cloud
+
     - name: Configure Avi Cloud for AWS (as a secondary cloud)
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -630,17 +638,9 @@
         - cloud
 
     - set_fact:
-        aviCloudUuid: "{{ aviCloudSecondaryOutput.obj.uuid }}"
+        aviCloudSecondUuid: "{{ aviCloudSecondaryOutput.obj.uuid }}"
       when:
         - avi_cloud_second is defined
-      tags:
-        - cloud
-
-    - set_fact:
-        aviCloudUuid: "{{ aviCloudOutput.obj.uuid }}"
-      when:
-        - avi_cloud is defined
-        - avi_cloud.vtype == "CLOUD_AWS"
       tags:
         - cloud
 
