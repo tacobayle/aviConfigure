@@ -350,7 +350,21 @@
       tags:
         - cluster
 
-    - name: Configure Cluster without HA with Controller Public IP
+    - name: Troubleshoot cluster uuid
+      debug:
+        msg: "{{ clusterInfo['obj'].uuid }}"
+      tags:
+        - creds
+
+    - name: Troubleshoot Public Controller IP
+      debug:
+        msg: "{{ controller.publicIp }}"
+      when:
+        - controller.publicIp is defined
+      tags:
+        - creds
+
+    - name: Configure Cluster without HA with Public ControllerIP
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         nodes:
