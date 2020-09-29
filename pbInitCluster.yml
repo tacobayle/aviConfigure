@@ -364,14 +364,14 @@
       tags:
         - creds
 
-    - name: Configure Cluster without HA with Public ControllerIP
+    - name: Configure Cluster without HA with Public Controller IP
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         nodes:
-            - name: "{{ avi_credentials.controller }}"
+            - name: "{{ controller.privateIp }}"
               ip:
                 type: V4
-                addr: "{{ avi_credentials.controller }}"
+                addr: "{{ controller.privateIp }}"
               public_ip_or_name:
                 addr: "{{ controller.publicIp }}"
                 type: V4
