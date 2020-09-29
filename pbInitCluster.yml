@@ -364,6 +364,14 @@
       tags:
         - creds
 
+    - name: Troubleshoot Private Controller IP
+      debug:
+        msg: "{{ controller.privateIp }}"
+      when:
+        - controller.privateIp is defined
+      tags:
+        - creds
+
     - name: Configure Cluster without HA with Public Controller IP
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
@@ -377,6 +385,14 @@
                 type: V4
         name: cluster-0-1
         uuid: "{{ clusterInfo['obj'].uuid }}"
+      when:
+        - controller.publicIp is defined
+        - controller.privateIp is defined
+      tags:
+        - cluster
+
+    - name: sleep for 120 seconds and continue with play - if Public Controller IP has been configured
+      wait_for: timeout=120
       when:
         - controller.publicIp is defined
       tags:
