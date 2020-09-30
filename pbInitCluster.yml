@@ -391,8 +391,8 @@
       tags:
         - cluster
 
-    - name: sleep for 120 seconds and continue with play - if Public Controller IP has been configured
-      wait_for: timeout=120
+    - name: sleep for 180 seconds and continue with play - if Public Controller IP has been configured
+      wait_for: timeout=180
       when:
         - controller.publicIp is defined
       tags:
@@ -417,6 +417,14 @@
       #   - controller.environment == "VMWARE"
       tags:
         - cluster
+
+    - name: Troubleshoot statusCluster
+      debug:
+        msg: "{{ statusCluster }}"
+      when:
+        - statusCluster is defined
+      tags:
+        - creds
 
 
     - name: Change Avi Credentials if cluster config has been done - with floating cluster IP - if cluster has been configured
