@@ -218,7 +218,7 @@
       set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
-                           'controller': "{{ dynamicInventoryControllerHosts.0 }}",
+                           'controller': "{{ controllerIps.0 }}",
                           'password': "{{ my_pass.0 }}",
                           'username': "{{ aviUser.0.name }}"}
       tags:
@@ -376,16 +376,17 @@
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         nodes:
-            - name: "{{ controller.privateIp }}"
+            - name: "{{ controllerPrivateIps.0 }}"
               ip:
                 type: V4
-                addr: "{{ controller.privateIp }}"
+                addr: "{{ controllerPrivateIps.0 }}"
               public_ip_or_name:
-                addr: "{{ controller.publicIp }}"
+                addr: "{{ controllerPublicIps.0 }}"
                 type: V4
         name: cluster-0-1
         uuid: "{{ clusterInfo['obj'].uuid }}"
       when:
+        - controller.enablePublicIP is defined
         - controller.publicIp is defined
         - controller.privateIp is defined
       tags:
