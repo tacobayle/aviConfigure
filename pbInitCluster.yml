@@ -387,8 +387,6 @@
         uuid: "{{ clusterInfo['obj'].uuid }}"
       when:
         - controller.enablePublicIP is defined
-        - controller.publicIp is defined
-        - controller.privateIp is defined
       tags:
         - cluster
 
