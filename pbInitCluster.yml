@@ -45,36 +45,36 @@
       tags:
         - creds
 
-    - name: Register Dynamic Inventory list for the controller group
-      shell: ansible-inventory -i /opt/ansible/inventory/gcp.yaml --list | jq .gcp_group_controller
-      ignore_errors: no
-      register: dynamicInventoryOutputJson
-      when:
-        - controller.environment == "GCP"
-      tags:
-        - creds
-
-    - set_fact:
-        dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
-      when:
-        - controller.environment == "GCP"
-      tags:
-        - creds
-
-    - set_fact:
-        dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
-      when:
-        - controller.environment == "GCP"
-      tags:
-        - creds
-
-    - name: Debug
-      debug:
-        msg: "{{ dynamicInventoryControllerHosts.0 }}"
-      when:
-        - controller.environment == "GCP"
-      tags:
-        - creds
+    # - name: Register Dynamic Inventory list for the controller group
+    #   shell: ansible-inventory -i /opt/ansible/inventory/gcp.yaml --list | jq .gcp_group_controller
+    #   ignore_errors: no
+    #   register: dynamicInventoryOutputJson
+    #   when:
+    #     - controller.environment == "GCP"
+    #   tags:
+    #     - creds
+    #
+    # - set_fact:
+    #     dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
+    #   when:
+    #     - controller.environment == "GCP"
+    #   tags:
+    #     - creds
+    #
+    # - set_fact:
+    #     dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
+    #   when:
+    #     - controller.environment == "GCP"
+    #   tags:
+    #     - creds
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ dynamicInventoryControllerHosts.0 }}"
+    #   when:
+    #     - controller.environment == "GCP"
+    #   tags:
+    #     - creds
 
     - name: Register JSON variables for credentials and cluster
       command: python3 python/generateJson.py ../hosts
@@ -117,7 +117,7 @@
     - set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
-                           'controller': "{{ dynamicInventoryControllerHosts.0 }}",
+                           'controller': "{{ controllerIps.0 }}",
                            'password': "{{ controller.password }}",
                            'username': "{{ controller.username }}"}
       tags:
