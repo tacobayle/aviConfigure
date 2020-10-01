@@ -190,17 +190,17 @@
       tags:
         - creds
 
-    - name: Change Avi Credentials - with Ansible user
-      set_fact:
-        avi_credentials: >
-                          {'api_version': "{{ controller.version }}",
-                          'controller': "{{ outputRaw | json_query('controller') }}",
-                          'password': "{{ my_pass.0 }}",
-                          'username': "{{ aviUser.0.name }}"}
-      tags:
-       - creds
-      when:
-        - controller.environment == "VMWARE"
+    # - name: Change Avi Credentials - with Ansible user
+    #   set_fact:
+    #     avi_credentials: >
+    #                       {'api_version': "{{ controller.version }}",
+    #                       'controller': "{{ outputRaw | json_query('controller') }}",
+    #                       'password': "{{ my_pass.0 }}",
+    #                       'username': "{{ aviUser.0.name }}"}
+    #   tags:
+    #    - creds
+    #   when:
+    #     - controller.environment == "VMWARE"
 
     # - name: Change Avi Credentials - with Ansible user
     #   set_fact:
