@@ -76,32 +76,32 @@
     #   tags:
     #     - creds
 
-    - name: Register JSON variables for credentials and cluster
-      command: python3 python/generateJson.py ../hosts
-      ignore_errors: no
-      register: outputJson
-      tags:
-        - creds
-      when:
-        - controller.environment == "VMWARE"
-
-    - set_fact:
-        outputRaw: "{{ outputJson.stdout | from_json }}"
-      tags:
-        - creds
-      when:
-        - controller.environment == "VMWARE"
-
-    - set_fact:
-        avi_credentials: >
-                          {'api_version': "{{ controller.version }}",
-                           'controller': "{{ outputRaw | json_query('controller') }}",
-                           'password': "{{ controller.password }}",
-                           'username': "{{ controller.username }}"}
-      tags:
-        - creds
-      when:
-        - controller.environment == "VMWARE"
+    # - name: Register JSON variables for credentials and cluster
+    #   command: python3 python/generateJson.py ../hosts
+    #   ignore_errors: no
+    #   register: outputJson
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "VMWARE"
+    #
+    # - set_fact:
+    #     outputRaw: "{{ outputJson.stdout | from_json }}"
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "VMWARE"
+    #
+    # - set_fact:
+    #     avi_credentials: >
+    #                       {'api_version': "{{ controller.version }}",
+    #                        'controller': "{{ outputRaw | json_query('controller') }}",
+    #                        'password': "{{ controller.password }}",
+    #                        'username': "{{ controller.username }}"}
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "VMWARE"
 
     # - set_fact:
     #     avi_credentials: >
@@ -123,7 +123,7 @@
       tags:
         - creds
       when:
-        - controller.environment == "GCP" or controller.environment == "AWS"
+        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE"
 
 
     # - set_fact:
@@ -393,7 +393,7 @@
     - name: sleep for 180 seconds and continue with play - if Public Controller IP has been configured
       wait_for: timeout=180
       when:
-        - controller.publicIp is defined
+        - controller.enablePublicIP is defined
       tags:
         - cluster
 
