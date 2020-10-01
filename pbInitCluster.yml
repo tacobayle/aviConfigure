@@ -14,36 +14,36 @@
 
   tasks:
 
-    - name: Register Dynamic Inventory list for the controller group
-      shell: ansible-inventory -i /opt/ansible/inventory/aws_ec2.yaml --list | jq .aws_group_controller
-      ignore_errors: no
-      register: dynamicInventoryOutputJson
-      when:
-        - controller.environment == "AWS"
-      tags:
-        - creds
-
-    - set_fact:
-        dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
-      when:
-        - controller.environment == "AWS"
-      tags:
-        - creds
-
-    - set_fact:
-        dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
-      when:
-        - controller.environment == "AWS"
-      tags:
-        - creds
-
-    - name: Debug
-      debug:
-        msg: "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}"
-      when:
-        - controller.environment == "AWS"
-      tags:
-        - creds
+    # - name: Register Dynamic Inventory list for the controller group
+    #   shell: ansible-inventory -i /opt/ansible/inventory/aws_ec2.yaml --list | jq .aws_group_controller
+    #   ignore_errors: no
+    #   register: dynamicInventoryOutputJson
+    #   when:
+    #     - controller.environment == "AWS"
+    #   tags:
+    #     - creds
+    #
+    # - set_fact:
+    #     dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
+    #   when:
+    #     - controller.environment == "AWS"
+    #   tags:
+    #     - creds
+    #
+    # - set_fact:
+    #     dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
+    #   when:
+    #     - controller.environment == "AWS"
+    #   tags:
+    #     - creds
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}"
+    #   when:
+    #     - controller.environment == "AWS"
+    #   tags:
+    #     - creds
 
     # - name: Register Dynamic Inventory list for the controller group
     #   shell: ansible-inventory -i /opt/ansible/inventory/gcp.yaml --list | jq .gcp_group_controller
@@ -103,27 +103,27 @@
       when:
         - controller.environment == "VMWARE"
 
-    - set_fact:
-        avi_credentials: >
-                          {'api_version': "{{ controller.version }}",
-                           'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
-                           'password': "{{ controller.password }}",
-                           'username': "{{ controller.username }}"}
-      tags:
-        - creds
-      when:
-        - controller.environment == "AWS"
+    # - set_fact:
+    #     avi_credentials: >
+    #                       {'api_version': "{{ controller.version }}",
+    #                        'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
+    #                        'password': "{{ controller.password }}",
+    #                        'username': "{{ controller.username }}"}
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "AWS"
 
     - set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
-                           'controller': "{{ controllerIps.0 }}",
+                           'controller': "{{ controllerPrivateIps.0 }}",
                            'password': "{{ controller.password }}",
                            'username': "{{ controller.username }}"}
       tags:
         - creds
       when:
-        - controller.environment == "GCP"
+        - controller.environment == "GCP" or controller.environment == "AWS"
 
 
     # - set_fact:
@@ -202,29 +202,29 @@
       when:
         - controller.environment == "VMWARE"
 
-    - name: Change Avi Credentials - with Ansible user
-      set_fact:
-        avi_credentials: >
-                          {'api_version': "{{ controller.version }}",
-                           'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
-                          'password': "{{ my_pass.0 }}",
-                          'username': "{{ aviUser.0.name }}"}
-      tags:
-        - creds
-      when:
-        - controller.environment == "AWS"
+    # - name: Change Avi Credentials - with Ansible user
+    #   set_fact:
+    #     avi_credentials: >
+    #                       {'api_version': "{{ controller.version }}",
+    #                        'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
+    #                       'password': "{{ my_pass.0 }}",
+    #                       'username': "{{ aviUser.0.name }}"}
+    #   tags:
+    #     - creds
+    #   when:
+    #     - controller.environment == "AWS"
 
     - name: Change Avi Credentials - with Ansible user
       set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
-                           'controller': "{{ controllerIps.0 }}",
+                           'controller': "{{ controllerPrivateIps.0 }}",
                           'password': "{{ my_pass.0 }}",
                           'username': "{{ aviUser.0.name }}"}
       tags:
         - creds
       when:
-        - controller.environment == "GCP"
+        - controller.environment == "GCP" or controller.environment == "AWS"
 
     - name: Retrieve IP fo follower controllers - if cluster has been configured
       command: python3 python/retrieveIpFollowers.py ../hosts
