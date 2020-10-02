@@ -531,13 +531,13 @@
         - vs
         - avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_GCP" or avi_cloud.vtype == "CLOUD_NSXT"
 
-    - name: Debug
-      debug:
-        msg: "{{ outputVsDns }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ outputVsDns.results.1.obj.uuid }}"
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns }}"
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns.results.1.obj.uuid }}"
 
     - name: Wait for the VS Http to be ready
       avi_api_session:
