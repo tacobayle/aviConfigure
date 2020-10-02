@@ -347,27 +347,27 @@
       tags:
         - cluster
 
-    - name: Troubleshoot cluster uuid
-      debug:
-        msg: "{{ clusterInfo['obj'].uuid }}"
-      tags:
-        - creds
-
-    - name: Troubleshoot Public Controller IP
-      debug:
-        msg: "{{ controller.publicIp }}"
-      when:
-        - controller.publicIp is defined
-      tags:
-        - creds
-
-    - name: Troubleshoot Private Controller IP
-      debug:
-        msg: "{{ controller.privateIp }}"
-      when:
-        - controller.privateIp is defined
-      tags:
-        - creds
+    # - name: Troubleshoot cluster uuid
+    #   debug:
+    #     msg: "{{ clusterInfo['obj'].uuid }}"
+    #   tags:
+    #     - creds
+    #
+    # - name: Troubleshoot Public Controller IP
+    #   debug:
+    #     msg: "{{ controller.publicIp }}"
+    #   when:
+    #     - controller.publicIp is defined
+    #   tags:
+    #     - creds
+    #
+    # - name: Troubleshoot Private Controller IP
+    #   debug:
+    #     msg: "{{ controller.privateIp }}"
+    #   when:
+    #     - controller.privateIp is defined
+    #   tags:
+    #     - creds
 
     - name: Configure Cluster without HA with Public Controller IP
       avi_cluster:
@@ -411,13 +411,13 @@
       tags:
         - cluster
 
-    - name: Troubleshoot statusCluster
-      debug:
-        msg: "{{ statusCluster }}"
-      when:
-        - statusCluster is defined
-      tags:
-        - creds
+    # - name: Troubleshoot statusCluster
+    #   debug:
+    #     msg: "{{ statusCluster }}"
+    #   when:
+    #     - statusCluster is defined
+    #   tags:
+    #     - creds
 
 
     - name: Change Avi Credentials if cluster config has been done - with floating cluster IP - if cluster has been configured
