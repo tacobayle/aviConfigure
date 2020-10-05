@@ -188,27 +188,27 @@
         - cloud
         - debugnsxt
 
-    # - name: retrieve vcenter content library info
-    #   command: python3 python/retrieveNsxtVcentersLibrary.py ../vars/creds.json "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ avi_cloud.vcenterContentLibrary }}"
-    #   ignore_errors: no
-    #   register: vcenterContentLibraryJson
-    #   tags:
-    #     - cloud
-    #     - nsxtApi
-    #     - debugnsxt
-    #   when:
-    #     - avi_cloud.vcenterContentLibrary is defined
-    #     - avi_cloud.vtype == "CLOUD_NSXT"
-    #
-    # - set_fact:
-    #     vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
-    #   tags:
-    #     - cloud
-    #     - nsxtApi
-    #     - debugnsxt
-    #   when:
-    #     - avi_cloud.vcenterContentLibrary is defined
-    #     - avi_cloud.vtype == "CLOUD_NSXT"
+    - name: retrieve vcenter content library info
+      command: python3 python/retrieveNsxtVcentersLibrary.py ../vars/creds.json "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ avi_cloud.vcenterContentLibrary }}"
+      ignore_errors: no
+      register: vcenterContentLibraryJson
+      tags:
+        - cloud
+        - nsxtApi
+        - debugnsxt
+      when:
+        - avi_cloud.vcenterContentLibrary is defined
+        - avi_cloud.vtype == "CLOUD_NSXT"
+
+    - set_fact:
+        vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
+      tags:
+        - cloud
+        - nsxtApi
+        - debugnsxt
+      when:
+        - avi_cloud.vcenterContentLibrary is defined
+        - avi_cloud.vtype == "CLOUD_NSXT"
 
     - name: Configure Vcenter Server for NSXT cloud
       avi_vcenterserver:
@@ -219,7 +219,7 @@
         cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
         vcenter_url: "{{ vcenter.server }}"
         content_lib:
-          id: "{{ avi_cloud.vcenterContentLibraryId }}"
+          id: "{{ vcenterContentLibrary.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
       tags:
         - cloud
