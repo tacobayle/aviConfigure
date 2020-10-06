@@ -25,7 +25,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
@@ -47,7 +47,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
@@ -74,7 +74,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
         dns_info:
@@ -102,7 +102,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
@@ -129,7 +129,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
         dns_info:
@@ -157,7 +157,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
@@ -258,7 +258,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.0.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ item.0.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
@@ -329,7 +329,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ avi_pool.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
       when:
@@ -345,7 +345,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ avi_pool.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
       when:
         - avi_pool is defined
@@ -362,7 +362,7 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         name: "{{ avi_pool.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         health_monitor_refs:
@@ -388,7 +388,7 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         name: "{{ avi_pool.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
@@ -415,7 +415,7 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         name: "{{ avi_pool.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool.lb_algorithm }}"
         health_monitor_refs:
@@ -439,7 +439,7 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ avi_pool_open_cart.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
@@ -458,7 +458,7 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         name: "{{ avi_pool_open_cart.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
@@ -524,7 +524,7 @@
         name: "{{ item.name }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-DNS') }}"
         network_profile_ref: "/api/networkprofile/?name={{ item.network_profile_ref | default('System-UDP-Per-Pkt') }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         tenant: "{{ item.tenant_ref | default('admin') }}"
         se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
