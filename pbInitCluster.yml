@@ -4,7 +4,6 @@
 
   vars_files:
     - "vars/params.yml"
-    #- "vars/creds.json"
 
   vars:
     my_pass: []
@@ -13,106 +12,6 @@
     - role: "avinetworks.avisdk"
 
   tasks:
-
-    # - name: Register Dynamic Inventory list for the controller group
-    #   shell: ansible-inventory -i /opt/ansible/inventory/aws_ec2.yaml --list | jq .aws_group_controller
-    #   ignore_errors: no
-    #   register: dynamicInventoryOutputJson
-    #   when:
-    #     - controller.environment == "AWS"
-    #   tags:
-    #     - creds
-    #
-    # - set_fact:
-    #     dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
-    #   when:
-    #     - controller.environment == "AWS"
-    #   tags:
-    #     - creds
-    #
-    # - set_fact:
-    #     dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
-    #   when:
-    #     - controller.environment == "AWS"
-    #   tags:
-    #     - creds
-    #
-    # - name: Debug
-    #   debug:
-    #     msg: "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}"
-    #   when:
-    #     - controller.environment == "AWS"
-    #   tags:
-    #     - creds
-
-    # - name: Register Dynamic Inventory list for the controller group
-    #   shell: ansible-inventory -i /opt/ansible/inventory/gcp.yaml --list | jq .gcp_group_controller
-    #   ignore_errors: no
-    #   register: dynamicInventoryOutputJson
-    #   when:
-    #     - controller.environment == "GCP"
-    #   tags:
-    #     - creds
-    #
-    # - set_fact:
-    #     dynamicInventoryOutput: "{{ dynamicInventoryOutputJson.stdout | from_json }}"
-    #   when:
-    #     - controller.environment == "GCP"
-    #   tags:
-    #     - creds
-    #
-    # - set_fact:
-    #     dynamicInventoryControllerHosts: "{{ dynamicInventoryOutput | json_query('hosts') }}"
-    #   when:
-    #     - controller.environment == "GCP"
-    #   tags:
-    #     - creds
-    #
-    # - name: Debug
-    #   debug:
-    #     msg: "{{ dynamicInventoryControllerHosts.0 }}"
-    #   when:
-    #     - controller.environment == "GCP"
-    #   tags:
-    #     - creds
-
-    # - name: Register JSON variables for credentials and cluster
-    #   command: python3 python/generateJson.py ../hosts
-    #   ignore_errors: no
-    #   register: outputJson
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "VMWARE"
-    #
-    # - set_fact:
-    #     outputRaw: "{{ outputJson.stdout | from_json }}"
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "VMWARE"
-    #
-    # - set_fact:
-    #     avi_credentials: >
-    #                       {'api_version': "{{ controller.version }}",
-    #                        'controller': "{{ outputRaw | json_query('controller') }}",
-    #                        'password': "{{ controller.password }}",
-    #                        'username': "{{ controller.username }}"}
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "VMWARE"
-
-    # - set_fact:
-    #     avi_credentials: >
-    #                       {'api_version': "{{ controller.version }}",
-    #                        'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
-    #                        'password': "{{ controller.password }}",
-    #                        'username': "{{ controller.username }}"}
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "AWS"
 
     - set_fact:
         avi_credentials: >
@@ -124,18 +23,6 @@
         - creds
       when:
         - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE"
-
-
-    # - set_fact:
-    #     avi_credentials: >
-    #                       {'api_version': "{{ controller.name.split('-')[2] }}",
-    #                        'controller': "{{ outputRaw | json_query('controller') }}",
-    #                        'password': "{{ controller.password }}",
-    #                        'username': "{{ controller.username }}"}
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "AWS"
 
     - name: Debug
       debug:
@@ -190,30 +77,6 @@
       tags:
         - creds
 
-    # - name: Change Avi Credentials - with Ansible user
-    #   set_fact:
-    #     avi_credentials: >
-    #                       {'api_version': "{{ controller.version }}",
-    #                       'controller': "{{ outputRaw | json_query('controller') }}",
-    #                       'password': "{{ my_pass.0 }}",
-    #                       'username': "{{ aviUser.0.name }}"}
-    #   tags:
-    #    - creds
-    #   when:
-    #     - controller.environment == "VMWARE"
-
-    # - name: Change Avi Credentials - with Ansible user
-    #   set_fact:
-    #     avi_credentials: >
-    #                       {'api_version': "{{ controller.version }}",
-    #                        'controller': "{{ lookup('dig', dynamicInventoryControllerHosts.0) }}",
-    #                       'password': "{{ my_pass.0 }}",
-    #                       'username': "{{ aviUser.0.name }}"}
-    #   tags:
-    #     - creds
-    #   when:
-    #     - controller.environment == "AWS"
-
     - name: Change Avi Credentials - with Ansible user
       set_fact:
         avi_credentials: >
@@ -226,57 +89,12 @@
       when:
         - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE"
 
-    # - name: Retrieve IP fo follower controllers - if cluster has been configured
-    #   command: python3 python/retrieveIpFollowers.py ../hosts
-    #   ignore_errors: no
-    #   when:
-    #     - controller.count == 3
-    #     - controller.floatingIp is defined
-    #     - controller.environment == "VMWARE"
-    #   register: outputJson
-    #   tags:
-    #     - cluster
-    #
-    # - name: Variable change - if cluster has been configured
-    #   set_fact:
-    #     outputRaw: "{{ outputJson.stdout | from_json }}"
-    #   when:
-    #     - controller.count == 3
-    #     - controller.floatingIp is defined
-    #     - controller.environment == "VMWARE"
-    #   tags:
-    #     - cluster
-
-    # - name: Debug
-    #   debug:
-    #     msg: "{{ outputRaw | json_query('controllerFollowerOne') }}"
-    #   when:
-    #     - controller.count == 3
-    #     - controller.floatingIp is defined
-    #   tags:
-    #     - cluster
-    #
-    # - name: Debug
-    #   debug:
-    #     msg: "{{ outputRaw | json_query('controllerFollowerTwo') }}"
-    #   when:
-    #     - controller.count == 3
-    #     - controller.floatingIp is defined
-    #   tags:
-    #     - cluster
-
-    # - name: Get main Cluster Information - if cluster has been configured
     - name: Get main Cluster Information
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
-        # api_version: "{{ avi_credentials.api_version }}"
         http_method: get
         path: cluster
       register: clusterInfo
-      # when:
-      #   - controller.count == 3
-      #   - controller.floatingIp is defined
-      #   - controller.environment == "VMWARE"
       tags:
         - cluster
 
@@ -347,28 +165,6 @@
       tags:
         - cluster
 
-    # - name: Troubleshoot cluster uuid
-    #   debug:
-    #     msg: "{{ clusterInfo['obj'].uuid }}"
-    #   tags:
-    #     - creds
-    #
-    # - name: Troubleshoot Public Controller IP
-    #   debug:
-    #     msg: "{{ controller.publicIp }}"
-    #   when:
-    #     - controller.publicIp is defined
-    #   tags:
-    #     - creds
-    #
-    # - name: Troubleshoot Private Controller IP
-    #   debug:
-    #     msg: "{{ controller.privateIp }}"
-    #   when:
-    #     - controller.privateIp is defined
-    #   tags:
-    #     - creds
-
     - name: Configure Cluster without HA with Public Controller IP
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
@@ -411,15 +207,6 @@
       tags:
         - cluster
 
-    # - name: Troubleshoot statusCluster
-    #   debug:
-    #     msg: "{{ statusCluster }}"
-    #   when:
-    #     - statusCluster is defined
-    #   tags:
-    #     - creds
-
-
     - name: Change Avi Credentials if cluster config has been done - with floating cluster IP - if cluster has been configured
       set_fact:
         avi_credentials: >
@@ -433,12 +220,6 @@
         - controller.environment == "VMWARE"
       tags:
         - cluster
-
-    # - name: Updated Avi credentials
-    #   debug:
-    #     msg: "{{ avi_credentials }}"
-    #   tags:
-    #     - creds
 
     - name: save json creds
       copy:
