@@ -6,7 +6,6 @@
 - import_playbook: pbCloudConnectUser.yml
 - import_playbook: pbIpamDns.yml
 - import_playbook: pbCloud.yml
-#- import_playbook: pbVmWareIpamUpdateCloud.yml
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: pbSeGroup.yml
 - import_playbook: pbVs.yml
