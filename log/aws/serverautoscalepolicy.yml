@@ -1,0 +1,18 @@
+---
+count: 1
+results:
+- url: https://c3.avidemo.vmware.com/api/serverautoscalepolicy/serverautoscalepolicy-28919a00-0562-4d27-9620-2bccb0bbd240
+  uuid: serverautoscalepolicy-28919a00-0562-4d27-9620-2bccb0bbd240
+  name: test-nic
+  tenant_ref: https://c3.avidemo.vmware.com/api/tenant/admin
+  _last_modified: '1600795601369398'
+  intelligent_autoscale: false
+  intelligent_scaleout_margin: 20
+  intelligent_scalein_margin: 40
+  min_size: 2
+  max_size: 2
+  max_scaleout_adjustment_step: 1
+  max_scalein_adjustment_step: 1
+  scaleout_cooldown: 300
+  scalein_cooldown: 300
+  use_predicted_load: false

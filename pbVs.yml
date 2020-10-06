@@ -281,13 +281,33 @@
         - vs
         - avi_pool_nsxtGroup
 
+    - name: create autoscalepolicy for ASG
+      avi_serverautoscalepolicy:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        min_size: "{{ item.min_size | default('2') }}"
+        max_size: "{{ item.max_size | default('2') }}"
+        max_scaleout_adjustment_step: "{{ item.max_scaleout_adjustment_step | default('2') }}"
+        max_scalein_adjustment_step: "{{ item.max_scalein_adjustment_step | default('2') }}"
+      loop: "{{ avi_serverautoscalepolicy }}"
+      when:
+        - avi_serverautoscalepolicy is defined
+      tags:
+        - pool
+        - vsHttp
+        - vs
+        - avi_pool_awsGroup
 
     - name: create pool with servers (AWS) based on Auto Scaling Group
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        autoscale_launch_config_ref: "/api/autoscalelaunchconfig?name={{ item.autoscale_launch_config_ref | default('default-autoscalelaunchconfig')"
+        autoscale_policy_ref: "/api/serverautoscalepolicy?name={{ item.autoscale_policy_ref | default(omit)"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ item.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         external_autoscale_groups:
@@ -298,7 +318,6 @@
       loop: "{{ avi_pool_awsGroup }}"
       when:
         - avi_pool_awsGroup is defined
-        - avi_cloud.vtype == "CLOUD_AWS"
       tags:
         - pool
         - vsHttp
@@ -467,7 +486,8 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default(avi_cloud.name) }}"
+        enabled: "{{ item.enabled | default('true') }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
