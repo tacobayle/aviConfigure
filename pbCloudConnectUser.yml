@@ -17,7 +17,7 @@
       tags:
         - debug
       when:
-        - avi_cloud.vtype == "CLOUD_NSXT"
+        - nsxt is defined
 
     - name: Create a Cloud connector user for NSX-T
       avi_cloudconnectoruser:
@@ -31,7 +31,7 @@
       tags:
         - cloud
       when:
-        - avi_cloud.vtype == "CLOUD_NSXT"
+        - nsxt is defined
 
     - name: Create a Cloud connector user for NSX-T (vccenter)
       avi_cloudconnectoruser:
@@ -46,7 +46,7 @@
         - cloud
         - vcenter
       when:
-        - avi_cloud.vtype == "CLOUD_NSXT"
+        - nsxt is defined
 
     - name: Debug
       debug:
@@ -54,7 +54,7 @@
       tags:
         - debug
       when:
-        - avi_cloud.vtype == "CLOUD_NSXT"
+        - nsxt is defined
 
     - name: Debug
       debug:
@@ -62,4 +62,4 @@
       tags:
         - debug
       when:
-        - avi_cloud.vtype == "CLOUD_NSXT"
+        - nsxt is defined

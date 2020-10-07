@@ -28,7 +28,7 @@
         name: "{{ dns.name | default('dns-avi')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       when:
-        - avi_cloud.vtype == "CLOUD_GCP" or avi_cloud.vtype == "CLOUD_VCENTER" or avi_cloud.vtype == "CLOUD_NSXT"
+        - gcp is defined or vmw is defined or nsxt is defined
       tags:
         - dns
 
@@ -41,7 +41,7 @@
         dhcp_enabled: "{{ network.dhcp_enabled }}"
       when:
         - network is defined
-        - avi_cloud.vtype == "CLOUD_GCP"
+        - gcp is defined
       tags:
         - ipam
 
@@ -55,7 +55,7 @@
       register: networkUuid
       when:
         - network is defined
-        - avi_cloud.vtype == "CLOUD_GCP"
+        - gcp is defined
       tags:
         - ipam
 
@@ -67,7 +67,7 @@
        label: "{{ item.uuid }}"
       when:
         - network is defined
-        - avi_cloud.vtype == "CLOUD_GCP"
+        - gcp is defined
       tags:
         - ipam
 
@@ -86,7 +86,7 @@
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - network is defined
-        - avi_cloud.vtype == "CLOUD_GCP"
+        - gcp is defined
       tags:
         - ipam
 
