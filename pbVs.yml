@@ -39,6 +39,8 @@
         - awsZones is defined
         - awsSubnetAviVsCidrs is defined
         - awsSubnetAviVsIds is defined
+      tags:
+        - debug
 
     - name: Define vip data for Aws (Single AZ)
       set_fact:
@@ -60,6 +62,9 @@
         - awsZones is defined
         - awsSubnetAviVsCidrs is defined
         - awsSubnetAviVsIds is defined
+      tags:
+        - debug
+
 
     - name: Create vsvip for dns VS (AWS)
       avi_vsvip:
