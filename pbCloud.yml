@@ -623,19 +623,50 @@
       tags:
         - cloud
 
+    # - name: Configure Cloud for GCP
+    #   avi_cloud:
+    #     avi_credentials: "{{ avi_credentials | default(omit) }}"
+    #     api_context: "{{ avi_api_context | default(omit) }}"
+    #     name: "{{ avi_cloud.name }}"
+    #     vtype: "{{ avi_cloud.vtype }}"
+    #     gcp_configuration: "{{ avi_cloud.gcp_configuration }}"
+    #     ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ avi_cloud.ipam_provider_ref | default('ipam-avi') }}"
+    #     dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ avi_cloud.dns_provider_ref | default('dns-avi') }}"
+    #   register: aviCloudOutput
+    #   when:
+    #     - avi_cloud is defined
+    #     - avi_cloud.vtype == "CLOUD_GCP"
+    #   tags:
+    #     - cloud
+    #
+    # - set_fact:
+    #     aviCloudUuid: "{{ aviCloudOutput.obj.uuid }}"
+    #   when:
+    #     - avi_cloud is defined
+    #     - avi_cloud.vtype == "CLOUD_GCP"
+    #   tags:
+    #     - cloud
+
     - name: Configure Cloud for GCP
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ avi_cloud.name }}"
-        vtype: "{{ avi_cloud.vtype }}"
-        gcp_configuration: "{{ avi_cloud.gcp_configuration }}"
+        name: cloudGcp
+        vtype: CLOUD_GCP
+        gcp_configuration:
+          gcs_bucket_name: "{{ gcp.gcs_bucket_name }}"
+          region_name: "{{ gcp.region_name }}"
+          se_project_id: "{{ gcp.se_project_id }}"
+          firewall_target_tags:
+            - "{{ gcp.firewall_target_tags }}"
+          network_config: "{{ gcp.network_config }}"
+          zones: "{{ gcpZones }}"
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ avi_cloud.ipam_provider_ref | default('ipam-avi') }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ avi_cloud.dns_provider_ref | default('dns-avi') }}"
       register: aviCloudOutput
       when:
-        - avi_cloud is defined
-        - avi_cloud.vtype == "CLOUD_GCP"
+        - gcp is defined
+        - gcpZones is defined
       tags:
         - cloud
 
