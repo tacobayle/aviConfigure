@@ -16,8 +16,8 @@
 
     - name: Debug
       debug:
-        msg: "{{ item.2 }}"
-      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtNames) | list }}"
+        msg: "{{ item.0 }}"
+      loop: "{{ awsZones | zip(awsSubnetAviVsCidr| list }}"
       when:
         - aws is defined
 
@@ -26,8 +26,8 @@
 
 
     - set_fact:
-        zones: "{{ zones | default([]) + [{ 'availability_zone': item.0, 'mgmt_network_uuid': item.1, 'mgmt_network_name': item.2 }] }}"
-      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtNames) | list }}"
+        vip: "{{ vip | default([]) + [{ 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2 }}}] }}"
+      loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       when:
         - aws is defined
       tags:
