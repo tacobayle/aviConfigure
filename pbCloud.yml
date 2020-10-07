@@ -664,7 +664,7 @@
     - name: Defining AWS Zones datas ctructures
       set_fact:
         zones: "{{ zones | default([]) + [{ 'availability_zone': item.0, 'mgmt_network_uuid': item.1, 'mgmt_network_name': item.2 }] }}"
-      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtNames) | list }}"
+      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtCidrs) | list }}"
       when:
         - aws is defined
       tags:
