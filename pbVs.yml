@@ -19,9 +19,9 @@
 #
 # VSVIP creation
 #
-    - name: Define vip data for Aws
+    - name: Define vip data for Aws (Multi AZ)
       set_fact:
-        vipAws: "{{ vipAws | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
+        vipAwsMultiAz: "{{ vipAwsMultiAz | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
       loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       loop_control:
         index_var: my_idx
@@ -31,9 +31,30 @@
         - awsSubnetAviVsCidrs is defined
         - awsSubnetAviVsIds is defined
 
-    - name: Debug
+    - name: Debug VIP data Multi AZ
       debug:
-        msg: "{{ vipAws }}"
+        msg: "{{ vipAwsMultiAz }}"
+      when:
+        - aws is defined
+        - awsZones is defined
+        - awsSubnetAviVsCidrs is defined
+        - awsSubnetAviVsIds is defined
+
+    - name: Define vip data for Aws (Single AZ)
+      set_fact:
+        vipAwsSingleAz: "{{ vipAwsSingleAz | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.1, 'subnet': {'mask': item.0.split('/')[1], 'type': 'V4', 'addr': item.0.split('/')[0] }}}}] }}"
+      loop: "{{ awsSubnetAviVsCidrs | zip(awsSubnetAviVsIds) | list }}"
+      loop_control:
+        index_var: my_idx
+      when:
+        - aws is defined
+        - awsZones is defined
+        - awsSubnetAviVsCidrs is defined
+        - awsSubnetAviVsIds is defined
+
+    - name: Debug VIP data Single AZ
+      debug:
+        msg: "{{ vipAwsSingleAz }}"
       when:
         - aws is defined
         - awsZones is defined
@@ -50,7 +71,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipAws }}"
+        vip: "{{ vipAwsSingleAz }}"
       loop: "{{ avi_virtualservice.dns }}"
       loop_control:
         label: "{{ item.name }}"
@@ -204,7 +225,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipAws }}"
+        vip: "{{ vipAwsMultiAz }}"
       loop: "{{ avi_virtualservice.http }}"
       loop_control:
         label: "{{ item.name }}"
