@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # vars:
+  #   zones: []
+
+  vars_files:
+    - "vars/params.yml"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ item.2 }}"
+      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtNames) | list }}"
+      when:
+        - aws is defined
+
+
+        # zones: "{{ zones }} + ['mgmt_network_uuid': {{ item.0 }}, 'availability_zone': {{ item.1 }}, 'mgmt_network_name': {{ item.2 }} ]"
+
+
+    - set_fact:
+        zones: "{{ zones | default([]) + [{ 'availability_zone': item.0, 'mgmt_network_uuid': item.1, 'mgmt_network_name': item.2 }] }}"
+      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtNames) | list }}"
+      when:
+        - aws is defined
+      tags:
+        - cloud
+
+    - name: Debug
+      debug:
+        msg: "{{ zones }}"
+      when:
+        - aws is defined

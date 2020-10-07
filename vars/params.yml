@@ -43,3 +43,26 @@ aviUser:
         tenant_ref: "/api/tenant/admin#admin"
       - all_tenants: true
         role_ref: "/api/role?name=System-Admin"
+
+
+aws:
+  region: region
+  secretAccessKey: secretAccessKey
+  accessKeyId: accessKeyId
+  vpcId: vpcId
+
+awsZones:
+- zone1
+- zone2
+- zone3
+
+awsSubnetSeMgtIds:
+- subnetId1
+- subnetId2
+- subnetId3
+
+awsSubnetSeMgtNames:
+- 192.168.1.0
+- 192.168.2.0
+- 192.168.3.0
+- 192.168.4.0
