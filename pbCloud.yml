@@ -667,6 +667,9 @@
       loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtCidrs) | list }}"
       when:
         - aws is defined
+        - awsZones is defined
+        - awsSubnetSeMgtIds is defined
+        - awsSubnetSeMgtCidrs is defined
       tags:
         - cloud
 
@@ -682,7 +685,6 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: cloudAws
         vtype: CLOUD_AWS
-        aws_configuration: "{{ avi_cloud_second.aws_configuration }}"
         aws_configuration:
           region: "{{ aws.region }}"
           secret_access_key: "{{ aws.secret_access_key }}"

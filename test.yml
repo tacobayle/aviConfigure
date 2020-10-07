@@ -14,26 +14,27 @@
 
   tasks:
 
-    - name: Debug
-      debug:
-        msg: "{{ item.0.cloud_ref }}"
-      with_nested:
-        - "{{ vstest.http }}"
-        - "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
-      when:
-        - item.0.cloud_ref == 'cloudAws'
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ item.0.cloud_ref }}"
+    #   with_nested:
+    #     - "{{ vstest.http }}"
+    #     - "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
+    #   when:
+    #     - item.0.cloud_ref == 'cloudAws'
 
 
         # zones: "{{ zones }} + ['mgmt_network_uuid': {{ item.0 }}, 'availability_zone': {{ item.1 }}, 'mgmt_network_name': {{ item.2 }} ]"
 
 
     - set_fact:
-        vipAws: "{{ vipAws | default([]) + [{ 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.3, 'subnet': {'mask': item.2.split('/')[1], 'type': 'V4', 'addr': item.2.split('/')[0] }}}}] }}"
-      with_nested:
-        - "{{ vstest.http }}"
-        - "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
+        vipAws: "{{ vipAws | default([]) + [{ 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
+      loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       when:
-        - item.0.cloud_ref == 'cloudAws'
+        - aws is defined
+        - awsZones is defined
+        - awsSubnetAviVsCidrs is defined
+        - awsSubnetAviVsIds is defined
       # loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       # when:
       #   - aws is defined
