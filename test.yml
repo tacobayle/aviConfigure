@@ -17,7 +17,7 @@
     - name: Debug
       debug:
         msg: "{{ item.0 }}"
-      loop: "{{ awsZones | zip(awsSubnetAviVsCidr| list }}"
+      loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       when:
         - aws is defined
 
@@ -26,7 +26,7 @@
 
 
     - set_fact:
-        vip: "{{ vip | default([]) + [{ 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2 }}}] }}"
+        vip: "{{ vip | default([]) + [{ 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
       loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
       when:
         - aws is defined
@@ -35,6 +35,6 @@
 
     - name: Debug
       debug:
-        msg: "{{ zones }}"
+        msg: "{{ vip }}"
       when:
         - aws is defined
