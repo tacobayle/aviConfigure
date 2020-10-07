@@ -67,3 +67,10 @@ aviUser:
 # - id2
 # - id3
 # - id4
+#
+# vstest:
+#   http:
+#     - name: app1
+#       cloud_ref: cloudGcp
+#     - name: app2
+#       cloud_ref: cloudAws
