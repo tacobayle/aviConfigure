@@ -11,7 +11,7 @@
       avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        cloud_ref: "/api/cloud/?name={{ avi_cloud.name | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
         avi_api_update_method: put
         name: "{{ item.name }}"
         ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
