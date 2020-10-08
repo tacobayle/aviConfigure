@@ -27,23 +27,28 @@
         # zones: "{{ zones }} + ['mgmt_network_uuid': {{ item.0 }}, 'availability_zone': {{ item.1 }}, 'mgmt_network_name': {{ item.2 }} ]"
 
 
-    - set_fact:
-        vipAws: "{{ vipAws | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
-      loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
-      loop_control:
-        index_var: my_idx
-      when:
-        - aws is defined
-        - awsZones is defined
-        - awsSubnetAviVsCidrs is defined
-        - awsSubnetAviVsIds is defined
-      # loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
-      # when:
-      #   - aws is defined
-
-
+    # - set_fact:
+    #     vipAws: "{{ vipAws | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.split('/')[1], 'type': 'V4', 'addr': item.1.split('/')[0] }}}}] }}"
+    #   loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
+    #   loop_control:
+    #     index_var: my_idx
+    #   when:
+    #     - aws is defined
+    #     - awsZones is defined
+    #     - awsSubnetAviVsCidrs is defined
+    #     - awsSubnetAviVsIds is defined
+    #   # loop: "{{ awsZones | zip(awsSubnetAviVsCidrs, awsSubnetAviVsIds) | list }}"
+    #   # when:
+    #   #   - aws is defined
+    #
+    #
     - name: Debug
       debug:
-        msg: "{{ vipAws }}"
+        msg: "{{ awsZones | length }}"
       when:
-        - aws is defined
+        - awsZones is defined
+
+    - name: with_sequence
+      debug:
+        msg: "{{ item }}"
+      with_sequence: start=0 end="{{ awsZones | length -1 }}" stride=1

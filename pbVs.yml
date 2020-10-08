@@ -85,6 +85,22 @@
         - vsDns
         - vs
 
+    - name: Define vip data for Gcp (Multi AZ)
+      set_fact:
+        vipGcp:
+          - ipam_network_subnet:
+              network_ref: "{{ listNetworkUuid.0 | default('Null') }}"
+              subnet:
+                mask: "{{ network.subnet.0.prefix.mask }}"
+                ip_addr:
+                  type: "{{ network.subnet.0.prefix.ip_addr.type }}"
+                  addr: "{{ network.subnet.0.prefix.ip_addr.addr }}"
+            avi_allocated_fip: true
+            auto_allocate_ip: true
+            auto_allocate_floating_ip: true
+      when:
+        - gcp is defined
+
     - name: Create vsvip for dns VS (GCP)
       avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -95,7 +111,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ item.vip }}"
+        vip: "{{ vipGcp }}"
       loop: "{{ avi_virtualservice.dns }}"
       loop_control:
         label: "{{ item.name }}"
@@ -249,7 +265,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ item.vip }}"
+        vip: "{{ vipGcp }}"
       loop: "{{ avi_virtualservice.http }}"
       loop_control:
         label: "{{ item.name }}"
