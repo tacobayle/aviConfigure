@@ -726,6 +726,11 @@
       tags:
         - cloud
 
+    - name: sleep for 20 seconds and continue with play
+      wait_for: timeout=20
+      tags:
+        - cloud
+
     - name: Wait for the cloud 0 to be ready
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
