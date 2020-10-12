@@ -33,7 +33,7 @@
       when:
         - nsxt is defined
 
-    - name: Create a Cloud connector user for NSX-T (vccenter)
+    - name: Create a Cloud connector user for NSX-T (vcenter)
       avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -63,3 +63,17 @@
         - debug
       when:
         - nsxt is defined
+
+    - name: Create a Cloud connector user for Azure
+      avi_cloudconnectoruser:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ azure.cloud_credentials_ref }}"
+        azure_serviceprincipal:
+          tenant_id: "{{ azure.tenant_id }}"
+          application_id: "{{ azure.application_id }}"
+          authentication_token: "{{ azure.authentication_token }}"
+      tags:
+        - cloud
+      when:
+        - azure is defined

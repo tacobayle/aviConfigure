@@ -13,7 +13,8 @@
 
   tasks:
 
-    - set_fact:
+    - name: Set variable avi_credentials
+      set_fact:
         avi_credentials: >
                           {'api_version': "{{ controller.version }}",
                            'controller': "{{ controllerPrivateIps.0 }}",
@@ -22,13 +23,13 @@
       tags:
         - creds
       when:
-        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE"
+        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE" or controller.environment == "AZURE"
 
-    - name: Debug
+    - name: Debug variable avi_credentials
       debug:
         msg: "{{ avi_credentials }}"
       tags:
-        - creds
+        - debug
 
     - name: Update user admin password
       avi_useraccount:
@@ -41,7 +42,7 @@
       tags:
         - creds
       when:
-        - controller.environment == "VMWARE" or controller.environment == "GCP"
+        - controller.environment == "VMWARE" or controller.environment == "GCP" or controller.environment == "AZURE"
 
     - name: Setting up Random password for users
       set_fact:
@@ -87,7 +88,7 @@
       tags:
         - creds
       when:
-        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE"
+        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE" or controller.environment == "AZURE"
 
     - name: Get main Cluster Information
       avi_api_session:
@@ -97,6 +98,12 @@
       register: clusterInfo
       tags:
         - cluster
+
+    - name: Debug variable cluster uuid
+      debug:
+        msg: "{{ clusterInfo['obj'].uuid }}"
+      tags:
+        - debug
 
     - name: Configure Cluster object with ClusterIP - if cluster has been configured
       avi_cluster:
