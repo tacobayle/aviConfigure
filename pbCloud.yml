@@ -736,6 +736,16 @@
       tags:
         - cloud
 
+    - name: Debugging Azure datas structure
+      debug:
+        msg: "{{ network_info }}"
+      when:
+        - azure is defined
+        - azureSubnets.mgt
+      tags:
+        - cloud
+        - debug
+
     # network_info:
     #   - se_network_id: subnet1
     #     virtual_network_id: "/subscriptions/{{ azure.subscriptionId }}/resourceGroups/rg-avi/providers/Microsoft.Network/virtualNetworks/vnet-avi"
