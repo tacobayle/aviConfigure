@@ -1,0 +1,51 @@
+---
+count: 2
+results:
+- url: https://51.138.119.48/api/cloud/cloud-240014a4-afc3-463e-8c3e-71af2830f5f4
+  uuid: cloud-240014a4-afc3-463e-8c3e-71af2830f5f4
+  name: Default-Cloud
+  tenant_ref: https://51.138.119.48/api/tenant/admin
+  _last_modified: '1602570387999147'
+  vtype: CLOUD_NONE
+  apic_mode: false
+  dhcp_enabled: false
+  mtu: 1500
+  prefer_static_routes: false
+  enable_vip_static_routes: false
+  license_type: LIC_CORES
+  state_based_dns_registration: true
+  ip6_autocfg_enabled: false
+  dns_resolution_on_se: false
+  enable_vip_on_all_interfaces: false
+  license_tier: ENTERPRISE
+  autoscale_polling_interval: 60
+- url: https://51.138.119.48/api/cloud/cloud-ecdc7eb7-4f7c-40f8-b812-f2ebc66a278d
+  uuid: cloud-ecdc7eb7-4f7c-40f8-b812-f2ebc66a278d
+  name: cloudAzure
+  tenant_ref: https://51.138.119.48/api/tenant/admin
+  _last_modified: '1602571660988525'
+  vtype: CLOUD_AZURE
+  apic_mode: false
+  azure_configuration:
+    subscription_id: b37d5cfa-0c68-422c-84af-82d99bb0ffd5
+    location: westeurope
+    network_info:
+    - virtual_network_id: "/subscriptions/b37d5cfa-0c68-422c-84af-82d99bb0ffd5/resourceGroups/rg-avi/providers/Microsoft.Network/virtualNetworks/vnet-avi"
+      se_network_id: subnetMgt
+    resource_group: rg-avi
+    use_azure_dns: true
+    use_enhanced_ha: false
+    use_managed_disks: true
+    use_standard_alb: false
+    cloud_credentials_ref: https://51.138.119.48/api/cloudconnectoruser/cloudconnectoruser-912be7d6-3838-4b1c-b3f1-df98809a795d
+  dhcp_enabled: true
+  mtu: 1500
+  prefer_static_routes: false
+  enable_vip_static_routes: false
+  license_type: LIC_CORES
+  state_based_dns_registration: true
+  ip6_autocfg_enabled: false
+  dns_resolution_on_se: false
+  enable_vip_on_all_interfaces: false
+  license_tier: ENTERPRISE
+  autoscale_polling_interval: 60

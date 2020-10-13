@@ -760,10 +760,8 @@
           use_managed_disks: "{{ azure.use_managed_disks }}"
           resource_group: "{{ azure.resource_group }}"
           use_enhanced_ha: "{{ azure.use_enhanced_ha }}"
-          cloud_credentials_ref: /api/cloudconnectoruser/?name={{ azure.cloud_credentials_ref }}
           use_azure_dns: "{{ azure.use_azure_dns }}"
           location: "{{ azure.location }}"
-          network_info: "{{ avi_cloud.azure_configuration.network_info }}"
           subscription_id: "{{ azure.subscription_id }}"
           use_standard_alb: "{{ azure.use_standard_alb }}"
           network_info: "{{ network_info }}"
@@ -781,8 +779,8 @@
       tags:
         - cloud
 
-    - name: sleep for 20 seconds and continue with play
-      wait_for: timeout=20
+    - name: sleep for 120 seconds and continue with play
+      wait_for: timeout=120
       tags:
         - cloud
 
