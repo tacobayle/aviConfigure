@@ -779,6 +779,13 @@
       tags:
         - cloud
 
+    - name: sleep for 180 seconds and continue with play
+      wait_for: timeout=180
+      when:
+        - azure is defined
+      tags:
+        - cloud
+
     - name: sleep for 120 seconds and continue with play
       wait_for: timeout=120
       tags:
