@@ -725,6 +725,7 @@
         name: "{{ aws.cloudName }}"
         vtype: CLOUD_AWS
         aws_configuration:
+          use_iam_roles: true
           region: "{{ aws.region }}"
           route53_integration: true
           asg_poll_interval: 60
