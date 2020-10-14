@@ -51,6 +51,9 @@
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
         vip: "{{ vipAzure }}"
       loop: "{{ avi_virtualservice.http }}"
+      retries: 3
+      delay: 10
+      ignore_errors: yes
       loop_control:
         label: "{{ item.name }}"
       when:

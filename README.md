@@ -1,7 +1,7 @@
 # Avi Configure
 
 ## Goals
-Configure Avi controller through Ansible for multi environement (VMware, AWS, GCP).
+Configure Avi controller through Ansible for multi environement (VMware, AWS, GCP, Azure).
 
 ## Prerequisites:
 - Make The following python packages are installed:
@@ -13,28 +13,6 @@ pip install avisdk==18.2.9
 sudo -u ubuntu ansible-galaxy install -f avinetworks.avisdk
 ```
 - Make sure your Avi Controller is reachable from your ansible host
-- Make sure you have an ansible hosts file define like the following:
-```
----
-all:
-  children:
-    controller:
-      hosts:
-        10.206.114.152:
-      vars:
-        ansible_user: admin
-        ansible_ssh_private_key_file: '~/.ssh/cloudKey'
-    backend:
-      hosts:
-        10.206.112.123:
-        10.206.112.120:
-        10.206.112.121:
-      vars:
-        ansible_user: admin
-        ansible_ssh_private_key_file: '~/.ssh/cloudKey'
-  vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-```
 
 ## Environment:
 
