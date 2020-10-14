@@ -270,7 +270,7 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or item.cloud_ref == "cloudAzure"
+        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure"
       tags:
         - pool
         - vsHttp
