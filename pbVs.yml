@@ -61,7 +61,7 @@
     #   register: nsxtgroupsOutput
       # when:
       #   - avi_pool_nsxtGroup is defined
-      #   - avi_cloud.vtype == "CLOUD_NSXT"
+      #   - nsxt is defined
       # tags:
       #   - pool
       #   - vsHttp
