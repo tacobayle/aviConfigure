@@ -1,0 +1,47 @@
+---
+count: 1
+results:
+- url: https://20.50.146.145/api/vsvip/vsvip-59096fa3-a510-4b32-ad7c-3725464b90c0
+  uuid: vsvip-59096fa3-a510-4b32-ad7c-3725464b90c0
+  name: vsvip-test-vs-cloudAzure
+  vrf_context_ref: https://20.50.146.145/api/vrfcontext/vrfcontext-83f4cca9-d652-422c-9877-99caf189b7cd
+  tenant_ref: https://20.50.146.145/api/tenant/admin
+  cloud_ref: https://20.50.146.145/api/cloud/cloud-73b54da1-816d-4513-ac33-2e6202a1d16a
+  _last_modified: '1602658584074091'
+  vip:
+  - vip_id: '1'
+    ip_address:
+      addr: 172.16.3.4
+      type: V4
+    enabled: true
+    port_uuid: "/subscriptions/b37d5cfa-0c68-422c-84af-82d99bb0ffd5/resourceGroups/rg-avi/providers/Microsoft.Network/networkInterfaces/avi-172-16-3-4"
+    subnet_uuid: subnetVip
+    subnet:
+      ip_addr:
+        addr: 172.16.1.0
+        type: V4
+      mask: 24
+    auto_allocate_ip: true
+    floating_ip:
+      addr: 51.144.159.175
+      type: V4
+    auto_allocate_floating_ip: true
+    avi_allocated_vip: true
+    avi_allocated_fip: true
+    ipam_network_subnet:
+      subnet:
+        ip_addr:
+          addr: 172.16.1.0
+          type: V4
+        mask: 24
+      subnet_uuid: subnetVip
+      network_ref: https://20.50.146.145/api/network/subnetVip
+    auto_allocate_ip_type: V4_ONLY
+    prefix_length: 32
+    network_ref: https://20.50.146.145/api/network/subnetVip
+  dns_info:
+  - fqdn: test-vs.azure.avidemo.fr
+    type: DNS_RECORD_A
+    num_records_in_response: 1
+    algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+  east_west_placement: false

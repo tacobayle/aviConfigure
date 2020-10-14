@@ -8,6 +8,11 @@
 - import_playbook: pbCloud.yml
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: pbSeGroup.yml
+- import_playbook: pbVsVipAzure.yml
+- import_playbook: pbVsVipAws.yml
+- import_playbook: pbVsVipGcp.yml
+- import_playbook: pbVsVipVmw.yml
+- import_playbook: pbVsVipNsx.yml
 - import_playbook: pbVs.yml
 - import_playbook: pbGslb.yml
 - import_playbook: pbGslbService.yml
