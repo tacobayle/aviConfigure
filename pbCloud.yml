@@ -726,8 +726,6 @@
         vtype: CLOUD_AWS
         aws_configuration:
           region: "{{ aws.region }}"
-          secret_access_key: "{{ aws.secret_access_key }}"
-          access_key_id: "{{ aws.access_key_id }}"
           route53_integration: true
           asg_poll_interval: 60
           vpc_id: "{{ aws.vpc_id }}"
