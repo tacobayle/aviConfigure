@@ -27,6 +27,7 @@
         auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
         auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
         instance_flavor: "{{ item.instance_flavor | default(omit) }}"
+        accelerated_networking: "{{ item.accelerated_networking | default(omit) }}"
       when:
         - serviceEngineGroup is defined
         - item.realtime_se_metrics is defined

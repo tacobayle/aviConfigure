@@ -235,7 +235,7 @@
         - vsHttp
         - vs
 
-    - name: create autoscalepolicy for ASG
+    - name: create autoscalepolicy for ASG or Scale Set
       avi_serverautoscalepolicy:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
