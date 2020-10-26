@@ -77,6 +77,12 @@
 
     - block:
 
+      - name: Debug the Avi credentials
+        debug:
+          msg: "{{ avi_credentials }}"
+        tags:
+          - gslb
+
       - set_fact:
           se_image_path: "{{ hostvars['localhost']['se_image_path'] }}"
 
