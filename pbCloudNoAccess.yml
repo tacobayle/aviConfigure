@@ -256,3 +256,6 @@
       loop: "{{ range(0, vcenter.amountOfSe, 1) | list }}"
       when:
         - no_access is defined
+
+    - debug:
+        msg: "{{ se_status }}"
