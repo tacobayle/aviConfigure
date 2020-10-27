@@ -227,35 +227,8 @@
       when:
         - no_access is defined
 
-    - name:  deploy Avi serviceengine
-      vmware_deploy_ovf:
-        hostname: '{{ vcenter.hostname }}'
-        username: '{{ vcenter.username }}'
-        password: '{{ vcenter.password }}'
-        #folder: "{{ vcenter.folder | default('SDDC-Datacenter/aviSe',true) }}"
-        datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
-        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
-        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'aviSe%02x' | format(item) }}"
-        validate_certs: False
-        networks:
-          Management: "{{ vcenter.networkManagementSe | default('VM Network',true) }}"
-          Data Network 1: "{{ vcenter.networkVipSe | default('VM Network',true) }}"
-          Data Network 2: "{{ vcenter.networkBackendSe | default('VM Network',true) }}"
-        properties:
-          AVICNTRL: '{{ avi_credentials.controller }}'
-          AVICNTRL_AUTHTOKEN: '{{ auth_token }}'
-          AVICNTRL_CLUSTERUUID: '{{ cluster_uuid }}'
-          avi.mgmt-ip.SE: "{{ se_mgmt_ip | default(omit) }}"
-          avi.mgmt-mask.SE: "{{ se_mgmt_mask | default(omit) }}"
-          avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
-        power_on: no
-        ova: "{{ ova_path }}"
-      register: se_status
-      delegate_to: "localhost"
-      loop: "{{ range(0, vcenter.amountOfSe, 1) | list }}"
+    - name: with_sequence -> loop
+      include_tasks: deploySeInVcenter.yml
+      loop: "{{ serviceEngineGroup }}"
       when:
         - no_access is defined
-
-    - debug:
-        msg: "{{ se_status }}"
