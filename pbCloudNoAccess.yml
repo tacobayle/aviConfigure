@@ -232,7 +232,7 @@
         hostname: '{{ vcenter.hostname }}'
         username: '{{ vcenter.username }}'
         password: '{{ vcenter.password }}'
-        folder: "{{ folder | default('SDDC-Datacenter/aviSe',true) }}"
+        folder: "{{ vcenter.folder | default('SDDC-Datacenter/aviSe',true) }}"
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
@@ -254,3 +254,5 @@
       register: se_status
       delegate_to: "localhost"
       loop: "{{ range(0, vcenter.amountOfSe, 1) | list }}"
+      when:
+        - no_access is defined
