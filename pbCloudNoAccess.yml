@@ -87,6 +87,9 @@
 
   tasks:
 
+    - set_fact:
+        se_image_path: "{{ hostvars['localhost']['se_image_path'] }}"
+
     - name: Download SE image
       fetch:
         src: "{{ se_image_path }}/se.ova"
