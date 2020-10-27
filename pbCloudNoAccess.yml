@@ -73,6 +73,9 @@
 - hosts: avicontroller
   gather_facts: no
 
+  vars_files:
+    - "vars/creds.json"
+
   tasks:
 
     - block:
