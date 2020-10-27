@@ -69,66 +69,38 @@
 
 #### end of block
 
+    - name:  Generate SE image on controller
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: post
+        path: 'fileservice/seova'
+        timeout: 600
+        data:
+          file_format: ova
+      delegate_to: localhost
+      when:
+        - no_access is defined
 
 - hosts: avicontroller
   gather_facts: no
 
-  vars_files:
-    - "vars/creds.json"
-
   tasks:
 
-    - block:
-
-      - name: Debug the Avi credentials
-        debug:
-          msg: "{{ avi_credentials }}"
-        tags:
-          - gslb
-
-      - set_fact:
-          se_image_path: "{{ hostvars['localhost']['se_image_path'] }}"
-
-      - name: Debug se_image_path
-        debug:
-          msg: "{{ se_image_path }}"
-
-      - name: Verify ova exists on controller
-        stat:
-          path: "{{ se_image_path }}/se.ova"
-        register: se_ova_status
-
-      - debug:
-         msg: "{{ se_ova_status }}"
-
-      - name:  Generate SE image if not exist on controller
-        avi_api_session:
-          avi_credentials: "{{ avi_credentials | default(omit) }}"
-          api_context: "{{ avi_api_context | default(omit) }}"
-          http_method: post
-          path: 'fileservice/seova'
-          timeout: 600
-          data:
-            file_format: ova
-        delegate_to: localhost
-        when:
-          - not se_ova_status.stat.exists
-
-      - name: Download SE image
-        fetch:
-          src: "{{ se_image_path }}/se.ova"
-          dest: ./
-          flat: yes
-          validate_checksum: False
-
-      - set_fact:
-          ova_path: "./se.ova"
-
+    - name: Download SE image
+      fetch:
+        src: "{{ se_image_path }}/se.ova"
+        dest: ./
+        flat: yes
+        validate_checksum: False
       when:
-        - 'ova_path is not defined or ova_path == None'
         - no_access is defined
 
-#### end of block
+    - name: Define ova path
+      set_fact:
+        ova_path: "./se.ova"
+      when:
+        - no_access is defined
 
     - name: Configure Avi Cloud for No Access
       avi_cloud:
@@ -156,7 +128,7 @@
       when:
         - no_access is defined
 
-    - name:  Set Cloud UUID variable
+    - name:  Define Cloud UUID variable
       set_fact:
         cloud_uuid_no_access: "{{ aviCloudOutput.obj.uuid }}"
       when:
@@ -172,14 +144,13 @@
           cloud_uuid: "{{ cloud_uuid_no_access }}"
       register: token_results
       when:
-        - cloud_uuid_no_access is defined
+        - no_access is defined
       delegate_to: "localhost"
 
     - name: Define auth token variable
       set_fact:
         auth_token: "{{ token_results.obj.auth_token }}"
       when:
-        - token_results is defined
         - no_access is defined
 
     - name: Get main Cluster Information
@@ -190,7 +161,7 @@
         path: cluster
       register: clusterInfo
       when:
-        - cloud_uuid_no_access is defined
+        - no_access is defined
       tags:
         - cluster
 
@@ -227,6 +198,14 @@
     - name: Debug variable controller IP
       debug:
         msg: "{{ avi_credentials.controller }}"
+      tags:
+        - debug
+      when:
+        - no_access is defined
+
+    - name: Debug variable OVA path
+      debug:
+        msg: "{{ ova_path }}"
       tags:
         - debug
       when:
