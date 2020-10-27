@@ -242,7 +242,7 @@
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'aviSe%02x' | format(item) }}"
+        name: "{{ 'aviSeGroup1%02x' | format(item) }}"
         validate_certs: False
         networks:
           Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
@@ -264,14 +264,40 @@
           avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
         power_on: no
         ova: "{{ ova_path }}"
-      register: se_status_se_group0
+      register: se_status_se_group_one
       delegate_to: "localhost"
       loop: "{{ range(0, serviceEngineGroup.0.numberOfSe, 1) | list }}"
       when:
         - no_access is defined
+        - serviceEngineGroup.0.numberOfSe is defined
 
-    - debug:
-        msg: "{{ se_status_se_group0 }}"
+    - set_fact:
+        se_status_se_group_one_list : "{{ se_status_se_group_one.results }}"
+      when:
+        - se_status_se_group_one is defined
+        - no_access is defined
+
+    - name: Modify SE Hardware for First SE group
+      vmware_guest:
+        hostname: "{{ vcenter.hostname }}"
+        username: "{{ vcenter.username }}"
+        password: "{{ vcenter.password }}"
+        validate_certs: False
+        uuid: "{{ item.instance.hw_product_uuid }}"
+        hardware:
+          memory_mb: "{{ serviceEngineGroup.0.memory_per_se | default(2048,true) }}"
+          memory_reservation_lock: "{{ serviceEngineGroup.0.tobereplaced | default(False,true) }}"
+          num_cpus: "{{ serviceEngineGroup.0.vcpus_per_se | default(1,true) }}"
+          cpu_reservation: "{{ serviceEngineGroup.0.tobereplaced | default(omit,true) }}"
+        disk:
+        - size_gb: "{{ serviceEngineGroup.0.disk_per_se | default(20,true) }}"
+        state: present
+      delegate_to: "localhost"
+      loop: "{{ se_status_se_group_one_list }}"
+      when:
+        - no_access is defined
+        - serviceEngineGroup.0.numberOfSe is defined
+
 
     - name:  deploy Avi serviceengine for Second SE group
       vmware_deploy_ovf:
@@ -282,7 +308,7 @@
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'aviSe%02x' | format(item) }}"
+        name: "{{ 'aviSeGroup2%02x' | format(item) }}"
         validate_certs: False
         networks:
           Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
@@ -304,11 +330,36 @@
           avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
         power_on: no
         ova: "{{ ova_path }}"
-      register: se_status_se_group1
+      register: se_status_se_group_two
       delegate_to: "localhost"
       loop: "{{ range(0, serviceEngineGroup.1.numberOfSe, 1) | list }}"
       when:
         - no_access is defined
+        - serviceEngineGroup.1.numberOfSe is defined
 
-    - debug:
-        msg: "{{ se_status_se_group1 }}"
+    - set_fact:
+        se_status_se_group_two_list : "{{ se_status_se_group_two.results }}"
+      when:
+        - se_status_se_group_two is defined
+        - no_access is defined
+
+    - name: Modify SE Hardware for Second SE group
+      vmware_guest:
+        hostname: "{{ vcenter.hostname }}"
+        username: "{{ vcenter.username }}"
+        password: "{{ vcenter.password }}"
+        validate_certs: False
+        uuid: "{{ item.instance.hw_product_uuid }}"
+        hardware:
+          memory_mb: "{{ serviceEngineGroup.1.memory_per_se | default(2048,true) }}"
+          memory_reservation_lock: "{{ serviceEngineGroup.1.tobereplaced | default(False,true) }}"
+          num_cpus: "{{ serviceEngineGroup.1.vcpus_per_se | default(1,true) }}"
+          cpu_reservation: "{{ serviceEngineGroup.1.tobereplaced | default(omit,true) }}"
+        disk:
+        - size_gb: "{{ serviceEngineGroup.1.disk_per_se | default(20,true) }}"
+        state: present
+      delegate_to: "localhost"
+      loop: "{{ se_status_se_group_two_list }}"
+      when:
+        - no_access is defined
+        - serviceEngineGroup.0.numberOfSe is defined
