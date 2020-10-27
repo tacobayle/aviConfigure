@@ -99,11 +99,24 @@
       when:
         - no_access is defined
 
-    - name: Define ova path
+    - name: Define ova path (in controller variable)
       set_fact:
         ova_path: "./se.ova"
       when:
         - no_access is defined
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Define ova path (in localhost variable)
+      set_fact:
+        ova_path: "{{ hostvars['avicontroller']['ova_path'] }}"
 
     - name: Configure Avi Cloud for No Access
       avi_cloud:
