@@ -229,7 +229,7 @@
 
     - name:  deploy Avi serviceengine
       vmware_deploy_ovf:
-        hostname: '{{ vcenter.server }}'
+        hostname: '{{ vcenter.hostname }}'
         username: '{{ vcenter.username }}'
         password: '{{ vcenter.password }}'
         folder: "{{ folder | default('SDDC-Datacenter/aviSe',true) }}"
