@@ -159,7 +159,6 @@
       when:
         - no_access is defined
 
-
     - name: Generate Auth Token for SE
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -172,6 +171,13 @@
       when:
         - cloud_uuid_no_access is defined
       delegate_to: "localhost"
+
+    - name: Define auth token variable
+      set_fact:
+        auth_token: "{{ token_results.obj.auth_token }}"
+      when:
+        - token_results is defined
+        - no_access is defined
 
     - name: Get main Cluster Information
       avi_api_session:
@@ -189,13 +195,6 @@
       set_fact:
         cluster_uuid: "{{ clusterInfo['obj'].uuid }}"
       when:
-        - no_access is defined
-
-    - name: Define auth token variable
-      set_fact:
-        auth_token: "{{ token_results.obj.auth_token }}"
-      when:
-        - token_results is defined
         - no_access is defined
 
     - name: Debug variable cloud uuid
