@@ -272,7 +272,7 @@
         ova: "{{ ova_path }}"
       register: se_status_se_group_one
       delegate_to: "localhost"
-      loop: "{{ range(0, serviceEngineGroup.0.numberOfSe, 1) | auth_token_list | list }}"
+      loop: "{{ range(0, serviceEngineGroup.0.numberOfSe, 1) | zip(auth_token_list) | list }}"
       when:
         - no_access is defined
         - serviceEngineGroup.0.numberOfSe is defined
