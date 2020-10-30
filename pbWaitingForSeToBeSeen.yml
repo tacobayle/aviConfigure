@@ -1,5 +1,6 @@
 ---
 - name: Wait for SE to be seen by Controller
+  avi_api_session:
     avi_credentials: "{{ avi_credentials | default(omit) }}"
     api_context: "{{ avi_api_context | default(omit) }}"
     http_method: get
