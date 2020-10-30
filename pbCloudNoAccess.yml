@@ -238,7 +238,7 @@
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
         password: "{{ vcenter.password }}"
-        folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
+        # folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
@@ -314,16 +314,25 @@
         - no_access is defined
         - serviceEngineGroup.0.numberOfSe is defined
 
-    - set_fact:
+    - name: Recording SE(s) Management IP for the first group
+      set_fact:
         se_group_one_mgmt_ip_list: "{{ se_group_one.results }}"
       when:  "se_group_one is defined and 'instance' in se_group_one"
+
+    - name: Debugging Management IP for the first group
+      debug:
+        msg:  "{{ item.instance.ipv4 }}"
+      loop: "{{ se_group_one_mgmt_ip_list }}"
+      when:
+        - no_access is defined
+        - serviceEngineGroup.0.numberOfSe is defined
 
     - name:  deploy Avi serviceengine for Second SE group
       vmware_deploy_ovf:
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
         password: "{{ vcenter.password }}"
-        folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
+        # folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
@@ -356,13 +365,6 @@
         - no_access is defined
         - serviceEngineGroup.1.numberOfSe is defined
 
-    - name: Recording SE(s) Management IP for the first group
-      set_fact:
-        se_status_se_group_two_list : "{{ se_status_se_group_two.results }}"
-      when:
-        - se_status_se_group_two is defined
-        - no_access is defined
-
     - name: Modify SE Hardware for Second SE group
       vmware_guest:
         hostname: "{{ vcenter.hostname }}"
@@ -382,7 +384,7 @@
       loop: "{{ se_status_se_group_two_list }}"
       when:
         - no_access is defined
-        - serviceEngineGroup.0.numberOfSe is defined
+        - serviceEngineGroup.1.numberOfSe is defined
 
     - name: Power On SE(s) for the second group
       vmware_guest:
@@ -398,9 +400,17 @@
       loop: "{{ se_status_se_group_two_list }}"
       when:
         - no_access is defined
-        - serviceEngineGroup.0.numberOfSe is defined
+        - serviceEngineGroup.1.numberOfSe is defined
 
     - name: Recording SE(s) Management IP for the second group
       set_fact:
         se_group_two_mgmt_ip_list: "{{ se_group_two.results }}"
-      when:  "se_group_one is defined and 'instance' in se_group_one"
+      when:  "se_group_two is defined and 'instance' in se_group_two"
+
+    - name: Debugging Management IP for the second group
+      debug:
+        msg:  "{{ item.instance.ipv4 }}"
+      loop: "{{ se_status_se_group_two_list }}"
+      when:
+        - no_access is defined
+        - serviceEngineGroup.1.numberOfSe is defined
