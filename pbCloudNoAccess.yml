@@ -229,7 +229,8 @@
 
     - name: Debug Auth Token
       debug:
-        msg: "{{ auth_token }}"
+        msg: "{{ item.obj.auth_token }}"
+      loop: "{{ auth_token_list }}"
       tags:
         - debug
       when:
