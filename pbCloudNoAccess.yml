@@ -206,6 +206,8 @@
     #   when:
     #     - no_access is defined
 
+# block that needs to be replayed for each SE group
+
     - name: Generate Auth Token for SE
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -270,7 +272,7 @@
         ova: "{{ ova_path }}"
       register: se_status_se_group_one
       delegate_to: "localhost"
-      loop: "{{ range(0, serviceEngineGroup.0.numberOfSe, 1) | {{ auth_token_list }} | list }}"
+      loop: "{{ range(0, serviceEngineGroup.0.numberOfSe, 1) | auth_token_list | list }}"
       when:
         - no_access is defined
         - serviceEngineGroup.0.numberOfSe is defined
@@ -346,6 +348,8 @@
       when:
         - no_access is defined
         - serviceEngineGroup.0.numberOfSe is defined
+
+# end of block that needs to be replayed for each SE group
 
 
     # - name:  deploy Avi serviceengine for Second SE group
