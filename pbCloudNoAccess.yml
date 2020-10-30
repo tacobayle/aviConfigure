@@ -286,9 +286,9 @@
         uuid: "{{ item.instance.hw_product_uuid }}"
         hardware:
           memory_mb: "{{ serviceEngineGroup.0.memory_per_se | default(2048,true) }}"
-          memory_reservation_lock: "{{ serviceEngineGroup.0.tobereplaced | default(False,true) }}"
+          memory_reservation_lock: "{{ serviceEngineGroup.0.mem_reserve | default(False,true) }}"
           num_cpus: "{{ serviceEngineGroup.0.vcpus_per_se | default(1,true) }}"
-          cpu_reservation: "{{ serviceEngineGroup.0.tobereplaced | default(omit,true) }}"
+          cpu_reservation: "{{ serviceEngineGroup.0.cpu_reserve | default(omit,true) }}"
         disk:
         - size_gb: "{{ serviceEngineGroup.0.disk_per_se | default(20,true) }}"
         state: present
@@ -317,7 +317,9 @@
     - name: Recording SE(s) Management IP for the first group
       set_fact:
         se_group_one_mgmt_ip_list: "{{ se_group_one.results }}"
-      when:  "se_group_one is defined and 'instance' in se_group_one"
+      when:
+        - no_access is defined
+        - serviceEngineGroup.0.numberOfSe is defined
 
     - name: Debugging Management IP for the first group
       debug:
@@ -327,90 +329,107 @@
         - no_access is defined
         - serviceEngineGroup.0.numberOfSe is defined
 
-    - name:  deploy Avi serviceengine for Second SE group
-      vmware_deploy_ovf:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
-        # folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
-        datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
-        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
-        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'grp2-se%02x' | format(item) }}"
-        validate_certs: False
-        networks:
-          Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
-          Data Network 1: "{{ vcenter.networkVipSe | default('default',true) }}"
-          Data Network 2: "{{ vcenter.networkBackendSe | default('default',true) }}"
-          Data Network 3: "{{ data_network3.se_int_pg | default('default',true) }}"
-          Data Network 4: "{{ data_network4.se_int_pg | default('default',true) }}"
-          Data Network 5: "{{ data_network5.se_int_pg | default('default',true) }}"
-          Data Network 6: "{{ data_network6.se_int_pg | default('default',true) }}"
-          Data Network 7: "{{ data_network7.se_int_pg | default('default',true) }}"
-          Data Network 8: "{{ data_network8.se_int_pg | default('default',true) }}"
-          Data Network 9: "{{ data_network9.se_int_pg | default('default',true) }}"
-        properties:
-          AVICNTRL: "{{ avi_credentials.controller }}"
-          AVICNTRL_AUTHTOKEN: "{{ auth_token }}"
-          AVICNTRL_CLUSTERUUID: "{{ cluster_uuid }}"
-          avi.mgmt-ip.SE: "{{ se_mgmt_ip | default(omit) }}"
-          avi.mgmt-mask.SE: "{{ se_mgmt_mask | default(omit) }}"
-          avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
-        power_on: no
-        ova: "{{ ova_path }}"
-      register: se_status_se_group_two
-      delegate_to: "localhost"
-      loop: "{{ range(0, serviceEngineGroup.1.numberOfSe, 1) | list }}"
+    - name: Waiting for the SE to be seen by the controller
+      include_tasks: pbWaitingForSeToBeSeen.yml
+      loop: "{{ se_group_one_mgmt_ip_list }}"
       when:
         - no_access is defined
-        - serviceEngineGroup.1.numberOfSe is defined
+        - serviceEngineGroup.0.numberOfSe is defined
 
-    - name: Modify SE Hardware for Second SE group
-      vmware_guest:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
-        validate_certs: False
-        uuid: "{{ item.instance.hw_product_uuid }}"
-        hardware:
-          memory_mb: "{{ serviceEngineGroup.1.memory_per_se | default(2048,true) }}"
-          memory_reservation_lock: "{{ serviceEngineGroup.1.tobereplaced | default(False,true) }}"
-          num_cpus: "{{ serviceEngineGroup.1.vcpus_per_se | default(1,true) }}"
-          cpu_reservation: "{{ serviceEngineGroup.1.tobereplaced | default(omit,true) }}"
-        disk:
-        - size_gb: "{{ serviceEngineGroup.1.disk_per_se | default(20,true) }}"
-        state: present
-      delegate_to: "localhost"
-      loop: "{{ se_status_se_group_two_list }}"
+    - name: Waiting for the SE to connect to the controller
+      include_tasks: pbWaitingForSeToConnect.yml
+      loop: "{{ se_group_one_mgmt_ip_list }}"
       when:
         - no_access is defined
-        - serviceEngineGroup.1.numberOfSe is defined
+        - serviceEngineGroup.0.numberOfSe is defined
 
-    - name: Power On SE(s) for the second group
-      vmware_guest:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
-        validate_certs: False
-        uuid: "{{ item.instance.hw_product_uuid }}"
-        wait_for_ip_address: yes
-        state: poweredon
-      delegate_to: "localhost"
-      register: se_group_two
-      loop: "{{ se_status_se_group_two_list }}"
-      when:
-        - no_access is defined
-        - serviceEngineGroup.1.numberOfSe is defined
 
-    - name: Recording SE(s) Management IP for the second group
-      set_fact:
-        se_group_two_mgmt_ip_list: "{{ se_group_two.results }}"
-      when:  "se_group_two is defined and 'instance' in se_group_two"
-
-    - name: Debugging Management IP for the second group
-      debug:
-        msg:  "{{ item.instance.ipv4 }}"
-      loop: "{{ se_status_se_group_two_list }}"
-      when:
-        - no_access is defined
-        - serviceEngineGroup.1.numberOfSe is defined
+    # - name:  deploy Avi serviceengine for Second SE group
+    #   vmware_deploy_ovf:
+    #     hostname: "{{ vcenter.hostname }}"
+    #     username: "{{ vcenter.username }}"
+    #     password: "{{ vcenter.password }}"
+    #     # folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
+    #     datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
+    #     cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
+    #     datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
+    #     name: "{{ 'grp2-se%02x' | format(item) }}"
+    #     validate_certs: False
+    #     networks:
+    #       Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
+    #       Data Network 1: "{{ vcenter.networkVipSe | default('default',true) }}"
+    #       Data Network 2: "{{ vcenter.networkBackendSe | default('default',true) }}"
+    #       Data Network 3: "{{ data_network3.se_int_pg | default('default',true) }}"
+    #       Data Network 4: "{{ data_network4.se_int_pg | default('default',true) }}"
+    #       Data Network 5: "{{ data_network5.se_int_pg | default('default',true) }}"
+    #       Data Network 6: "{{ data_network6.se_int_pg | default('default',true) }}"
+    #       Data Network 7: "{{ data_network7.se_int_pg | default('default',true) }}"
+    #       Data Network 8: "{{ data_network8.se_int_pg | default('default',true) }}"
+    #       Data Network 9: "{{ data_network9.se_int_pg | default('default',true) }}"
+    #     properties:
+    #       AVICNTRL: "{{ avi_credentials.controller }}"
+    #       AVICNTRL_AUTHTOKEN: "{{ auth_token }}"
+    #       AVICNTRL_CLUSTERUUID: "{{ cluster_uuid }}"
+    #       avi.mgmt-ip.SE: "{{ se_mgmt_ip | default(omit) }}"
+    #       avi.mgmt-mask.SE: "{{ se_mgmt_mask | default(omit) }}"
+    #       avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
+    #     power_on: no
+    #     ova: "{{ ova_path }}"
+    #   register: se_status_se_group_two
+    #   delegate_to: "localhost"
+    #   loop: "{{ range(0, serviceEngineGroup.1.numberOfSe, 1) | list }}"
+    #   when:
+    #     - no_access is defined
+    #     - serviceEngineGroup.1.numberOfSe is defined
+    #
+    # - name: Modify SE Hardware for Second SE group
+    #   vmware_guest:
+    #     hostname: "{{ vcenter.hostname }}"
+    #     username: "{{ vcenter.username }}"
+    #     password: "{{ vcenter.password }}"
+    #     validate_certs: False
+    #     uuid: "{{ item.instance.hw_product_uuid }}"
+    #     hardware:
+    #       memory_mb: "{{ serviceEngineGroup.1.memory_per_se | default(2048,true) }}"
+    #       memory_reservation_lock: "{{ serviceEngineGroup.1.tobereplaced | default(False,true) }}"
+    #       num_cpus: "{{ serviceEngineGroup.1.vcpus_per_se | default(1,true) }}"
+    #       cpu_reservation: "{{ serviceEngineGroup.1.tobereplaced | default(omit,true) }}"
+    #     disk:
+    #     - size_gb: "{{ serviceEngineGroup.1.disk_per_se | default(20,true) }}"
+    #     state: present
+    #   delegate_to: "localhost"
+    #   loop: "{{ se_status_se_group_two_list }}"
+    #   when:
+    #     - no_access is defined
+    #     - serviceEngineGroup.1.numberOfSe is defined
+    #
+    # - name: Power On SE(s) for the second group
+    #   vmware_guest:
+    #     hostname: "{{ vcenter.hostname }}"
+    #     username: "{{ vcenter.username }}"
+    #     password: "{{ vcenter.password }}"
+    #     validate_certs: False
+    #     uuid: "{{ item.instance.hw_product_uuid }}"
+    #     wait_for_ip_address: yes
+    #     state: poweredon
+    #   delegate_to: "localhost"
+    #   register: se_group_two
+    #   loop: "{{ se_status_se_group_two_list }}"
+    #   when:
+    #     - no_access is defined
+    #     - serviceEngineGroup.1.numberOfSe is defined
+    #
+    # - name: Recording SE(s) Management IP for the second group
+    #   set_fact:
+    #     se_group_two_mgmt_ip_list: "{{ se_group_two.results }}"
+    #   when:
+    #     - no_access is defined
+    #     - serviceEngineGroup.1.numberOfSe is defined
+    #
+    # - name: Debugging Management IP for the second group
+    #   debug:
+    #     msg:  "{{ item.instance.ipv4 }}"
+    #   loop: "{{ se_status_se_group_two_list }}"
+    #   when:
+    #     - no_access is defined
+    #     - serviceEngineGroup.1.numberOfSe is defined

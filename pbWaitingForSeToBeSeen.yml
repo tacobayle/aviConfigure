@@ -1,0 +1,13 @@
+---
+- name: Wait for SE to be seen by Controller
+    avi_credentials: "{{ avi_credentials | default(omit) }}"
+    api_context: "{{ avi_api_context | default(omit) }}"
+    http_method: get
+    path: serviceengine
+    params:
+      name: "{{ item }}"
+  register: api_results
+  until: api_results.obj.count == 1
+  retries: 20
+  delay: 30
+  delegate_to: "localhost"
