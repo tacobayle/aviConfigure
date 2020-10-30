@@ -238,11 +238,11 @@
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
         password: "{{ vcenter.password }}"
-        #folder: "{{ vcenter.folder | default('SDDC-Datacenter/aviSe',true) }}"
+        folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'aviSeGroup1%02x' | format(item) }}"
+        name: "{{ 'grp1-se%02x' | format(item) }}"
         validate_certs: False
         networks:
           Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
@@ -304,11 +304,11 @@
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
         password: "{{ vcenter.password }}"
-        #folder: "{{ vcenter.folder | default('SDDC-Datacenter/aviSe',true) }}"
+        folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
         datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
         cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
-        name: "{{ 'aviSeGroup2%02x' | format(item) }}"
+        name: "{{ 'grp2-se%02x' | format(item) }}"
         validate_certs: False
         networks:
           Management: "{{ vcenter.networkManagementSe | default('default',true) }}"
