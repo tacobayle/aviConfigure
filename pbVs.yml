@@ -37,8 +37,8 @@
       loop_control:
         label: "{{ item.name }}"
       when:
-        - item.type == "HEALTH_MONITOR_HTTP"
         - avi_healthmonitor is defined
+        - item.type == "HEALTH_MONITOR_HTTP"
       tags:
         - vsHttp
         - hm
