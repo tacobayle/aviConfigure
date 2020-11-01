@@ -209,8 +209,9 @@
           name: "{{ item }}"
       register: api_results
       until: api_results.obj.count == 1
-      retries: 30
-      delay: 30
+      retries: 6
+      delay: 20
+      ignore_errors: yes
       delegate_to: "localhost"
       loop: "{{ se_group_mgmt_ip_list }}"
       when:
@@ -226,8 +227,9 @@
           name: "{{ item }}"
       register: api_results
       until: api_results.obj.results[0].se_connected == true
-      retries: 30
-      delay: 30
+      retries: 6
+      delay: 20
+      ignore_errors: yes
       delegate_to: "localhost"
       loop: "{{ se_group_mgmt_ip_list }}"
       when:
