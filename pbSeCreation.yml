@@ -1,0 +1,238 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+# This playbook requires the following variable:
+#   - avi_credentials and or api_context
+#   - cloud_uuid_no_access
+#   - ova_path
+#   - vcenter
+
+    - name: Get main Cluster Information
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        path: cluster
+      register: clusterInfo
+      tags:
+        - cluster
+
+    - name: Define cluster uuid variable
+      set_fact:
+        cluster_uuid: "{{ clusterInfo['obj'].uuid }}"
+
+    - name: Debug variable cluster uuid
+      debug:
+        msg: "{{ cluster_uuid }}"
+      tags:
+        - debug
+
+    - name: Debug variable cloud uuid
+      debug:
+        msg: "{{ cloud_uuid_no_access }}"
+      tags:
+        - debug
+
+    - name: Debug variable controller IP
+      debug:
+        msg: "{{ avi_credentials.controller }}"
+      tags:
+        - debug
+
+    - name: Debug variable OVA path
+      debug:
+        msg: "{{ ova_path }}"
+      tags:
+        - debug
+
+    - name: Define networks data for SE for management
+      set_fact:
+        networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : vcenter.networkManagementSe }) }}"
+      when:
+        - vcenter.networkManagementSe is defined
+
+    - name: Generate Auth Token for SE
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        path: securetoken-generate
+        params:
+          cloud_uuid: "{{ cloud_uuid_no_access }}"
+      register: token_results
+      loop: "{{ range(0, numberOfSe, 1) | list }}"
+      when:
+        - numberOfSe is defined
+      delegate_to: "localhost"
+
+    - name: Define auth token list variable
+      set_fact:
+        auth_token_list: "{{ token_results.results }}"
+      when:
+        - token_results is defined
+
+    - name: Debug Auth Token
+      debug:
+        msg: "{{ item.obj.auth_token }}"
+      loop: "{{ auth_token_list }}"
+      when:
+        - auth_token_list is defined
+      tags:
+        - debug
+
+    - name: Adding the netorks defined in the variable networksList
+      set_fact:
+        networksList: "{{ networksList | default([]) +  [{ 'Data Network %1x' | format(item.0) : item.1 }] }}"
+      loop: "{{ range(1, networks |length +1, 1) | zip(networks) | list }}"
+      when:
+        - networks is defined
+        - networks |length > 0
+
+    - name: Padding networksList with default network
+      set_fact:
+        networksList: "{{ networksList | default([]) +  [{ 'Data Network %1x' | format(item) : 'default' }] }}"
+      loop: "{{ range(networks |length + 1, 10, 1) | list }}"
+      when:
+        - networks is defined
+        - networks |length > 0
+
+    - name: Debugging networks data for SE for management
+      debug:
+        msg: "{{ networksList }}"
+
+    - name: Define networks data for SE for management
+      set_fact:
+        networksSe: "{{ networksSe | default({}) | combine (item) }}"
+      loop: "{{ networksList }}"
+
+    - name: Define networks data for SE for management
+      debug:
+        msg: "{{ networksSe }}"
+
+    - name:  deploy Avi serviceengine for SE group
+      vmware_deploy_ovf:
+        hostname: "{{ vcenter.hostname }}"
+        username: "{{ vcenter.username }}"
+        password: "{{ vcenter.password }}"
+        # folder: "{{ vcenter.folder | default('/SDDC-Datacenter/aviSe',true) }}"
+        datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
+        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
+        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
+        name: "name-{{ 'se%02x' | format(item.0) }}"
+        validate_certs: False
+        networks: "{{ networksSe }}"
+        properties:
+          AVICNTRL: "{{ avi_credentials.controller }}"
+          AVICNTRL_AUTHTOKEN: "{{ item.1.obj.auth_token }}"
+          AVICNTRL_CLUSTERUUID: "{{ cluster_uuid }}"
+          avi.mgmt-ip.SE: "{{ se_mgmt_ip | default(omit) }}"
+          avi.mgmt-mask.SE: "{{ se_mgmt_mask | default(omit) }}"
+          avi.default-gw.SE: "{{ se_mgmt_gw| default(omit) }}"
+        power_on: no
+        ova: "{{ ova_path }}"
+      register: se_status_se_group
+      delegate_to: "localhost"
+      loop: "{{ range(0, numberOfSe, 1) | zip(auth_token_list) | list }}"
+      when:
+        - numberOfSe is defined
+
+    - set_fact:
+        se_status_se_group_list : "{{ se_status_se_group.results }}"
+      when:
+        - se_status_se_group is defined
+
+    - name: Modify SE(s) Hardware for SE group
+      vmware_guest:
+        hostname: "{{ vcenter.hostname }}"
+        username: "{{ vcenter.username }}"
+        password: "{{ vcenter.password }}"
+        validate_certs: False
+        uuid: "{{ item.instance.hw_product_uuid }}"
+        hardware:
+          memory_mb: "{{ memory_per_se | default(2048,true) }}"
+          memory_reservation_lock: "{{ mem_reserve | default(False,true) }}"
+          num_cpus: "{{ vcpus_per_se | default(1,true) }}"
+          cpu_reservation: "{{ cpu_reserve | default(omit,true) }}"
+        disk:
+        - size_gb: "{{ disk_per_se | default(20,true) }}"
+        state: present
+      delegate_to: "localhost"
+      loop: "{{ se_status_se_group_list }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Power On SE(s) for SE group
+      vmware_guest:
+        hostname: "{{ vcenter.hostname }}"
+        username: "{{ vcenter.username }}"
+        password: "{{ vcenter.password }}"
+        validate_certs: False
+        uuid: "{{ item.instance.hw_product_uuid }}"
+        wait_for_ip_address: yes
+        state: poweredon
+      delegate_to: "localhost"
+      register: se_group
+      loop: "{{ se_status_se_group_list }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Recording SE(s) Management IP for the first group
+      set_fact:
+        se_group_mgmt_ip_list: "{{ se_group.results }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Debugging Management IP for the SE group
+      debug:
+        msg:  "{{ item.instance.ipv4 }}"
+      loop: "{{ se_group_mgmt_ip_list }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Waiting for the SE to be seen by the controller
+      include_tasks: pbWaitingForSeToBeSeen.yml
+      loop: "{{ se_group_mgmt_ip_list }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Waiting for the SE to connect to the controller
+      include_tasks: pbWaitingForSeToConnect.yml
+      loop: "{{ se_group_mgmt_ip_list }}"
+      when:
+        - numberOfSe is defined
+
+    - name: Retrieve SE Group info
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        path: serviceenginegroup
+        params:
+          name: "{{ name | default('Default-Group',true) }}"
+          cloud_ref.name: "{{ no_access.name | default('Default-Cloud',true) }}"
+      register: seg_results
+
+    - name: Registring SE group uuid
+      set_fact:
+        seg_uuid: "{{ seg_results.obj.results[0].uuid }}"
+      when: seg_results.obj.count == 1
+
+    - name: Apply Interface configurations on Service Engine and modify SE Group
+      avi_serviceengine:
+        avi_api_update_method: patch
+        avi_api_patch_op: replace
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.instance.ipv4 }}"
+        se_group_ref: "/api/serviceenginegroup/{{ seg_uuid }}"
+      loop: "{{ se_group_mgmt_ip_list }}"
+      delegate_to: "localhost"
+      when:
+        - se_group_mgmt_ip_list is defined
