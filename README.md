@@ -1,7 +1,7 @@
 # Avi Configure
 
 ## Goals
-Configure Avi controller through Ansible for multi environement (VMware, AWS, GCP, Azure).
+Configure Avi controller through Ansible for multi environement (VMware, AWS, GCP, Azure and VMC).
 
 ## Prerequisites:
 - Make The following python packages are installed:
@@ -12,7 +12,8 @@ pip3 install dnspython
 pip install avisdk==18.2.9
 sudo -u ubuntu ansible-galaxy install -f avinetworks.avisdk
 ```
-- Make sure your Avi Controller is reachable from your ansible host
+- Make sure your Avi Controller is reachable (HTTP 443) from your ansible host
+- For VMC, make sure the vcenter and ESXi hosts are reachable (HTTP 443) from your ansible host
 
 ## Environment:
 
@@ -59,6 +60,7 @@ avisdk 18.2.9
 - AWS
 - NSX-T
 - GCP
+- VMC
 
 ## Input/Parameters:
 
@@ -71,8 +73,9 @@ A sample variable file per cloud type is defined in the var directory:
 - Configure the controller cluster (Vcenter or NSX environment only)
 - Create a backup backup_passphrase
 - Configure system configuration (global, DNS, NTP, email config)
-- Configure Cloud
+- Configure Cloud, supported clouds are: v-center, was, azure, gcp, nsxt, no access (for VMC)
 - Configure SE group
+- Configure SE (only for VMC)
 - Create a Health Monitor
 - Create a Pool (based on the Health Monitor previously created) -  based on servers IP
 - Create a Pool (based on the Health Monitor previously created) -  based on NSXT Group

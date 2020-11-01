@@ -9,10 +9,12 @@
   tasks:
 
 # This playbook requires the following variable:
-#   - avi_credentials and or api_context
+#   - avi_credentials
 #   - cloud_uuid_no_access
 #   - ova_path
-#   - vcenter
+#   - vcenter variable
+#   - serviceEngineGroup variable
+# This playbook has been tested only for VMC with DHCP enabled in the segment.
 
     - name: Get main Cluster Information
       avi_api_session:
@@ -52,7 +54,7 @@
     #   tags:
     #     - debug
 
-    - name: Generate Auth Token for SE
+    - name: Generate Auth Token for SE(s)
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -66,7 +68,7 @@
         - numberOfSe is defined
       delegate_to: "localhost"
 
-    - name: Define auth token list variable
+    - name: Define auth token list
       set_fact:
         auth_token_list: "{{ token_results.results }}"
       when:
@@ -81,7 +83,7 @@
     #   tags:
     #     - debug
 
-    - name: Define networks data for SE for management
+    - name: Define networks data for SE(s) for management
       set_fact:
         networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : vcenter.networkManagementSe }) }}"
       when:
@@ -95,7 +97,7 @@
         - networks is defined
         - networks |length > 0
 
-    - name: Padding networksList with default network
+    - name: Padding networksList with default network for undefined network(s) until 9 networks
       set_fact:
         networksList: "{{ networksList | default([]) +  [{ 'Data Network %1x' | format(item) : 'default' }] }}"
       loop: "{{ range(networks |length + 1, 10, 1) | list }}"
@@ -107,7 +109,7 @@
     #   debug:
     #     msg: "{{ networksList }}"
 
-    - name: Define networkSe before VM creation
+    - name: Define networkSe before SE(s) creation
       set_fact:
         networksSe: "{{ networksSe | default({}) | combine (item) }}"
       loop: "{{ networksList }}"
@@ -116,7 +118,7 @@
     #   debug:
     #     msg: "{{ networksSe }}"
 
-    - name:  deploy Avi serviceengine for SE group
+    - name:  deploy Avi SE(S)
       vmware_deploy_ovf:
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
@@ -143,12 +145,13 @@
       when:
         - numberOfSe is defined
 
-    - set_fact:
+    - name: Recording SE(s) creation output
+      set_fact:
         se_status_se_group_list : "{{ se_status_se_group.results }}"
       when:
         - se_status_se_group is defined
 
-    - name: Modify SE(s) Hardware for SE group
+    - name: Modify SE(s) Hardware
       vmware_guest:
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
@@ -168,7 +171,7 @@
       when:
         - numberOfSe is defined
 
-    - name: Power On SE(s) for SE group
+    - name: Power On SE(s)
       vmware_guest:
         hostname: "{{ vcenter.hostname }}"
         username: "{{ vcenter.username }}"
@@ -183,7 +186,7 @@
       when:
         - numberOfSe is defined
 
-    - name: Recording SE(s) Management IP for the SEs
+    - name: Recording SE(s) Management IP
       set_fact:
         se_group_mgmt_ip_list: "{{ se_group.results }}"
       when:
@@ -196,7 +199,7 @@
     #   when:
     #     - numberOfSe is defined
 
-    - name: Wait for the SEs to be seen by Controller
+    - name: Wait for the SE(s) to be seen by Controller
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -213,7 +216,7 @@
       when:
         - numberOfSe is defined
 
-    - name: Wait for the SEs to connect to Controller
+    - name: Wait for the SE(s) to connect to Controller
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -243,14 +246,14 @@
       when:
         - name != 'Default-Group'
 
-    - name: Registring SE group uuid (if not Default-Group)
+    - name: Registering SE group uuid (if not Default-Group)
       set_fact:
         seg_uuid: "{{ seg_results.obj.results[0].uuid }}"
       when: seg_results.obj.count == 1
       when:
         - name != 'Default-Group'
 
-    - name: Modify SE Group (if not Default-Group)
+    - name: Assigning SE Group (if not Default-Group)
       avi_serviceengine:
         avi_api_update_method: patch
         avi_api_patch_op: replace

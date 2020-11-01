@@ -841,10 +841,17 @@
 
     - name: sleep for 120 seconds and continue with play
       wait_for: timeout=120
+      when:
+        - no_access is not defined
+        - azure is defined
+        - aws is defined
+        - gcp is defined
+        - nsxt is defined
+        - vmw is defined
       tags:
         - cloud
 
-    - name: Wait for the cloud 0 to be ready
+    - name: Wait for the cloud 0 to be ready // this is expected to fail for no_access
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -856,7 +863,7 @@
       delay: 10
       ignore_errors: yes
 
-    - name: Wait for the cloud 1 to be ready
+    - name: Wait for the cloud 1 to be ready // this is expected to fail for no_access
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -868,7 +875,7 @@
       delay: 10
       ignore_errors: yes
 
-    - name: Wait for the cloud 2 to be ready
+    - name: Wait for the cloud 2 to be ready // this is expected to fail for no_access
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
