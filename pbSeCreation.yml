@@ -99,7 +99,7 @@
 
     - name: Padding networksList with default network for undefined network(s) until 9 networks
       set_fact:
-        networksList: "{{ networksList | default([]) +  [{ 'Data Network %1x' | format(item) : 'default' }] }}"
+        networksList: "{{ networksList | default([]) +  [{ 'Data Network %1x' | format(item) : 'sddc-cgw-network-1' }] }}"
       loop: "{{ range(seg.networks |length + 1, 10, 1) | list }}"
       when:
         - seg.networks is defined
