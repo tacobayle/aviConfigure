@@ -387,7 +387,7 @@
         - vsDns
         - vs
 
-    - name: Update system config with DNS VS
+    - name: Update system config with first DNS VS
       avi_systemconfiguration:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -397,6 +397,8 @@
       tags:
         - vsDns
         - vs
+      when: avi_virtualservice.dns.0.name is defined
+
 
     # - name: Debug
     #   debug:

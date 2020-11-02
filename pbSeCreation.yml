@@ -272,7 +272,8 @@
     - name: sleep for 90 seconds and continue with play (if not Default-Group)
       wait_for: timeout=90
       when:
-        - azure is defined
+        - se_group_mgmt_ip_list is defined
+        - seg.name != 'Default-Group'
       tags:
         - cloud
 

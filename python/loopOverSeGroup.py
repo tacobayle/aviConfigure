@@ -1,5 +1,7 @@
 import requests, json, os, yaml, sys
 #
+# this python script is used to iterate over a list of tasks and using the loop inside the list of tasks
+#
 playbook = sys.argv[1]
 yamlFile = sys.argv[2]
 avi_credentials = sys.argv[3]

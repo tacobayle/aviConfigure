@@ -151,11 +151,11 @@
       when:
         - no_access is defined
 
-    - name: debugging Start of the python script
-      debug:
-        msg: python3 python/loopOverSeGroup.py pbSeCreation.yml ~/ansible/vars/fromTerraform.yml "{{ avi_credentials | to_json }}" "{{ cloud_uuid_no_access | to_json }}" "{{ ova_path | to_json }}"
-      when:
-        - no_access is defined
+    # - name: debugging Start of the python script
+    #   debug:
+    #     msg: python3 python/loopOverSeGroup.py pbSeCreation.yml ~/ansible/vars/fromTerraform.yml "{{ avi_credentials | to_json }}" "{{ cloud_uuid_no_access | to_json }}" "{{ ova_path | to_json }}"
+    #   when:
+    #     - no_access is defined
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement)
       command: python3 python/loopOverSeGroup.py pbSeCreation.yml ~/ansible/vars/fromTerraform.yml "{{ avi_credentials | to_json }}" "{{ cloud_uuid_no_access | to_json }}" "{{ ova_path | to_json }}"
