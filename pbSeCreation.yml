@@ -159,10 +159,10 @@
         validate_certs: False
         uuid: "{{ item.instance.hw_product_uuid }}"
         hardware:
-          memory_mb: "{{ seg.memory_per_se | default(2048,true) }}"
-          memory_reservation_lock: "{{ seg.mem_reserve | default(False,true) }}"
-          num_cpus: "{{ seg.vcpus_per_se | default(1,true) }}"
-          cpu_reservation: "{{ seg.cpu_reserve | default(omit,true) }}"
+          memory_mb: "{{ seg.memory_per_se | int | default(2048,true) }}"
+          memory_reservation_lock: "{{ seg.mem_reserve | int | default(False,true) }}"
+          num_cpus: "{{ seg.vcpus_per_se | int | default(1,true) }}"
+          cpu_reservation: "{{ seg.cpu_reserve | int | default(omit,true) }}"
         disk:
         - size_gb: "{{ seg.disk_per_se | default(20,true) }}"
         state: present

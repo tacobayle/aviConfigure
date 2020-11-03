@@ -17,7 +17,7 @@
       tags:
         - debug
 
-    - name: Create BackupConfiguration object
+    - name: Create Backup Configuration passphrase
       avi_backupconfiguration:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -37,6 +37,88 @@
         ntp_configuration: "{{ avi_systemconfiguration.ntp_configuration }}"
         email_configuration: "{{ avi_systemconfiguration.email_configuration }}"
         welcome_workflow_complete: "{{ avi_systemconfiguration.welcome_workflow_complete }}"
-      when: avi_systemconfiguration is defined
+      when:
+        - avi_systemconfiguration is defined
+      tags:
+        - system
+
+    - name: Define ntp_servers
+      set_fact:
+        ntp_servers: "{{ ntp_servers | default([]) + [{ 'servers': {'type': 'V4', 'addr': item}}] }}"
+      loop: "{{ ntpServers }}"
+      when:
+        - ntpServers is defined
+
+    - name: Debug ntp servers
+      debug:
+        msg: "{{ ntpServers }}"
+      tags:
+        - debug
+      when:
+        - ntpServers is defined
+
+    - name: Define dns_servers
+      set_fact:
+        server_list: "{{ server_list | default([]) + [{'type': 'V4', 'addr': item}] }}"
+      loop: "{{ dnsServers }}"
+      when:
+        - dnsServers is defined
+
+    - name: Debug dns servers
+      debug:
+        msg: "{{ dnsServers }}"
+      tags:
+        - debug
+      when:
+        - dnsServers is defined
+
+    - name: Define avi_systemconfiguration
+      set_fact:
+        avi_systemconfiguration:
+          global_tenant_config:
+            se_in_provider_context: controller.se_in_provider_context
+            tenant_access_to_provider_se: controller.tenant_access_to_provider_se
+            tenant_vrf: controller.tenant_vrf
+          welcome_workflow_complete: true
+          ntp_configuration:
+            ntp_servers: "{{ ntp_servers }}"
+          dns_configuration:
+            search_domain: ''
+            server_list: "{{ server_list }}"
+          email_configuration:
+            from_email: controller.email_configuration
+            smtp_type: SMTP_LOCAL_HOST
+      when:
+        - controller.se_in_provider_context is defined
+        - controller.tenant_access_to_provider_se is defined
+        - controller.tenant_vrf is defined
+        - ntp_servers is defined
+        - server_list is defined
+        - controller.email_configuration is defined
+
+    - name: Debug dns servers
+      debug:
+        msg: "{{ avi_systemconfiguration }}"
+      tags:
+        - debug
+      when:
+        - controller.se_in_provider_context is defined
+        - controller.tenant_access_to_provider_se is defined
+        - controller.tenant_vrf is defined
+        - ntp_servers is defined
+        - server_list is defined
+        - controller.email_configuration is defined
+
+    - name: Configure Avi System parameters
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        global_tenant_config: "{{ avi_systemconfiguration.global_tenant_config }}"
+        dns_configuration: "{{ avi_systemconfiguration.dns_configuration }}"
+        ntp_configuration: "{{ avi_systemconfiguration.ntp_configuration }}"
+        email_configuration: "{{ avi_systemconfiguration.email_configuration }}"
+        welcome_workflow_complete: "{{ avi_systemconfiguration.welcome_workflow_complete }}"
+      when:
+        - avi_systemconfiguration is defined
       tags:
         - system
