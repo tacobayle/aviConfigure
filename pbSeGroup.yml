@@ -30,7 +30,6 @@
         accelerated_networking: "{{ item.accelerated_networking | default(omit) }}"
       when:
         - serviceEngineGroup is defined
-        - item.realtime_se_metrics is defined
       loop: "{{ serviceEngineGroup }}"
       loop_control:
         label: "Modifying SE group called {{ item.name }}"
