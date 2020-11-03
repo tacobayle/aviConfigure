@@ -53,13 +53,13 @@
         name: "{{ no_access.name }}"
         vtype: CLOUD_NONE
         apic_mode: false
-        dhcp_enabled: "{{ no_access.dhcp_enabled }}"
+        dhcp_enabled: "{{ no_access.dhcp_enabled | default('true') }}"
         mtu: 1500
         prefer_static_routes: false
         enable_vip_static_routes: false
         license_type: LIC_CORES
-        state_based_dns_registration: "{{ no_access.state_based_dns_registration }}"
-        ip6_autocfg_enabled: "{{ no_access.ip6_autocfg_enabled }}"
+        state_based_dns_registration: "{{ no_access.state_based_dns_registration | default('false') }}"
+        ip6_autocfg_enabled: "{{ no_access.ip6_autocfg_enabled | default('false') }}"
         dns_resolution_on_se: false
         enable_vip_on_all_interfaces: false
         license_tier: ENTERPRISE
@@ -70,7 +70,7 @@
       tags:
         - cloud
       when:
-        - no_access is defined
+        - no_access.name is defined
 
     - name:  Define Cloud UUID variable
       set_fact:
