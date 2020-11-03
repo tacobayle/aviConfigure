@@ -63,7 +63,7 @@
         params:
           cloud_uuid: "{{ cloud_uuid_no_access }}"
       register: token_results
-      loop: "{{ range(0, seg.numberOfSe, 1) | list }}"
+      loop: "{{ range(0, seg.numberOfSe | int, 1) | list }}"
       when:
         - seg.numberOfSe is defined
       delegate_to: "localhost"
@@ -141,7 +141,7 @@
         ova: "{{ ova_path }}"
       register: se_status_se_group
       delegate_to: "localhost"
-      loop: "{{ range(0, seg.numberOfSe, 1) | zip(auth_token_list) | list }}"
+      loop: "{{ range(0, seg.numberOfSe | int, 1) | zip(auth_token_list) | list }}"
       when:
         - seg.numberOfSe is defined
 
