@@ -15,7 +15,7 @@
 
   tasks:
 
-    - name: Create Avi DNS provider setting (for GCP, Vcenter or no Access)
+    - name: Create Avi DNS provider setting (for GCP, Vcenter, NSX-T or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -110,15 +110,58 @@
       tags:
         - cloud
 
+    - set_fact:
+        ipBegin: "{{ network.cidr | ipaddr(network.ipStartPool) }}"
+      when:
+        - network.cidr is defined
+        - network.ipStartPool is defined
+
+    - set_fact:
+        ipBegin: "{{ ipBegin.split('/')[0] }}"
+      when:
+        - network.cidr is defined
+        - network.ipStartPool is defined
+
+    - set_fact:
+        ipEnd: "{{ network.cidr | ipaddr(network.ipEndPool) }}"
+      when:
+        - network.cidr is defined
+        - network.ipEndPool is defined
+
+    - set_fact:
+        ipEnd: "{{ ipEnd.split('/')[0] }}"
+      when:
+        - network.cidr is defined
+        - network.ipEndPool is defined
+
+    - name: Define subnet for network
+      set_fact:
+        subnet:
+          - prefix:
+              mask: "{{ network.cidr.split('/')[1] }}"
+              ip_addr:
+                type: "{{ network.type | default("V4") }}"
+                addr: "{{ network.cidr.split('/')[0] }}"
+            static_ranges:
+              - begin:
+                  type: "{{ network.type | default("V4") }}"
+                  addr: "{{ ipBegin }}"
+                end:
+                  type: "{{ network.type | default("V4") }}"
+                  addr: "{{ ipEnd }}"
+      when:
+        - ipBegin is defined
+        - ipEnd is defined
+
 
     - name: Create Network for IPAM
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ network.name }}"
+        name: "{{ network.name | default('net-avi')}}"
         cloud_ref: "/api/cloud/?name={{ network.cloud_ref }}"
         configured_subnets: "{{ network.subnet }}"
-        dhcp_enabled: "{{ network.dhcp_enabled }}"
+        dhcp_enabled: "{{ network.dhcp_enabled | default('false')}}"
       when:
         - network is defined
         - gcp is defined or no_access is defined
