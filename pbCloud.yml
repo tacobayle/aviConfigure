@@ -72,7 +72,7 @@
       when:
         - no_access.name is defined
 
-    - name:  Define Cloud UUID variable
+    - name:  Define Cloud no_access uuid
       set_fact:
         cloud_uuid_no_access: "{{ aviCloudNoAccess.obj.uuid }}"
       when:
@@ -102,7 +102,7 @@
       tags:
         - cloud
 
-    - name: save avi Cloud Gcp Uuid
+    - name: Define Cloud GCP uuid
       set_fact:
         aviCloudGcpUuid: "{{ aviCloudGcp.obj.uuid }}"
       when:
@@ -154,6 +154,25 @@
         - ipBegin is defined
         - ipEnd is defined
         - network.cidr is defined
+
+    - name: Debug network.subnet variable
+      debug:
+        msg: "{{ network.subnet }}"
+      tags:
+        - debug
+      when:
+        - ipBegin is defined
+        - ipEnd is defined
+        - network.cidr is defined
+
+    - name: Debug network.dhcp_enabled variable
+      debug:
+        msg: "{{ network.dhcp_enabled }}"
+      tags:
+        - debug
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
 
     - name: Create Network for IPAM
       avi_network:
