@@ -30,7 +30,7 @@
 
     - name: Define ntp_servers
       set_fact:
-        ntp_servers: "{{ ntp_servers | default([]) + [{ 'servers': {'type': 'V4', 'addr': item}}] }}"
+        ntp_servers: "{{ ntp_servers | default([]) + [{ 'server': {'type': 'V4', 'addr': item}}] }}"
       loop: "{{ ntpServers }}"
       when:
         - ntpServers is defined
