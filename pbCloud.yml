@@ -141,19 +141,18 @@
     - name: Define configured_subnets for network
       set_fact:
         configured_subnets:
-          subnet:
-            - prefix:
-                mask: "{{ network.cidr.split('/')[1] }}"
-                ip_addr:
+          - prefix:
+              mask: "{{ network.cidr.split('/')[1] }}"
+              ip_addr:
+                type: "{{ network.type | default('V4') }}"
+                addr: "{{ network.cidr.split('/')[0] }}"
+            static_ranges:
+              - begin:
                   type: "{{ network.type | default('V4') }}"
-                  addr: "{{ network.cidr.split('/')[0] }}"
-              static_ranges:
-                - begin:
-                    type: "{{ network.type | default('V4') }}"
-                    addr: "{{ ipBegin }}"
-                  end:
-                    type: "{{ network.type | default('V4') }}"
-                    addr: "{{ ipEnd }}"
+                  addr: "{{ ipBegin }}"
+                end:
+                  type: "{{ network.type | default('V4') }}"
+                  addr: "{{ ipEnd }}"
       when:
         - ipBegin is defined
         - ipEnd is defined
@@ -166,15 +165,6 @@
         - debug
       when:
         - configured_subnets is defined
-
-    - name: Debug network.dhcp_enabled variable
-      debug:
-        msg: "{{ network.dhcp_enabled }}"
-      tags:
-        - debug
-      when:
-        - network is defined
-        - gcp is defined or no_access is defined
 
     - name: Create Network for IPAM
       avi_network:
