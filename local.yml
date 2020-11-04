@@ -12,6 +12,7 @@
 - import_playbook: pbVsVipGcp.yml
 - import_playbook: pbVsVipVmw.yml
 - import_playbook: pbVsVipNsx.yml
+- import_playbook: pbVsVipNoAccessVmware.yml
 - import_playbook: pbVs.yml
 - import_playbook: pbGslb.yml
 - import_playbook: pbGslbService.yml

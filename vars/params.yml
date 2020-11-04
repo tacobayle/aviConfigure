@@ -44,35 +44,15 @@ aviUser:
       - all_tenants: true
         role_ref: "/api/role?name=System-Admin"
 
-
-# aws:
-#   region: region
-#   secretAccessKey: secretAccessKey
-#   accessKeyId: accessKeyId
-#   vpcId: vpcId
-#
-# awsZones:
-# - zone1
-# - zone2
-# - zone3
-#
-# awsSubnetAviVsCidrs:
-# - 192.168.11.0/24
-# - 192.168.12.0/24
-# - 192.168.13.0/24
-# - 192.168.14.0/24
-#
-# awsSubnetAviVsIds:
-# - id1
-# - id2
-# - id3
-# - id4
-#
-# vstest:
-#   http:
-#     - name: app1
-#       cloud_ref: cloudGcp
-#     - name: app2
-#       cloud_ref: cloudAws
-#     - name: app3
-#       cloud_ref: cloudAws
+healthMonitor:
+  - name: hm1
+    receive_timeout: 1
+    failed_checks: 2
+    send_interval: 1
+    successful_checks: 2
+    type: HEALTH_MONITOR_HTTP
+    http_request: "HEAD / HTTP/1.0"
+    http_response_code:
+      - HTTP_2XX
+      - HTTP_3XX
+      - HTTP_5XX
