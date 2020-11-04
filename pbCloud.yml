@@ -110,25 +110,29 @@
       tags:
         - cloud
 
-    - set_fact:
+    - name: Define Network Range IP Begin
+      set_fact:
         ipBegin: "{{ network.cidr | ipaddr(network.ipStartPool) }}"
       when:
         - network.cidr is defined
         - network.ipStartPool is defined
 
-    - set_fact:
+    - name: Define Network Range IP Begin
+      set_fact:
         ipBegin: "{{ ipBegin.split('/')[0] }}"
       when:
         - network.cidr is defined
         - network.ipStartPool is defined
 
-    - set_fact:
+    - name: Define Network Range IP End
+      set_fact:
         ipEnd: "{{ network.cidr | ipaddr(network.ipEndPool) }}"
       when:
         - network.cidr is defined
         - network.ipEndPool is defined
 
-    - set_fact:
+    - name: Define Network Range IP End
+      set_fact:
         ipEnd: "{{ ipEnd.split('/')[0] }}"
       when:
         - network.cidr is defined
