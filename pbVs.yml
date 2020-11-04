@@ -339,7 +339,7 @@
         lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool_open_cart.health_monitor_refs }}"
+          - "/api/healthmonitor?name={{ avi_pool_open_cart.health_monitor_refs | default('hm1') }}"
         servers:
           - ip:
               addr: "{{ item }}"
