@@ -6,10 +6,6 @@
   vars:
     listNetworkUuid: []
 
-  # vars_files:
-  #   # - "vars/fromTerraform.yml"
-    # - "../vars/creds.json"
-
   roles:
     - role: "avinetworks.avisdk"
 
@@ -185,13 +181,13 @@
         - ipEnd is defined
         - network.cidr is defined
 
-    - name: Debug configured_subnets variable
-      debug:
-        msg: "{{ configured_subnets }}"
-      tags:
-        - debug
-      when:
-        - configured_subnets is defined
+#    - name: Debug configured_subnets variable
+#      debug:
+#        msg: "{{ configured_subnets }}"
+#      tags:
+#        - debug
+#      when:
+#        - configured_subnets is defined
 
     - name: Create Network for IPAM
       avi_network:
