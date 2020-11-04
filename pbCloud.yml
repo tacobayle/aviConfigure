@@ -134,9 +134,9 @@
         - network.cidr is defined
         - network.ipEndPool is defined
 
-    - name: Define subnet for network
+    - name: Define configured_subnets for network
       set_fact:
-        network:
+        configured_subnets:
           subnet:
             - prefix:
                 mask: "{{ network.cidr.split('/')[1] }}"
@@ -155,15 +155,13 @@
         - ipEnd is defined
         - network.cidr is defined
 
-    - name: Debug network.subnet variable
+    - name: Debug configured_subnets variable
       debug:
-        msg: "{{ network.subnet }}"
+        msg: "{{ configured_subnets }}"
       tags:
         - debug
       when:
-        - ipBegin is defined
-        - ipEnd is defined
-        - network.cidr is defined
+        - configured_subnets is defined
 
     - name: Debug network.dhcp_enabled variable
       debug:
@@ -180,7 +178,7 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ network.name | default('net-avi')}}"
         cloud_ref: "/api/cloud/?name={{ network.cloud_ref }}"
-        configured_subnets: "{{ network.subnet }}"
+        configured_subnets: "{{ configured_subnets }}"
         dhcp_enabled: "{{ network.dhcp_enabled | default('false')}}"
       when:
         - network is defined
