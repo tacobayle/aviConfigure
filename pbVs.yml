@@ -66,7 +66,7 @@
       when:
         - healthMonitor is defined
         - item.type == "HEALTH_MONITOR_HTTP"
-        - no_access is defined or gcp is defined
+        - no_access is defined or gcp is defined or aws is defined
       tags:
         - vsHttp
         - hm
