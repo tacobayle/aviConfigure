@@ -137,7 +137,7 @@
           - "{{ item.1.id }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.0.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
-          - "/api/healthmonitor?name={{ item.0.health_monitor_refs }}"
+          - "/api/healthmonitor?name={{ item.0.health_monitor_refs | default('hm1') }}"
       with_nested:
         - "{{ avi_pool_nsxtGroup }}"
         - "{{ nsxtGroups.resource.nsxt_groups }}"
@@ -181,7 +181,7 @@
         lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
         health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs }}"
+          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
         servers:
           - ip:
               addr: "{{ item }}"
@@ -299,7 +299,7 @@
           - "{{ item.external_autoscale_groups }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
-          - "/api/healthmonitor?name={{ item.health_monitor_refs }}"
+          - "/api/healthmonitor?name={{ item.health_monitor_refs | default('hm1') }}"
       loop: "{{ avi_pool_group }}"
       when:
         - avi_pool_group is defined
