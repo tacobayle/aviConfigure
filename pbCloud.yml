@@ -922,7 +922,7 @@
       when:
         - aws is defined
 
-    - name: Configure Avi Cloud for AWS
+    - name: Configure Avi Cloud for AWS (using IAM role)
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -938,6 +938,30 @@
       register: aviCloudAws
       when:
         - aws is defined
+        - aws.secret_access_key is not defined
+        - aws.access_key_id is not defined
+      tags:
+        - cloud
+
+    - name: Configure Avi Cloud for AWS (without IAM role)
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ aws.cloudName }}"
+        vtype: CLOUD_AWS
+        aws_configuration:
+          secret_access_key: "{{ aws.secret_access_key }}"
+          access_key_id: "{{ aws.access_key_id }}"
+          region: "{{ aws.region }}"
+          route53_integration: true
+          asg_poll_interval: 60
+          vpc_id: "{{ aws.vpc_id }}"
+          zones: "{{ zones }}"
+      register: aviCloudAws
+      when:
+        - aws is defined
+        - aws.secret_access_key is defined
+        - aws.access_key_id is defined
       tags:
         - cloud
 
