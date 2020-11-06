@@ -940,8 +940,6 @@
       register: aviCloudAws
       when:
         - aws is defined
-        - aws.secret_access_key is not defined
-        - aws.access_key_id is not defined
       tags:
         - cloud
 
