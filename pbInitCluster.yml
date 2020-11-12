@@ -19,11 +19,13 @@
                           {'api_version': "{{ controller.version }}",
                            'controller': "{{ controllerPrivateIps.0 }}",
                            'password': "{{ controller.password }}",
-                           'username': "{{ controller.username }}"}
+                           'username': "{{ controller.username | default{'admin') }}"}
       tags:
         - creds
       when:
-        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE" or controller.environment == "AZURE"
+        - controller.version is defined
+        - controllerPrivateIps is defined
+        - controller.password is defined
 
     - name: Debug variable avi_credentials
       debug:
@@ -42,7 +44,7 @@
       tags:
         - creds
       when:
-        - controller.environment == "VMWARE" or controller.environment == "GCP" or controller.environment == "AZURE"
+        - controller.environment != "AWS"
 
     - name: Setting up Random password for users
       set_fact:
@@ -50,7 +52,8 @@
       loop: "{{ aviUser }}"
       loop_control:
         label: "Configuring {{ item.name }}"
-      when: aviUser is defined
+      when:
+        - aviUser is defined
       tags:
         - creds
         - password
@@ -74,7 +77,8 @@
       loop: "{{ aviUser|zip(my_pass)|list }}"
       loop_control:
         label: "Configuring {{ item.0.name }}"
-      when: aviUser is defined
+      when:
+        - aviUser is defined
       tags:
         - creds
 
@@ -87,8 +91,6 @@
                           'username': "{{ aviUser.0.name }}"}
       tags:
         - creds
-      when:
-        - controller.environment == "GCP" or controller.environment == "AWS" or controller.environment == "VMWARE" or controller.environment == "AZURE"
 
     - name: Get main Cluster Information
       avi_api_session:
