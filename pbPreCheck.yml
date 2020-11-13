@@ -1,5 +1,5 @@
 ---
-- hosts: controller,aws_group_controller,gcp_group_controller,azure_group_controller
+- hosts: controller,aws_group_controller,gcp_group_controller,azure_group_controller,meta-avi_controller
   gather_facts: no
   connection: local
 

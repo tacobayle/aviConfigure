@@ -24,7 +24,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../terraform/aviControllerVmw" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../aviVmw" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -39,10 +39,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-188" y="-790" key="FileChooserDialogImpl" timestamp="1604680473139">
-      <screen x="-928" y="-1085" width="1920" height="1080" />
+    <state x="1732" y="-785" key="FileChooserDialogImpl" timestamp="1605290753530">
+      <screen x="992" y="-1080" width="1920" height="1080" />
     </state>
     <state x="-188" y="-790" key="FileChooserDialogImpl/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@-928.-1085.1920.1080" timestamp="1604680473139" />
-    <state x="1732" y="-785" key="FileChooserDialogImpl/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@992.-1080.1920.1080" timestamp="1604571723192" />
+    <state x="1732" y="-785" key="FileChooserDialogImpl/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@992.-1080.1920.1080" timestamp="1605290753530" />
   </component>
 </project>
