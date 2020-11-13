@@ -19,13 +19,14 @@
                           {'api_version': "{{ controller.version }}",
                            'controller': "{{ controllerPrivateIps.0 }}",
                            'password': "{{ controller.password }}",
-                           'username': "{{ controller.username | default{'admin') }}"}
+                           'username': "{{ controller.username }}"}
       tags:
         - creds
       when:
         - controller.version is defined
         - controllerPrivateIps is defined
         - controller.password is defined
+        - controller.username is defined
 
     - name: Debug variable avi_credentials
       debug:
