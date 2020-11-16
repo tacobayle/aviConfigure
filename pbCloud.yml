@@ -11,7 +11,7 @@
 
   tasks:
 
-    - name: Create Avi DNS provider setting (for GCP, Vcenter, NSX-T or no Access)
+    - name: Create Avi DNS provider setting (for GCP, Vcenter, NSX-T, OpenStack or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -25,12 +25,12 @@
         name: "{{ dns.name | default('dns-avi')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       when:
-        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined
+        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined or openstack is defined
         - domain.name is defined
       tags:
         - dns
 
-    - name: Create Avi IPAM
+    - name: Create Avi IPAM (for GCP or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -41,6 +41,25 @@
         - gcp is defined or no_access is defined
       tags:
         - ipam
+
+    - name: Configure Avi Cloud for OpenStack
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ avi_cloud.name | default('cloudOpenStack') }}"
+        vtype: CLOUD_OPENSTACK
+        openstack_configuration: "{{ openstack }}"
+      register: aviCloudOpenStack
+      tags:
+        - cloud
+      when:
+        - openstack is defined
+
+    - name:  Define Cloud OpenStack uuid
+      set_fact:
+        cloud_uuid_openstack: "{{ aviCloudOpenStack.obj.uuid }}"
+      when:
+        - openstack is defined
 
     - name: Configure Avi Cloud for No Access
       avi_cloud:

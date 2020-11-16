@@ -1,0 +1,69 @@
+---
+count: 2
+results:
+  - url: https://100.64.129.68/api/cloud/cloud-f214d99c-932d-46f6-995b-d1956c13b94e
+    uuid: cloud-f214d99c-932d-46f6-995b-d1956c13b94e
+    name: Default-Cloud
+    tenant_ref: https://100.64.129.68/api/tenant/admin
+    _last_modified: '1605514688151126'
+    vtype: CLOUD_NONE
+    apic_mode: false
+    dhcp_enabled: false
+    mtu: 1500
+    prefer_static_routes: false
+    enable_vip_static_routes: false
+    license_type: LIC_CORES
+    state_based_dns_registration: true
+    ip6_autocfg_enabled: false
+    dns_resolution_on_se: false
+    enable_vip_on_all_interfaces: false
+    license_tier: ENTERPRISE
+    autoscale_polling_interval: 60
+  - url: https://100.64.129.68/api/cloud/cloud-0a8e390e-3586-45e0-a561-2ebdfa8d255c
+    uuid: cloud-0a8e390e-3586-45e0-a561-2ebdfa8d255c
+    name: cloudOpenStack
+    tenant_ref: https://100.64.129.68/api/tenant/admin
+    _last_modified: '1605520585862829'
+    vtype: CLOUD_OPENSTACK
+    openstack_configuration:
+      username: admin
+      password: "<sensitive>"
+      admin_tenant: projectAvi
+      mgmt_network_name: net-avise
+      privilege: WRITE_ACCESS
+      use_keystone_auth: true
+      region: RegionOne
+      hypervisor: KVM
+      tenant_se: true
+      import_keystone_tenants: true
+      anti_affinity: true
+      security_groups: true
+      allowed_address_pairs: true
+      free_floatingips: false
+      img_format: OS_IMG_FMT_AUTO
+      use_admin_url: true
+      role_mapping:
+        - os_role: admin
+          avi_role: Tenant-Admin
+      use_internal_endpoints: false
+      config_drive: true
+      auth_url: http://10.41.134.124:35357/v3
+      insecure: false
+      external_networks: false
+      neutron_rbac: true
+      map_admin_to_cloudadmin: false
+      contrail_plugin: false
+      name_owner: true
+      contrail_disable_policy: false
+    apic_mode: false
+    dhcp_enabled: true
+    mtu: 1500
+    prefer_static_routes: false
+    enable_vip_static_routes: false
+    license_type: LIC_CORES
+    state_based_dns_registration: true
+    ip6_autocfg_enabled: true
+    dns_resolution_on_se: false
+    enable_vip_on_all_interfaces: false
+    license_tier: ENTERPRISE
+    autoscale_polling_interval: 60
