@@ -35,10 +35,10 @@
             ipam_network_subnet:
               network_ref: "/api/network/?name={{ item.network_ref | default(avi_network_vip.name) }}"
               subnet:
-                mask: "{{ item.mask | default(avi_network_vip.subnet.0.prefix.mask) }}"
+                mask: "{{ item.mask | default(avi_network_vip.cidr.split('/')[1]) }}"
                 ip_addr:
-                  type: "{{ item.type | default(avi_network_vip.subnet.0.prefix.ip_addr.type) }}"
-                  addr: "{{ item.addr | default(avi_network_vip.subnet.0.prefix.ip_addr.addr) }}"
+                  type: "{{ item.type | default(avi_network_vip.type) }}"
+                  addr: "{{ item.addr | default(avi_network_vip.cidr.split('/')[0]) }}"
       loop: "{{ avi_virtualservice.dns }}"
       when:
         - avi_virtualservice.http is defined
@@ -62,10 +62,10 @@
             ipam_network_subnet:
               network_ref: "/api/network/?name={{ item.network_ref | default(avi_network_vip.name) }}"
               subnet:
-                mask: "{{ item.mask | default(avi_network_vip.subnet.0.prefix.mask) }}"
+                mask: "{{ item.mask | default(avi_network_vip.cidr.split('/')[1]) }}"
                 ip_addr:
-                  type: "{{ item.type | default(avi_network_vip.subnet.0.prefix.ip_addr.type) }}"
-                  addr: "{{ item.addr | default(avi_network_vip.subnet.0.prefix.ip_addr.addr) }}"
+                  type: "{{ item.type | default(avi_network_vip.type) }}"
+                  addr: "{{ item.addr | default(avi_network_vip.cidr.split('/')[0]) }}"
       loop: "{{ avi_virtualservice.http }}"
       when:
         - avi_virtualservice.http is defined
