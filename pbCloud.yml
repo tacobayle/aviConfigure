@@ -704,7 +704,7 @@
       set_fact:
         vipConfigured_subnets:
           - prefix:
-              mask: "{{ avi_network_vip.cidr('/')[1] }}"
+              mask: "{{ avi_network_vip.cidr.split('/')[1] }}"
               ip_addr:
                 type: "{{ avi_network_vip.type }}"
                 addr: "{{ avi_network_vip.cidr.split('/')[0] }}"
