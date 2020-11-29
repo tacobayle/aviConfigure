@@ -1069,7 +1069,7 @@
     - name: sleep for 120 seconds and continue with play
       wait_for: timeout=120
       when:
-        - azure is defined or aws is defined or gcp is defined or nsxt is defined or vmw is defined openstack is defined
+        - azure is defined or aws is defined or gcp is defined or nsxt is defined or vmw is defined or openstack is defined
       tags:
         - cloud
 
