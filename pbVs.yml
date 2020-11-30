@@ -211,7 +211,7 @@
         - vsHttp
         - vs
 
-    - name: update pool with servers (VMware, NoAccessVMware)
+    - name: update pool with servers (NoAccessVMware)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -231,13 +231,13 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudVmw" or avi_pool.cloud_ref == "cloudNoAccess"
+        - avi_pool.cloud_ref == "cloudNoAccess"
       tags:
         - pool
         - vsHttp
         - vs
 
-    - name: update pool with servers (AWS, GCP, Azure)
+    - name: update pool with servers (VMware, AWS, GCP, Azure)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -257,7 +257,7 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure"
+        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure" or avi_pool.cloud_ref == "cloudVmw"
       tags:
         - pool
         - vsHttp
