@@ -532,6 +532,8 @@
       set_fact:
         networkMgtUuid: "{{ item.uuid }}"
       loop: "{{ networkOutput.obj.results }}"
+      loop_control:
+        label: "{{ item.name }}"
       tags:
         - cloud
         - network
@@ -630,6 +632,8 @@
       set_fact:
         networkVipUuid: "{{ item.uuid }}"
       loop: "{{ networkOutput.obj.results }}"
+      loop_control:
+        label: "{{ item.name }}"
       tags:
         - cloud
         - network
