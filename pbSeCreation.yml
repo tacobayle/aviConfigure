@@ -124,7 +124,7 @@
         username: "{{ vcenter.username }}"
         password: "{{ vcenter.password }}"
         datacenter_name: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
-        folder_name: "{{ seg.name }}"
+        folder_name: "Avi-SEG-{{ seg.name }}"
         folder_type: vm
         state: present
       register: vm_folder_creation_result
