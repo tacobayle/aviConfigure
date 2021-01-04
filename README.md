@@ -1,10 +1,10 @@
 # Avi Configure
 
 ## Goals
-Configure Avi controller through Ansible for multi environement (VMware, AWS, GCP, Azure and VMC).
+Configure Avi controller through Ansible for multi environment (VMware, AWS, GCP, Azure and VMC).
 
 ## Prerequisites:
-- Make The following python packages are installed:
+- The following python packages are installed:
 ```
 pip install ansible
 pip install dnspython
@@ -12,7 +12,7 @@ pip3 install dnspython
 pip install avisdk==18.2.9
 sudo -u ubuntu ansible-galaxy install -f avinetworks.avisdk
 ```
-- Make sure your Avi Controller is reachable (HTTP 443) from your ansible host
+- Avi Controller is reachable (HTTP 443) from your ansible host
 - For VMC, make sure the vcenter and ESXi hosts are reachable (HTTP 443) from your ansible host
 
 ## Environment:
@@ -50,7 +50,7 @@ ansible 2.9.12
 ### Avi version
 
 ```
-Avi 20.1.1
+Avi 20.1.3
 avisdk 18.2.9
 ```
 
@@ -60,25 +60,25 @@ avisdk 18.2.9
 - AWS
 - NSX-T
 - GCP
-- VMC
+- VMC (No Access)
 
 ## Input/Parameters:
 
 A sample variable file per cloud type is defined in the var directory:
 - vars/vcenter.yml
 
-## Use the the ansible playbook to:
+## Use  the ansible playbook to:
 - Wait the portal to be active (https port open)
 - Bootstrap the controller with a password
 - Configure the controller cluster (Vcenter or NSX environment only)
-- Create a backup backup_passphrase
+- Create a backup_passphrase
 - Configure system configuration (global, DNS, NTP, email config)
 - Configure Cloud, supported clouds are: v-center, was, azure, gcp, nsxt, no access (for VMC)
 - Configure SE group
-- Configure SE (only for VMC)
+- Spin-up SE (only for VMC)
 - Create a Health Monitor
 - Create a Pool (based on the Health Monitor previously created) -  based on servers IP
-- Create a Pool (based on the Health Monitor previously created) -  based on NSXT Group
+- Create a Pool (based on the Health Monitor previously created) -  based on NSX-T Group
 - Create a Pool (based on the Health Monitor previously created) -  based on AWS ASG
 - Create VS(s) based on vs-vip
 - Enable a GSLB config (with a local controller and a remote controller)

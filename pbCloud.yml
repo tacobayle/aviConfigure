@@ -255,9 +255,9 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        internal_profile:
-          usable_networks:
-            - nw_ref: "/api/network/{{ listNetworkUuid.0 }}"
+        gcp_profile:
+          usable_network_refs:
+            - "/api/network/{{ listNetworkUuid.0 }}"
         name: "{{ ipam.name | default('ipam-avi') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
