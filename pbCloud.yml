@@ -712,13 +712,14 @@
               ip_addr:
                 type: "{{ avi_network_vip.type }}"
                 addr: "{{ avi_network_vip.cidr.split('/')[0] }}"
-            static_ranges:
-              - begin:
-                  type: "{{ avi_network_vip.type }}"
-                  addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.begin }}"
-                end:
-                  type: "{{ avi_network_vip.type }}"
-                  addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.end }}"
+            static_ip_ranges:
+              - range:
+                  begin:
+                    type: "{{ avi_network_vip.type }}"
+                    addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.begin }}"
+                  end:
+                    type: "{{ avi_network_vip.type }}"
+                    addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.end }}"
       when:
         - avi_network_vip is defined
         - vmw is defined
