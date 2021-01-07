@@ -816,7 +816,7 @@
                 type: "{{ avi_network_vip.type }}"
               mask: "0"
             next_hop:
-              addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.gwAddr }}"
+              addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.gwAddr | default('1') }}"
               type: "{{ avi_network_vip.type }}"
             route_id: "1"
       when:
