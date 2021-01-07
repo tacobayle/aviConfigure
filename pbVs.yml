@@ -163,7 +163,7 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudNsx"
+        - avi_pool.cloud_ref == "cloudNsxt"
       tags:
         - pool
         - vsHttp
@@ -190,7 +190,7 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudNsx"
+        - avi_pool.cloud_ref == "cloudNsxt"
       tags:
         - pool
         - vsHttp
