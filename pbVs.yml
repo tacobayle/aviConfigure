@@ -33,40 +33,13 @@
         send_interval: "{{ item.send_interval }}"
         successful_checks: "{{ item.successful_checks }}"
         type: "{{ item.type }}"
-      loop: "{{ avi_healthmonitor }}"
-      loop_control:
-        label: "{{ item.name }}"
-      when:
-        - avi_healthmonitor is defined
-        - item.type == "HEALTH_MONITOR_HTTP"
-      tags:
-        - vsHttp
-        - hm
-        - pool
-        - vs
-
-    - name: Create HTTP health monitor
-      avi_healthmonitor:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ item.name }}"
-        tenant: "{{ item.tenant_ref | default('admin') }}"
-        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        http_monitor:
-          http_request: "{{ item.http_request }}"
-          http_response_code: "{{ item.http_response_code }}"
-        receive_timeout: "{{ item.receive_timeout }}"
-        failed_checks: "{{ item.failed_checks }}"
-        send_interval: "{{ item.send_interval }}"
-        successful_checks: "{{ item.successful_checks }}"
-        type: "{{ item.type }}"
       loop: "{{ healthMonitor }}"
       loop_control:
         label: "{{ item.name }}"
       when:
         - healthMonitor is defined
         - item.type == "HEALTH_MONITOR_HTTP"
-        - no_access is defined or gcp is defined or aws is defined or azure is defined or vmw is defined
+        - no_access is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined
       tags:
         - vsHttp
         - hm
@@ -99,53 +72,50 @@
 # NSXT workaround
 #
 
-    - name: retrieve NsxT details for avi_pool_nsxtGroup
-      command: python3 python/retrieveNsxtGroups.py ../vars/creds.json "{{ aviCloudUuid }}"
-      ignore_errors: no
-      register: nsxtGroupsJson
-      when:
-        - avi_pool_nsxtGroup is defined
-        - nsxt is defined
-      tags:
-        - pool
-        - vsHttp
-        - vs
-        - avi_pool_nsxtGroup
-
-    - name: save NsxT details for avi_pool_nsxtGroup
-      set_fact:
-        nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
-      when:
-        - avi_pool_nsxtGroup is defined
-        - nsxt is defined
-      tags:
-        - pool
-        - vsHttp
-        - vs
-        - avi_pool_nsxtGroup
+#    - name: retrieve NsxT details for avi_pool_nsxtGroup
+#      command: python3 python/retrieveNsxtGroups.py ../vars/creds.json "{{ aviCloudUuid }}"
+#      ignore_errors: no
+#      register: nsxtGroupsJson
+#      when:
+#        - avi_pool_nsxtGroup is defined
+#        - nsxt is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+#        - avi_pool_nsxtGroup
+#
+#    - name: save NsxT details for avi_pool_nsxtGroup
+#      set_fact:
+#        nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
+#      when:
+#        - avi_pool_nsxtGroup is defined
+#        - nsxt is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+#        - avi_pool_nsxtGroup
 
     - name: create pool with servers (NSXT) based on NSXT group
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ item.0.name }}"
+        name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ item.0.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        lb_algorithm: "{{ item.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
         nsx_securitygroup:
-          - "{{ item.1.id }}"
-        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.0.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
+          - "{{ item.id }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
-          - "/api/healthmonitor?name={{ item.0.health_monitor_refs | default('hm1') }}"
-      with_nested:
-        - "{{ avi_pool_nsxtGroup }}"
-        - "{{ nsxtGroups.resource.nsxt_groups }}"
+          - "/api/healthmonitor?name={{ item.health_monitor_refs | default('hm1') }}"
+      loop: "{{ avi_pool_nsxtGroup }}"
       ignore_errors: yes
       when:
         - avi_pool_nsxtGroup is defined
         - nsxt is defined
-        - item.0.groupName == item.1.name
       tags:
         - pool
         - vsHttp
