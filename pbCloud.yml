@@ -440,27 +440,27 @@
         - cloud
         - debugnsxt
 
-    - name: python workaround to retrieve vcenter content library info
-      command: python3 python/retrieveNsxtVcentersLibrary.py ../vars/creds.json "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenterContentLibrary }}"
-      ignore_errors: no
-      register: vcenterContentLibraryJson
-      tags:
-        - cloud
-        - nsxtApi
-        - debugnsxt
-      when:
-        - nsxt.vcenterContentLibrary is defined
-        - nsxt is defined
+#    - name: python workaround to retrieve vcenter content library info
+#      command: python3 python/retrieveNsxtVcentersLibrary.py ../vars/creds.json "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenterContentLibrary }}"
+#      ignore_errors: no
+#      register: vcenterContentLibraryJson
+#      tags:
+#        - cloud
+#        - nsxtApi
+#        - debugnsxt
+#      when:
+#        - nsxt.vcenterContentLibrary is defined
+#        - nsxt is defined
 
-    - set_fact:
-        vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
-      tags:
-        - cloud
-        - nsxtApi
-        - debugnsxt
-      when:
-        - nsxt.vcenterContentLibrary is defined
-        - nsxt is defined
+#    - set_fact:
+#        vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
+#      tags:
+#        - cloud
+#        - nsxtApi
+#        - debugnsxt
+#      when:
+#        - nsxt.vcenterContentLibrary is defined
+#        - nsxt is defined
 
     - name: Configure Vcenter Server for NSXT cloud
       avi_vcenterserver:
@@ -471,7 +471,7 @@
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         vcenter_url: "{{ vcenter.server }}"
         content_lib:
-          id: "{{ vcenterContentLibrary.id }}"
+          id: "{{ avi_cloud.vcenterContentLibraryId }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
       tags:
         - cloud
