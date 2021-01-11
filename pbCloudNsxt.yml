@@ -174,7 +174,7 @@
         - nsxt is defined
 
     - set_fact:
-        vcenterContentLibraryId: "{{ vcenterContentLibraryJson.stdout | from_json }}"
+        vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
       tags:
         - cloud
         - nsxtApi
@@ -191,7 +191,7 @@
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         vcenter_url: "{{ vcenter.server }}"
         content_lib:
-          id: "{{ vcenterContentLibraryId }}"
+          id: "{{ vcenterContentLibraryId.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
       tags:
         - cloud
