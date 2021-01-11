@@ -23,7 +23,7 @@
         name: "vsvip-{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        tier1_lr: "/infra/tier-1s/{{ nsxtTier1sVip.id }}"
+        tier1_lr: "{{ nsxtTier1sVip.id }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
@@ -51,7 +51,7 @@
         name: "vsvip-{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        tier1_lr: "/infra/tier-1s/{{ nsxtTier1sVip.id }}"
+        tier1_lr: "{{ nsxtTier1sVip.id }}"
         dns_info:
           - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
