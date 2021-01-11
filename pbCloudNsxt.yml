@@ -433,7 +433,7 @@
             segment_config_mode: TIER1_SEGMENT_MANUAL
             manual:
               tier1_lrs:
-                - tier1_lr_id: "{{ nsxtTier1sVip.id }}"
+                - tier1_lr_id: "/infra/tier-1s/{{ nsxtTier1sVip.id }}"
                   segment_id: "{{ nsxtSegmentVip.id }}"
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
