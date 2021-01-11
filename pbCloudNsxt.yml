@@ -163,24 +163,24 @@
         - nsxtApi
 
     - name: python workaround to retrieve vcenter content library info
-        command: python3 python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenterContentLibrary }}"
-        ignore_errors: no
-        register: vcenterContentLibraryJson
-        tags:
-          - cloud
-          - nsxtApi
-        when:
-          - nsxt.vcenterContentLibrary is defined
-          - nsxt is defined
+      command: python3 python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenterContentLibrary }}"
+      ignore_errors: no
+      register: vcenterContentLibraryJson
+      tags:
+        - cloud
+        - nsxtApi
+      when:
+        - nsxt.vcenterContentLibrary is defined
+        - nsxt is defined
 
     - set_fact:
         vcenterContentLibraryId: "{{ vcenterContentLibraryJson.stdout | from_json }}"
-        tags:
-          - cloud
-          - nsxtApi
-        when:
-          - nsxt.vcenterContentLibrary is defined
-          - nsxt is defined
+      tags:
+        - cloud
+        - nsxtApi
+      when:
+        - nsxt.vcenterContentLibrary is defined
+        - nsxt is defined
 
     - name: Configure Vcenter Server for NSXT cloud
       avi_vcenterserver:
