@@ -9,7 +9,7 @@
 
     - name: Debug
       debug:
-        msg: "{{ avi_credentials }}"
+        msg: "{{ hostvars['localhost']['avi_credentials']['controller'] }}"
       tags:
         - debug
       when:
