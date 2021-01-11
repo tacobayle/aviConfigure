@@ -17,8 +17,8 @@
 
     - name: copy keys for avi controller
       copy:
-        src: "{{ lsc.controller_private_key }}"
-        dest: ".ssh/{{ lsc.controller_private_key | basename }}"
+        src: "{{ controller.private_key_path }}"
+        dest: ".ssh/{{ controller.private_key_path | basename }}"
 
     - name: sudo curl command for the controller
       become: true
