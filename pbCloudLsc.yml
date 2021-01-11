@@ -8,9 +8,25 @@
 
   tasks:
 
+    - name: Defining SE Memory
+      set_fact:
+        seMem: "{{ lsc.serviceEngineGroup.memory_per_se / 1000 }}"
+      when:
+        - lsc is defined
+      tags:
+        - cloud
+
+    - name: Defining SE Memory
+      set_fact:
+        seMemG: "{{ seMem | float | round(0,'common') | int }}"
+      when:
+        - lsc is defined
+      tags:
+        - cloud
+
     - name: Defining SE structure
       set_fact:
-        listSe: "{{ listSe | default([]) + [{ 'host_attr': [{'attr_key': 'CPU', 'attr_val': lsc.serviceEngineGroup.vcpus_per_se }], [{'attr_key': 'MEMORY', 'attr_val': lsc.serviceEngineGroup.memory_per_se / 1000 | round }], [{'attr_key': 'DPDK', 'attr_val': lsc.serviceEngineGroup.DPDK }], [{'attr_key': 'SE_INBAND_MGMT', 'attr_val': lsc.serviceEngineGroup.SE_INBAND_MGMT }], {'host_ip': {'type': 'V4', 'addr': item.0 }}, {'se_group_ref': '/api/serviceenginegroup/?name=Default-Group'} }] }}"
+        listSe: "{{ listSe | default([]) + [{ 'host_attr': [{'attr_key': 'CPU', 'attr_val': lsc.serviceEngineGroup.vcpus_per_se }, {'attr_key': 'MEMORY', 'attr_val': seMemG}, {'attr_key': 'DPDK', 'attr_val': lsc.serviceEngineGroup.DPDK }, {'attr_key': 'SE_INBAND_MGMT', 'attr_val': lsc.serviceEngineGroup.SE_INBAND_MGMT }], 'host_ip': {'type': 'V4', 'addr': item }, 'se_group_ref': '/api/serviceenginegroup/?name=Default-Group'} ] }}"
       loop: "{{ seLsc }}"
       when:
         - lsc is defined
@@ -38,7 +54,7 @@
           se_sys_disk_size_GB: 10
           se_log_disk_size_GB: 5
           se_inband_mgmt: false
-          hosts: '{{ ListSe }}'
+          hosts: '{{ listSe }}'
           ssh_user_ref: /api/cloudconnectoruser/?name=credsLsc
         prefer_static_routes: false
         license_type: LIC_CORES
