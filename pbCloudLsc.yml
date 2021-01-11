@@ -26,7 +26,7 @@
 
     - name: Defining SE structure
       set_fact:
-        listSe: "{{ listSe | default([]) + [{ 'host_attr': [{'attr_key': 'CPU', 'attr_val': lsc.serviceEngineGroup.vcpus_per_se }, {'attr_key': 'MEMORY', 'attr_val': seMemG}, {'attr_key': 'DPDK', 'attr_val': lsc.serviceEngineGroup.DPDK }, {'attr_key': 'SE_INBAND_MGMT', 'attr_val': lsc.serviceEngineGroup.SE_INBAND_MGMT }], 'host_ip': {'type': 'V4', 'addr': item }, 'se_group_ref': '/api/serviceenginegroup/?name=Default-Group'} ] }}"
+        listSe: "{{ listSe | default([]) + [{ 'host_attr': [{'attr_key': 'CPU', 'attr_val': lsc.serviceEngineGroup.vcpus_per_se }, {'attr_key': 'MEMORY', 'attr_val': seMemG}, {'attr_key': 'DPDK', 'attr_val': lsc.serviceEngineGroup.DPDK }, {'attr_key': 'SE_INBAND_MGMT', 'attr_val': lsc.serviceEngineGroup.SE_INBAND_MGMT }], 'host_ip': {'type': 'V4', 'addr': item }} ] }}"
       loop: "{{ seLsc }}"
       when:
         - lsc is defined
