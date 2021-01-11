@@ -105,7 +105,7 @@
         cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ item.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
+        tier1_lr: "{{ nsxtTier1sVip.id }}"
         nsx_securitygroup:
           - "{{ item.id }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
@@ -129,7 +129,7 @@
         name: "{{ avi_pool.name }}"
         cloud_ref: "/api/cloud/?name={{ avi_pool.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
+        tier1_lr: "{{ nsxtTier1sVip.id }}"
       when:
         - avi_servers is defined
         - avi_pool is defined
@@ -149,7 +149,7 @@
         cloud_ref: "/api/cloud/?name={{ avi_pool.cloud_ref | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        tier1_lr: "{{ avi_network_vip.tier1 | default(omit) }}"
+        tier1_lr: "{{ nsxtTier1sVip.id }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
         servers:
