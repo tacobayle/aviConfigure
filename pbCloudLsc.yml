@@ -19,7 +19,7 @@
 
     - name: Debug
       debug:
-        msg: "{{ ListSe }}"
+        msg: "{{ listSe }}"
       when:
         - lsc is defined
       tags:
