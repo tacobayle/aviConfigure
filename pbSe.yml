@@ -1,0 +1,17 @@
+---
+- hosts: seLsc
+  become: true
+  gather_facts: no
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: copy keys for avi controller
+      copy:
+        src: "{{ lsc.controller_private_key }}"
+        dest: ".ssh/{{ lsc.controller_private_key | basename }}"
+
+    - name: sudo curl command for the controller
+      become: true
+      shell: |
+        curl -ks https://"{{ avi_credentials.controller }}":443/api/linux_host_install?username=credsLsc | sudo bash

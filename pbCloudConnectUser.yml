@@ -17,7 +17,28 @@
       tags:
         - debug
       when:
-        - nsxt is defined
+        - nsxt is defined or lsc is defined
+
+    - name: Create a Cloud connector user for LSC
+      avi_cloudconnectoruser:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        private_key: "{{ lookup('file', '{{ lsc.se_private_key }}') }}"
+        name: credsLsc
+      register: lscUserOutput
+      ignore_errors: no
+      tags:
+        - cloud
+      when:
+        - lsc is defined
+
+    - name: Debug
+      debug:
+        msg: "{{ lscUserOutput.obj.uuid }}"
+      tags:
+        - debug
+      when:
+        - lsc is defined
 
     - name: Create a Cloud connector user for NSX-T
       avi_cloudconnectoruser:
