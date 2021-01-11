@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Configure Cloud for GCP
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ gcp.cloudName }}"
+        vtype: CLOUD_GCP
+        gcp_configuration:
+          gcs_bucket_name: "{{ gcp.gcs_bucket_name }}"
+          region_name: "{{ gcp.region_name }}"
+          se_project_id: "{{ gcp.se_project_id }}"
+          firewall_target_tags:
+            - "{{ gcp.firewall_target_tags }}"
+          network_config: "{{ gcp.network_config }}"
+          zones: "{{ gcpZones }}"
+        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ gcp.ipam_provider_ref | default('ipam-avi') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ gcp.dns_provider_ref | default('dns-avi') }}"
+      register: aviCloudGcp
+      when:
+        - gcp is defined
+        - gcpZones is defined
+      tags:
+        - cloud
+
+    - name: Define Cloud GCP uuid
+      set_fact:
+        aviCloudGcpUuid: "{{ aviCloudGcp.obj.uuid }}"
+      when:
+        - gcp is defined
+      tags:
+        - cloud

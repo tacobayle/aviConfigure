@@ -1,10 +1,19 @@
 ---
+- import_playbook: pbInstallDocker.yml
 - import_playbook: pbPreCheck.yml
 - import_playbook: pbAwsUpdatePassword.yml
 - import_playbook: pbInitCluster.yml
 - import_playbook: pbSystemConfig.yml
 - import_playbook: pbCloudConnectUser.yml
-- import_playbook: pbCloud.yml
+- import_playbook: pbDnsIpam.yml
+- import_playbook: pbCloudVmw.yml
+- import_playbook: pbCloudOpenstack.yml
+- import_playbook: pbCloudGcp.yml
+- import_playbook: pbCloudAzure.yml
+- import_playbook: pbCloudAws.yml
+- import_playbook: pbCloudNsxt.yml
+- import_playbook: pbCloudNoAccess.yml
+- import_playbook: pbCloudCheck.yml
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: pbSeGroup.yml
 - import_playbook: pbVsVipAzure.yml

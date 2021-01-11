@@ -1,0 +1,70 @@
+---
+- hosts: seLsc
+  gather_facts: yes
+  become_user: root
+  become_method: sudo
+
+  vars_files:
+    - "vars/params.yml"
+
+  tasks:
+
+    - name: Update repositories cache and install a list of package
+      become: true
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      ignore_errors: no
+      loop: "{{ packageList }}"
+      when: packageList is defined
+      tags:
+        - apt
+
+    - name: Add docker key to apt
+      become: true
+      apt_key:
+        url: "{{ item }}"
+      loop: "{{ keyUrl }}"
+      when: keyUrl is defined
+      tags:
+        - apt
+
+    - debug:
+        msg: "{{ hostvars[inventory_hostname].ansible_distribution }}"
+    - debug:
+        msg: "{{ hostvars[inventory_hostname].ansible_distribution_major_version }}"
+    - debug:
+        msg: "{{ hostvars[inventory_hostname].ansible_distribution_version }}"
+    - debug:
+        msg: "{{ hostvars[inventory_hostname].ansible_distribution_release }}"
+
+    - name: Add repo to apt
+      become: true
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      loop: "{{ repoUrl }}"
+      when: repoUrl is defined
+      tags:
+        - apt
+
+    - name: Install docker packages
+      become: true
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      ignore_errors: no
+      loop: "{{ dockerPackages }}"
+      when: dockerPackages is defined
+      tags:
+        - apt
+
+    - name: Add the docker users to the docker group
+      become: true
+      user:
+        name: "{{ dockerUser | default('ubuntu') }}"
+        group: docker
+        append: yes
+      ignore_errors: no
+      tags:
+        - user

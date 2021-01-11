@@ -1,0 +1,158 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    listNetworkUuid: []
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Create Avi DNS provider setting (for GCP, Vcenter, NSX-T, OpenStack or no Access)
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        internal_profile:
+          dns_service_domain:
+            - domain_name: "{{ domain.name }}"
+              num_dns_ip: 1
+              pass_through: true
+              record_ttl: 100
+          ttl: 300
+        name: "{{ dns.name | default('dns-avi')}}"
+        type: IPAMDNS_TYPE_INTERNAL_DNS
+      when:
+        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined or openstack is defined
+        - domain.name is defined
+      tags:
+        - dns
+
+    - name: Create Avi IPAM (for GCP or no Access)
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ ipam.name | default('ipam-avi') }}"
+        type: IPAMDNS_TYPE_INTERNAL
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam
+
+    - name: Define Network Range IP Begin
+      set_fact:
+        ipBegin: "{{ network.cidr | ipaddr(network.ipStartPool) }}"
+      when:
+        - network.cidr is defined
+        - network.ipStartPool is defined
+        - gcp is defined or no_access is defined
+
+
+    - name: Define Network Range IP Begin
+      set_fact:
+        ipBegin: "{{ ipBegin.split('/')[0] }}"
+      when:
+        - network.cidr is defined
+        - network.ipStartPool is defined
+        - gcp is defined or no_access is defined
+
+
+    - name: Define Network Range IP End
+      set_fact:
+        ipEnd: "{{ network.cidr | ipaddr(network.ipEndPool) }}"
+      when:
+        - network.cidr is defined
+        - network.ipEndPool is defined
+        - gcp is defined or no_access is defined
+
+
+    - name: Define Network Range IP End
+      set_fact:
+        ipEnd: "{{ ipEnd.split('/')[0] }}"
+      when:
+        - network.cidr is defined
+        - network.ipEndPool is defined
+        - gcp is defined or no_access is defined
+
+
+    - name: Define configured_subnets for network
+      set_fact:
+        configured_subnets:
+          - prefix:
+              mask: "{{ network.cidr.split('/')[1] }}"
+              ip_addr:
+                type: "{{ network.type | default('V4') }}"
+                addr: "{{ network.cidr.split('/')[0] }}"
+            static_ip_ranges:
+              - range:
+                  begin:
+                    type: "{{ network.type | default('V4') }}"
+                    addr: "{{ ipBegin }}"
+                  end:
+                    type: "{{ network.type | default('V4') }}"
+                    addr: "{{ ipEnd }}"
+      when:
+        - ipBegin is defined
+        - ipEnd is defined
+        - network.cidr is defined
+        - gcp is defined or no_access is defined
+
+    - name: Create Network for IPAM
+      avi_network:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ network.name | default('net-avi')}}"
+        cloud_ref: "/api/cloud/?name={{ network.cloud_ref }}"
+        configured_subnets: "{{ configured_subnets }}"
+        dhcp_enabled: "{{ network.dhcp_enabled | default('false')}}"
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam
+
+    - name: get Networks to retrieve Uuid
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: network
+      register: networkUuid
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam
+
+    - name: Append Network uuid to the list
+      set_fact:
+        listNetworkUuid: "{{ listNetworkUuid }} + [ '{{ item.uuid }}' ]"
+      loop: "{{ networkUuid.obj.results }}"
+      loop_control:
+        label: "{{ item.uuid }}"
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam
+
+    - name: Update Avi IPAM
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        gcp_profile:
+          usable_network_refs:
+            - "/api/network/{{ listNetworkUuid.0 }}"
+        name: "{{ ipam.name | default('ipam-avi') }}"
+        type: IPAMDNS_TYPE_INTERNAL
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam

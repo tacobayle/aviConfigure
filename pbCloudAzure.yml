@@ -1,0 +1,63 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Defining Azure datas structure
+      set_fact:
+        network_info: "{{ network_info | default([]) + [{ 'se_network_id': item.se_network_id, 'virtual_network_id': item.virtual_network_id }] }}"
+      loop: "{{ azureSubnets.mgt }}"
+      when:
+        - azure is defined
+        - azureSubnets.mgt
+      tags:
+        - cloud
+
+    - name: Debugging Azure datas structure
+      debug:
+        msg: "{{ network_info }}"
+      when:
+        - azure is defined
+        - azureSubnets.mgt
+      tags:
+        - cloud
+        - debug
+
+    # network_info:
+    #   - se_network_id: subnet1
+    #     virtual_network_id: "/subscriptions/{{ azure.subscriptionId }}/resourceGroups/rg-avi/providers/Microsoft.Network/virtualNetworks/vnet-avi"
+
+    - name: Configure Avi Cloud for Azure
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ azure.cloudName }}"
+        vtype: CLOUD_AZURE
+        azure_configuration:
+          use_managed_disks: "{{ azure.use_managed_disks }}"
+          resource_group: "{{ azure.resource_group }}"
+          use_enhanced_ha: "{{ azure.use_enhanced_ha }}"
+          use_azure_dns: "{{ azure.use_azure_dns }}"
+          location: "{{ azure.location }}"
+          subscription_id: "{{ azure.subscription_id }}"
+          use_standard_alb: "{{ azure.use_standard_alb }}"
+          network_info: "{{ network_info }}"
+      register: aviCloudAzure
+      when:
+        - azure is defined
+      tags:
+        - cloud
+
+    - name: save avi Cloud Azure Uuid
+      set_fact:
+        aviCloudAzureUuid: "{{ aviCloudAzure.obj.uuid }}"
+      when:
+        - azure is defined
+      tags:
+        - cloud
+

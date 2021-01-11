@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Defining AWS Zones datas structure
+      set_fact:
+        zones: "{{ zones | default([]) + [{ 'availability_zone': item.0, 'mgmt_network_uuid': item.1, 'mgmt_network_name': item.2 }] }}"
+      loop: "{{ awsZones | zip(awsSubnetSeMgtIds, awsSubnetSeMgtCidrs) | list }}"
+      when:
+        - aws is defined
+        - awsZones is defined
+        - awsSubnetSeMgtIds is defined
+        - awsSubnetSeMgtCidrs is defined
+      tags:
+        - cloud
+
+    - name: Debug
+      debug:
+        msg: "{{ zones }}"
+      when:
+        - aws is defined
+
+    - name: Configure Avi Cloud for AWS (using IAM role or secret key)
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ aws.cloudName }}"
+        vtype: CLOUD_AWS
+        aws_configuration:
+          use_iam_roles: "{{ aws.use_iam_roles | default('true') }}"
+          secret_access_key: "{{ aws.secret_access_key | default(omit) }}"
+          access_key_id: "{{ aws.access_key_id | default(omit) }}"
+          region: "{{ aws.region }}"
+          route53_integration: true
+          asg_poll_interval: 60
+          vpc_id: "{{ aws.vpc_id }}"
+          zones: "{{ zones }}"
+      register: aviCloudAws
+      when:
+        - aws is defined
+      tags:
+        - cloud
+
+    - name: save avi Cloud Aws Uuid
+      set_fact:
+        aviCloudAwsUuid: "{{ aviCloudAws.obj.uuid }}"
+      when:
+        - aws is defined
+      tags:
+        - cloud

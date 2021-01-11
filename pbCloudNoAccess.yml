@@ -1,0 +1,68 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Configure Avi Cloud for No Access
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ no_access.name }}"
+        vtype: CLOUD_NONE
+        apic_mode: false
+        dhcp_enabled: "{{ no_access.dhcp_enabled | default('true') }}"
+        mtu: 1500
+        prefer_static_routes: false
+        enable_vip_static_routes: false
+        license_type: LIC_CORES
+        state_based_dns_registration: "{{ no_access.state_based_dns_registration | default('false') }}"
+        ip6_autocfg_enabled: "{{ no_access.ip6_autocfg_enabled | default('false') }}"
+        dns_resolution_on_se: false
+        enable_vip_on_all_interfaces: false
+        license_tier: ENTERPRISE
+        autoscale_polling_interval: 60
+        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ no_access.ipam_provider_ref | default('ipam-avi') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ no_access.dns_provider_ref | default('dns-avi') }}"
+      register: aviCloudNoAccess
+      tags:
+        - cloud
+      when:
+        - no_access.name is defined
+
+    - name:  Define Cloud no_access uuid
+      set_fact:
+        cloud_uuid_no_access: "{{ aviCloudNoAccess.obj.uuid }}"
+      when:
+        - no_access is defined
+        - aviCloudNoAccess is defined
+
+    - name: Update vrf global with default route for VIP network
+      avi_vrfcontext:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        cloud_ref: "/api/cloud/?name={{ no_access.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        name: global
+        static_routes:
+          - prefix:
+              ip_addr:
+                addr: "0.0.0.0"
+                type: "{{ network.type | default('V4') }}"
+              mask: "0"
+            next_hop:
+              addr: "{{ network.defaultGateway }}"
+              type: "{{ network.type | default('V4') }}"
+            route_id: "1"
+      when:
+        - no_access is defined
+        - network.defaultGateway is defined
+      tags:
+        - vrf
+        - route

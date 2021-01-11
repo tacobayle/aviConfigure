@@ -1,7 +1,7 @@
 # Avi Configure
 
 ## Goals
-Configure Avi controller through Ansible for multi environment (VMware, AWS, GCP, Azure and VMC).
+Configure Avi controller through Ansible for multi environment (VMware (vCenter and NSX-T), AWS, GCP, Azure, OpenStack and VMC).
 
 ## Prerequisites:
 - The following python packages are installed:
@@ -12,7 +12,7 @@ pip3 install dnspython
 pip install avisdk==18.2.9
 sudo -u ubuntu ansible-galaxy install -f avinetworks.avisdk
 ```
-- Avi Controller is reachable (HTTP 443) from your ansible host
+- Avi Controller API is reachable (HTTP 443) from your ansible host
 - For VMC, make sure the vcenter and ESXi hosts are reachable (HTTP 443) from your ansible host
 
 ## Environment:
@@ -61,6 +61,7 @@ avisdk 18.2.9
 - NSX-T
 - GCP
 - VMC (No Access)
+- OpenStack
 
 ## Input/Parameters:
 
@@ -73,7 +74,7 @@ A sample variable file per cloud type is defined in the var directory:
 - Configure the controller cluster (Vcenter or NSX environment only)
 - Create a backup_passphrase
 - Configure system configuration (global, DNS, NTP, email config)
-- Configure Cloud, supported clouds are: v-center, was, azure, gcp, nsxt, no access (for VMC)
+- Configure Cloud, supported clouds are: v-center, was, azure, gcp, openstack, nsxt, no access (for VMC)
 - Configure SE group
 - Spin-up SE (only for VMC)
 - Create a Health Monitor
@@ -88,5 +89,3 @@ A sample variable file per cloud type is defined in the var directory:
 ```
 git clone https://github.com/tacobayle/aviConfigure ; ansible-playbook -i hosts aviConfigure/local.yml --extra-vars @vars/fromTerraform.yml
 ```
-
-## Improvment:
