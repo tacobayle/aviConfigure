@@ -7,6 +7,7 @@
 - import_playbook: pbCloudConnectUser.yml
 - import_playbook: pbSe.yml
 - import_playbook: pbDnsIpam.yml
+- import_playbook: pbCloudLsc.yml
 - import_playbook: pbCloudVmw.yml
 - import_playbook: pbCloudOpenstack.yml
 - import_playbook: pbCloudGcp.yml
