@@ -191,7 +191,7 @@
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         vcenter_url: "{{ vcenter.server }}"
         content_lib:
-          id: "{{ vcenterContentLibraryId.id }}"
+          id: "{{ vcenterContentLibrary.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
       tags:
         - cloud
