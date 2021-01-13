@@ -64,7 +64,100 @@
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.ipam_provider_ref | default('ipam-avi') }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi') }}"
         name: "{{ lsc.name }}"
+        register: aviCloudLsc
       when:
         - lsc is defined
       tags:
         - cloud
+
+    - set_fact:
+        cloud_uuid_lsc: "{{ aviCloudLsc.obj.uuid }}"
+      when:
+        - lsc is defined
+      tags:
+        - cloud
+
+    - name: Define Network Range IP Begin
+      set_fact:
+        ipBegin: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipStartPool) }}"
+      when:
+        - lsc is defined
+        - lsc.network_vip.cidr is defined
+        - lsc.network_vip.ipStartPool is defined
+
+    - name: Define Network Range IP Begin
+      set_fact:
+        ipBegin: "{{ ipBegin.split('/')[0] }}"
+      when:
+        - lsc is defined
+        - lsc.network_vip.cidr is defined
+        - lsc.network_vip.ipStartPool is defined
+
+    - name: Define Network Range IP End
+      set_fact:
+        ipEnd: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipEndPool) }}"
+      when:
+        - lsc is defined
+        - lsc.network_vip.cidr is defined
+        - lsc.network_vip.ipEndPool is defined
+
+    - name: Define Network Range IP End
+      set_fact:
+        ipEnd: "{{ ipEnd.split('/')[0] }}"
+      when:
+        - lsc is defined
+        - lsc.network_vip.cidr is defined
+        - lsc.network_vip.ipEndPool is defined
+
+    - name: Define configured_subnets for network
+      set_fact:
+        configured_subnets:
+          - prefix:
+              mask: "{{ lsc.network_vip.cidr.split('/')[1] }}"
+              ip_addr:
+                type: "{{ lsc.network_vip.type | default('V4') }}"
+                addr: "{{ lsc.network_vip.cidr.split('/')[0] }}"
+            static_ip_ranges:
+              - range:
+                  begin:
+                    type: "{{ lsc.network_vip.type | default('V4') }}"
+                    addr: "{{ ipBegin }}"
+                  end:
+                    type: "{{ lsc.network_vip.type | default('V4') }}"
+                    addr: "{{ ipEnd }}"
+      when:
+        - ipBegin is defined
+        - ipEnd is defined
+        - lsc.network_vip.cidr is defined
+        - lsc is defined
+
+    - name: Create Network for IPAM
+      avi_network:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ network.name | default('net-avi')}}"
+        cloud_ref: "/api/cloud/{{ cloud_uuid_lsc }}"
+        configured_subnets: "{{ configured_subnets }}"
+        dhcp_enabled: "{{ lsc.network_vip.dhcp_enabled | default('false')}}"
+        register: output_network_vip_lsc
+      when:
+        - lsc is defined
+      tags:
+        - ipam
+
+    - name: Update Avi IPAM with Network configured
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        internal_profile:
+          usable_network_refs:
+            - "/api/network/{{ output_network_vip_lsc.obj.uuid }}"
+        name: "{{ ipam.name | default('ipam-avi') }}"
+        type: IPAMDNS_TYPE_INTERNAL
+      when:
+        - network is defined
+        - gcp is defined or no_access is defined
+      tags:
+        - ipam

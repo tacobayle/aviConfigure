@@ -11,7 +11,7 @@
 
   tasks:
 
-    - name: Create Avi DNS provider setting (for GCP, Vcenter, NSX-T, OpenStack or no Access)
+    - name: Create Avi DNS provider setting (for GCP, Vmw, NSX-T, OpenStack or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
