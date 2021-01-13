@@ -64,14 +64,14 @@
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.ipam_provider_ref | default('ipam-avi') }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi') }}"
         name: "{{ lsc.name }}"
-        register: aviCloudLsc
+      register: output_avi_cloud_lsc
       when:
         - lsc is defined
       tags:
         - cloud
 
     - set_fact:
-        cloud_uuid_lsc: "{{ aviCloudLsc.obj.uuid }}"
+        cloud_uuid_lsc: "{{ output_avi_cloud_lsc.obj.uuid }}"
       when:
         - lsc is defined
       tags:
