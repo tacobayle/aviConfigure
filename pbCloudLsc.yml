@@ -139,7 +139,7 @@
         cloud_ref: "/api/cloud/{{ cloud_uuid_lsc }}"
         configured_subnets: "{{ configured_subnets }}"
         dhcp_enabled: "{{ lsc.network_vip.dhcp_enabled | default('false')}}"
-        register: output_network_vip_lsc
+      register: output_network_vip_lsc
       when:
         - lsc is defined
       tags:
