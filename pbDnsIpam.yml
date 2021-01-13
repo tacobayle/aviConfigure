@@ -30,7 +30,7 @@
       tags:
         - dns
 
-    - name: Create Avi IPAM (for GCP or no Access)
+    - name: Create Avi IPAM (for GCP, Vmw, or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -38,7 +38,7 @@
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - network is defined
-        - gcp is defined or no_access is defined
+        - gcp is defined or no_access is defined or vmw is defined
       tags:
         - ipam
 

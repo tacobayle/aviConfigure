@@ -61,6 +61,8 @@
         mtu: 1500
         apic_mode: false
         state_based_dns_registration: true
+        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.ipam_provider_ref | default('ipam-avi') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi') }}"
         name: "{{ lsc.name }}"
       when:
         - lsc is defined
