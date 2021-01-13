@@ -33,14 +33,6 @@
       tags:
         - cloud
 
-    - name: Debug
-      debug:
-        msg: "{{ listSe }}"
-      when:
-        - lsc is defined
-      tags:
-        - debug
-
     - name: Creating Linux Server Cloud
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -77,6 +69,14 @@
       tags:
         - cloud
 
+    - name: Debug
+      debug:
+        msg: "{{ cloud_lsc_uuid }}"
+      when:
+        - lsc is defined
+      tags:
+        - debug
+
     - name: Define Network Range IP Begin
       set_fact:
         ipBegin: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipStartPool) }}"
@@ -85,6 +85,14 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
 
+    - name: Debug
+      debug:
+        msg: "{{ ipBegin }}"
+      when:
+        - lsc is defined
+      tags:
+        - debug
+
     - name: Define Network Range IP Begin
       set_fact:
         ipBegin: "{{ ipBegin.split('/')[0] }}"
@@ -92,6 +100,14 @@
         - lsc is defined
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
+
+    - name: Debug
+      debug:
+        msg: "{{ ipBegin }}"
+      when:
+        - lsc is defined
+      tags:
+        - debug
 
     - name: Define Network Range IP End
       set_fact:
@@ -153,11 +169,11 @@
         avi_api_update_method: patch
         internal_profile:
           usable_networks:
-            - nw_ref: "/api/network/?name={{ output_network_vip_lsc.obj.uuid }}"
+            - nw_ref: "/api/network/{{ output_network_vip_lsc.obj.uuid }}"
         name: "{{ ipam.name | default('ipam-avi') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - network is defined
-        - gcp is defined or no_access is defined
+        - lsc is defined
+        - output_network_vip_lsc.obj.uuid is defined
       tags:
         - ipam
