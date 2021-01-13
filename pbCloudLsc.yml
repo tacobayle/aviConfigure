@@ -69,13 +69,6 @@
       tags:
         - cloud
 
-    - name: Debug
-      debug:
-        msg: "{{ cloud_lsc_uuid }}"
-      when:
-        - lsc is defined
-      tags:
-        - debug
 
     - name: Define Network Range IP Begin
       set_fact:
@@ -85,14 +78,6 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ ipBegin }}"
-      when:
-        - lsc is defined
-      tags:
-        - debug
-
     - name: Define Network Range IP Begin
       set_fact:
         ipBegin: "{{ ipBegin.split('/')[0] }}"
@@ -100,14 +85,6 @@
         - lsc is defined
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
-
-    - name: Debug
-      debug:
-        msg: "{{ ipBegin }}"
-      when:
-        - lsc is defined
-      tags:
-        - debug
 
     - name: Define Network Range IP End
       set_fact:
@@ -161,19 +138,45 @@
       tags:
         - ipam
 
-    - name: Update Avi IPAM with Network configured
+    - name: Create Avi IPAM with Network configured
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        avi_api_patch_op : add
-        avi_api_update_method: patch
         internal_profile:
           usable_networks:
             - nw_ref: "/api/network/{{ output_network_vip_lsc.obj.uuid }}"
-        name: "{{ ipam.name | default('ipam-avi') }}"
+        name: "{{ ipam.name | default('ipam-avi-lsc') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - lsc is defined
         - output_network_vip_lsc.obj.uuid is defined
       tags:
         - ipam
+
+    - name: Updating LSC Cloud with IPAM
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        vtype: CLOUD_LINUXSERVER
+        license_tier: ENTERPRISE_18
+        enable_vip_static_routes: false
+        ip6_autocfg_enabled: false
+        dhcp_enabled: false
+        linuxserver_configuration:
+          se_sys_disk_size_GB: 10
+          se_log_disk_size_GB: 5
+          se_inband_mgmt: false
+          hosts: '{{ listSe }}'
+          ssh_user_ref: /api/cloudconnectoruser/?name=credsLsc
+        prefer_static_routes: false
+        license_type: LIC_CORES
+        mtu: 1500
+        apic_mode: false
+        state_based_dns_registration: true
+        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.ipam_provider_ref | default('ipam-avi-lsc') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi') }}"
+        name: "{{ lsc.name }}"
+      when:
+        - lsc is defined
+      tags:
+        - cloud

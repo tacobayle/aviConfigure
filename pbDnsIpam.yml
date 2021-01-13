@@ -25,19 +25,19 @@
         name: "{{ dns.name | default('dns-avi')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       when:
-        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined or openstack is defined
+        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined or openstack is defined or lsc is defined
         - domain.name is defined
       tags:
         - dns
 
-    - name: Create Avi IPAM (for GCP, Vmw, or no Access)
+    - name: Create Avi IPAM (for GCP, or no Access)
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ ipam.name | default('ipam-avi') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - gcp is defined or no_access is defined or vmw is defined
+        - gcp is defined or no_access is defined
       tags:
         - ipam
 
