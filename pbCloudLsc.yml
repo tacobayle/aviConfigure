@@ -126,8 +126,8 @@
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ network.name | default('net-avi')}}"
-        cloud_ref: "/api/cloud/?name={{ cloud_lsc_uuid }}"
+        name: "{{ lsc.network_vip.name }}"
+        cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         configured_subnets: "{{ configured_subnets }}"
         dhcp_enabled: "{{ lsc.network_vip.dhcp_enabled | default('false')}}"
       register: output_network_vip_lsc

@@ -20,7 +20,7 @@
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
-              network_ref: "/api/network/?name={{ lsc.network_vip }}"
+              network_ref: "/api/network/?name={{ lsc.network_vip.name }}"
               subnet:
                 mask: "{{ lsc.network_vip.cidr.split('/')[1] }}"
                 ip_addr:
@@ -47,7 +47,7 @@
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
-              network_ref: "/api/network/?name={{ lsc.network_vip }}"
+              network_ref: "/api/network/?name={{ lsc.network_vip.name }}"
               subnet:
                 mask: "{{ lsc.network_vip.cidr.split('/')[1] }}"
                 ip_addr:
@@ -99,7 +99,7 @@
         - pool
         - lsc
 
-    - name: Create DNS Virtualservice
+    - name: Create DNS Virtualservice (based on vsvip) - LSC
       avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -120,7 +120,7 @@
         - vs
         - lsc
 
-    - name: Create HTTP Virtualservice (based on vsvip)
+    - name: Create HTTP Virtualservice (based on vsvip) - LSC
       avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
