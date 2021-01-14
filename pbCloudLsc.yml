@@ -68,7 +68,6 @@
       tags:
         - cloud
 
-
     - name: Define Network Range IP Begin
       set_fact:
         ipBegin: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipStartPool) }}"

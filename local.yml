@@ -18,6 +18,7 @@
 - import_playbook: pbCloudCheck.yml
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: pbSeGroup.yml
+- import_playbook: pbVsLsc.yml
 - import_playbook: pbVsVipAzure.yml
 - import_playbook: pbVsVipAws.yml
 - import_playbook: pbVsVipGcp.yml
