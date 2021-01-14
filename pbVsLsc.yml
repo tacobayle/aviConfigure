@@ -16,7 +16,7 @@
         cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "item.name + '.' + domain.name"
+          - fqdn: "{{ item.name + '.' + domain.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
@@ -43,7 +43,7 @@
         cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "item.name + '.' + domain.name"
+          - fqdn: "{{ item.name + '.' + domain.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
@@ -89,7 +89,7 @@
           - ip:
               addr: "{{ item }}"
               type: 'V4'
-      loop: "{{ avi_servers }}"
+      loop: "{{ avi_servers_lsc }}"
       when:
         - avi_servers is defined
         - lsc.pool is defined
