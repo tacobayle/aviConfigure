@@ -85,8 +85,6 @@
         cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ lsc.pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
         servers:
           - ip:
               addr: "{{ item }}"
