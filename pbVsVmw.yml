@@ -92,7 +92,7 @@
               type: 'V4'
       loop: "{{ avi_servers_vmw }}"
       when:
-        - avi_servers is defined
+        - avi_servers_vmw is defined
         - vmw.pool is defined
       tags:
         - pool
@@ -111,7 +111,7 @@
         - vmw
         - pool
 
-    - name: update pool with servers - VMW
+    - name: update pool opencart with servers - VMW
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"

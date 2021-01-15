@@ -16,7 +16,7 @@
           vcenter_url: "{{ avi_vsphere_server }}"
           privilege: WRITE_ACCESS
           datacenter: "{{ vmw.datacenter }}"
-          management_network: "{{ vmw.management_network.name }}"
+          management_network: "/api/vimgrnwruntime/?name={{ vmw.management_network.name }}"
       when:
         - vmw is defined
       tags:
