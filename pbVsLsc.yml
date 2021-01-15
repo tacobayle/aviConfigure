@@ -91,7 +91,7 @@
               type: 'V4'
       loop: "{{ avi_servers_lsc }}"
       when:
-        - avi_servers is defined
+        - avi_servers_lsc is defined
         - lsc.pool is defined
       tags:
         - pool
