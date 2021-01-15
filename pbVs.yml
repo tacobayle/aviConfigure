@@ -166,7 +166,7 @@
         - vsHttp
         - vs
 
-    - name: Create pool without server (AWS, VMware, Azure, GCP, NoAccessVMware)
+    - name: Create pool without server (AWS, Azure, GCP, NoAccessVMware)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -175,7 +175,7 @@
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
       when:
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure" or avi_pool.cloud_ref == "cloudVmw" or avi_pool.cloud_ref == "cloudNoAccess"
+        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure" or avi_pool.cloud_ref == "cloudNoAccess"
       tags:
         - pool
         - vsHttp
@@ -207,7 +207,7 @@
         - vsHttp
         - vs
 
-    - name: update pool with servers (VMware, AWS, GCP, Azure)
+    - name: update pool with servers (AWS, GCP, Azure)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -227,7 +227,7 @@
       when:
         - avi_servers is defined
         - avi_pool is defined
-        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure" or avi_pool.cloud_ref == "cloudVmw"
+        - avi_pool.cloud_ref == "cloudAws" or avi_pool.cloud_ref == "cloudGcp" or avi_pool.cloud_ref == "cloudAzure"
       tags:
         - pool
         - vsHttp
@@ -280,7 +280,7 @@
         - asg
         - scale set
 
-    - name: Create pool without server for OpenCart (VMware, AWS, GCP, Azure)
+    - name: Create pool without server for OpenCart (AWS, GCP, Azure)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -291,13 +291,13 @@
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
       when:
         - avi_pool_open_cart is defined
-        - avi_pool_open_cart.cloud_ref == "cloudVmw" or avi_pool_open_cart.cloud_ref == "cloudGcp" or avi_pool_open_cart.cloud_ref == "cloudAws" or avi_pool_open_cart.cloud_ref == "cloudAzure"
+        - avi_pool_open_cart.cloud_ref == "cloudGcp" or avi_pool_open_cart.cloud_ref == "cloudAws" or avi_pool_open_cart.cloud_ref == "cloudAzure"
       tags:
         - pool
         - vsHttp
         - vs
 
-    - name: update pool with servers for OpenCart (VMware, AWS, GCP, Azure)
+    - name: update pool with servers for OpenCart (AWS, GCP, Azure)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -318,7 +318,7 @@
       when:
         - avi_servers_open_cart is defined
         - avi_pool_open_cart is defined
-        - avi_pool_open_cart.cloud_ref == "cloudVmw" or avi_pool_open_cart.cloud_ref == "cloudGcp" or avi_pool_open_cart.cloud_ref == "cloudAws" or avi_pool_open_cart.cloud_ref == "cloudAzure"
+        - avi_pool_open_cart.cloud_ref == "cloudGcp" or avi_pool_open_cart.cloud_ref == "cloudAws" or avi_pool_open_cart.cloud_ref == "cloudAzure"
       tags:
         - pool
         - vsHttp

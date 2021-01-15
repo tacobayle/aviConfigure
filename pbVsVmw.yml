@@ -1,0 +1,192 @@
+---
+- hosts: localhost
+  connection: local
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - debug
+
+    - name: Create vsvip for dns VS - VMW
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.name + '.' + domain.name }}"
+        vip:
+          - auto_allocate_ip: true
+            ipam_network_subnet:
+              network_ref: "/api/network/?name={{ vmw.network_vip.name }}"
+              subnet:
+                mask: "{{ vmw.network_vip.cidr.split('/')[1] }}"
+                ip_addr:
+                  type: "{{ vmw.network_vip.type | default('V4') }}"
+                  addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
+      loop: "{{ vmw.virtualservices.dns }}"
+      when:
+        - vmw.virtualservices.dns is defined
+      tags:
+        - vmw
+        - vsvip_dns
+
+    - name: Create vsvip for http VS - VMW
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.name + '.' + domain.name }}"
+        vip:
+          - auto_allocate_ip: true
+            ipam_network_subnet:
+              network_ref: "/api/network/?name={{ vmw.network_vip.name }}"
+              subnet:
+                mask: "{{ vmw.network_vip.cidr.split('/')[1] }}"
+                ip_addr:
+                  type: "{{ vmw.network_vip.type | default('V4') }}"
+                  addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
+      loop: "{{ vmw.virtualservices.http }}"
+      when:
+        - vmw.virtualservices.http is defined
+      tags:
+        - vmw
+        - vsvip_http
+
+    - name: Create pool without server - VMW
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ vmw.pool.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      when:
+        - vmw.pool is defined
+      tags:
+        - vmw
+        - pool
+
+    - name: update pool with servers - VMW
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ vmw.pool.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ vmw.pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        servers:
+          - ip:
+              addr: "{{ item }}"
+              type: 'V4'
+      loop: "{{ avi_servers_vmw }}"
+      when:
+        - avi_servers is defined
+        - vmw.pool is defined
+      tags:
+        - pool
+        - vmw
+
+    - name: Create pool opencart without server - VMW
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ vmw.pool_opencart.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      when:
+        - vmw.pool_opencart is defined
+      tags:
+        - vmw
+        - pool
+
+    - name: update pool with servers - VMW
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ vmw.pool_opencart.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ vmw.pool_opencart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        servers:
+          - ip:
+              addr: "{{ item }}"
+              type: 'V4'
+      loop: "{{ avi_servers_opencart }}"
+      when:
+        - avi_servers_opencart is defined
+        - vmw.pool_opencart is defined
+      tags:
+        - pool
+        - vmw
+
+    - name: Create DNS Virtualservice (based on vsvip) - VMW
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-DNS') }}"
+        network_profile_ref: "/api/networkprofile/?name={{ item.network_profile_ref | default('System-UDP-Per-Pkt') }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        services: "{{ item.services }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+      loop: "{{ vmw.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - vmw.virtualservices.dns is defined
+      tags:
+        - vs
+        - vmw
+
+    - name: Create HTTP Virtualservice (based on vsvip) - VMW
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref | default(omit) }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ vmw.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - vmw.virtualservices.http is defined
+      tags:
+        - vs
+        - vmw

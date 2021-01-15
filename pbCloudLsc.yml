@@ -8,7 +8,7 @@
 
   tasks:
 
-    - name: Defining SE Memory
+    - name: Defining SE Memory - LSC
       set_fact:
         seMem: "{{ lsc.serviceEngineGroup.memory_per_se / 1000 }}"
       when:
@@ -16,7 +16,7 @@
       tags:
         - cloud
 
-    - name: Defining SE Memory
+    - name: Defining SE Memory - LSC
       set_fact:
         seMemG: "{{ seMem | float | round(0,'common') | int }}"
       when:
@@ -24,7 +24,7 @@
       tags:
         - cloud
 
-    - name: Defining SE structure
+    - name: Defining SE structure - LSC
       set_fact:
         listSe: "{{ listSe | default([]) + [{ 'host_attr': [{'attr_key': 'CPU', 'attr_val': lsc.serviceEngineGroup.vcpus_per_se }, {'attr_key': 'MEMORY', 'attr_val': seMemG}, {'attr_key': 'DPDK', 'attr_val': lsc.serviceEngineGroup.DPDK }, {'attr_key': 'SE_INBAND_MGMT', 'attr_val': lsc.serviceEngineGroup.SE_INBAND_MGMT }], 'host_ip': {'type': 'V4', 'addr': item }} ] }}"
       loop: "{{ seLsc }}"
@@ -33,7 +33,7 @@
       tags:
         - cloud
 
-    - name: Creating Linux Server Cloud
+    - name: Creating Linux Server Cloud - LSC
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -68,7 +68,7 @@
       tags:
         - cloud
 
-    - name: Define Network Range IP Begin
+    - name: Define Network Range IP Begin - LSC
       set_fact:
         ipBegin: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipStartPool) }}"
       when:
@@ -76,7 +76,7 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
 
-    - name: Define Network Range IP Begin
+    - name: Define Network Range IP Begin - LSC
       set_fact:
         ipBegin: "{{ ipBegin.split('/')[0] }}"
       when:
@@ -84,7 +84,7 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipStartPool is defined
 
-    - name: Define Network Range IP End
+    - name: Define Network Range IP End - LSC
       set_fact:
         ipEnd: "{{ lsc.network_vip.cidr | ipaddr(lsc.network_vip.ipEndPool) }}"
       when:
@@ -92,7 +92,7 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipEndPool is defined
 
-    - name: Define Network Range IP End
+    - name: Define Network Range IP End - LSC
       set_fact:
         ipEnd: "{{ ipEnd.split('/')[0] }}"
       when:
@@ -100,7 +100,7 @@
         - lsc.network_vip.cidr is defined
         - lsc.network_vip.ipEndPool is defined
 
-    - name: Define configured_subnets for network
+    - name: Define configured_subnets for network - LSC
       set_fact:
         configured_subnets:
           - prefix:
@@ -122,7 +122,7 @@
         - lsc.network_vip.cidr is defined
         - lsc is defined
 
-    - name: Create Network for IPAM
+    - name: Create Network for IPAM - LSC
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -136,7 +136,7 @@
       tags:
         - ipam
 
-    - name: Create Avi IPAM with Network configured
+    - name: Create Avi IPAM with Network configured - LSC
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -151,7 +151,7 @@
       tags:
         - ipam
 
-    - name: Updating LSC Cloud with IPAM
+    - name: Updating LSC Cloud with IPAM - LSC
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"

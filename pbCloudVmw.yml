@@ -8,29 +8,54 @@
 
   tasks:
 
-    - name: Configure Avi Cloud for Vcenter
+    - name: Defining variable vcenter_configuration - VMW
+      set_fact:
+        vcenter_configuration:
+          username: "{{ avi_vsphere_user }}"
+          password: "{{ avi_vsphere_password }}"
+          vcenter_url: "{{ avi_vsphere_server }}"
+          privilege: WRITE_ACCESS
+          datacenter: "{{ vmw.datacenter }}"
+          management_network: "{{ vmw.management_network.name }}"
+      when:
+        - vmw is defined
+      tags:
+        - cloud
+        - vmw
+
+    - name: Configure Avi Cloud - VMW
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name:  "{{ vmw.name }}"
         vtype: CLOUD_VCENTER
-        vcenter_configuration: "{{ vmw.vcenter_configuration }}"
+        vcenter_configuration: "{{ vcenter_configuration }}"
         dhcp_enabled: "{{ vmw.dhcp_enabled }}"
-      register: aviCloudOutput
+      register: output_cloud_vmw
       when:
         - vmw is defined
       tags:
         - cloud
+        - vmw
 
-    - name: Pause for 1 minute
+    - set_fact:
+        cloud_vmw_uuid: "{{ output_cloud_vmw.obj.uuid }}"
+      when:
+        - vmw is defined
+      tags:
+        - cloud
+        - vmw
+
+    - name: Pause for 1 minute  - VMW
       pause:
         minutes: 1
       when:
         - vmw is defined
       tags:
         - cloud
+        - vmw
 
-    - name: get Network details
+    - name: get Network details  - VMW
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -47,7 +72,7 @@
       when:
         - vmw is defined
 
-    - name: Update Mgmt Network (for Vmware)
+    - name: Update Mgmt Network - VMW
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -55,20 +80,18 @@
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        uuid: "{{ networkMgtUuid | default(omit) }}"
-        name: "{{ vmw.network }}"
-        dhcp_enabled: "{{ vmw.networkDhcpEnabled | default(omit) }}"
-        exclude_discovered_subnets: "{{ vmw.networkExcludeDiscoveredSubnets | default(omit) }}"
-        vcenter_dvs: "{{ vmw.networkVcenterDvs | default(omit) }}"
+        name: "{{ vmw.management_network.name }}"
+        dhcp_enabled: "{{ vmw.management_network.dhcp_enabled | default(omit) }}"
+        exclude_discovered_subnets: "{{ vmw.management_network.exclude_discovered_subnets | default(omit) }}"
+        vcenter_dvs: "{{ vmw.management_network.vcenter_dvs | default(omit) }}"
       when:
-        - vmw.network is defined
-        - vmw is defined
+        - vmw.management_network is defined
       tags:
         - cloud
         - network
         - ipamdns
 
-    - name: get Network details
+    - name: get Network details - VMW
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -80,92 +103,118 @@
       register: networkOutput
       tags:
         - cloud
+        - network
+        - ipamdns
       when:
         - vmw is defined
 
-    - name: Define subnet variable for vip network
+    - name: Define Network Range IP Begin - VMW
       set_fact:
-        vipConfigured_subnets:
+        ipBegin: "{{ vmw.network_vip.cidr | ipaddr(vmw.network_vip.ipStartPool) }}"
+      when:
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.ipStartPool is defined
+
+    - name: Define Network Range IP Begin - VMW
+      set_fact:
+        ipBegin: "{{ ipBegin.split('/')[0] }}"
+      when:
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.ipStartPool is defined
+
+    - name: Define Network Range IP End - VMW
+      set_fact:
+        ipEnd: "{{ vmw.network_vip.cidr | ipaddr(vmw.network_vip.ipEndPool) }}"
+      when:
+        - vmw is defined
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.ipEndPool is defined
+
+    - name: Define Network Range IP End - VMW
+      set_fact:
+        ipEnd: "{{ ipEnd.split('/')[0] }}"
+      when:
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.ipEndPool is defined
+
+    - name: Define configured_subnets for network - VMW
+      set_fact:
+        configured_subnets:
           - prefix:
-              mask: "{{ avi_network_vip.cidr.split('/')[1] }}"
+              mask: "{{ vmw.network_vip.cidr.split('/')[1] }}"
               ip_addr:
-                type: "{{ avi_network_vip.type }}"
-                addr: "{{ avi_network_vip.cidr.split('/')[0] }}"
+                type: "{{ vmw.network_vip.type | default('V4') }}"
+                addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
             static_ip_ranges:
               - range:
                   begin:
-                    type: "{{ avi_network_vip.type }}"
-                    addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.begin }}"
+                    type: "{{ vmw.network_vip.type | default('V4') }}"
+                    addr: "{{ ipBegin }}"
                   end:
-                    type: "{{ avi_network_vip.type }}"
-                    addr: "{{ avi_network_vip.cidr.split('/')[0].split('.')[0] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[1] }}.{{ avi_network_vip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.end }}"
+                    type: "{{ vmw.network_vip.type | default('V4') }}"
+                    addr: "{{ ipEnd }}"
       when:
-        - avi_network_vip is defined
-        - vmw is defined
-      tags:
-        - ipam
+        - ipBegin is defined
+        - ipEnd is defined
+        - vmw.network_vip.cidr is defined
 
-    - name: Update Vip Network for V-vcenter
+    - name: Update Vip Network - VMW
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        name: "{{ avi_network_vip.name }}"
-        configured_subnets: "{{ vipConfigured_subnets }}"
-        dhcp_enabled: "{{ avi_network_vip.dhcp_enabled }}"
-        exclude_discovered_subnets: "{{ avi_network_vip.exclude_discovered_subnets }}"
-        vcenter_dvs: "{{ avi_network_vip.vcenter_dvs }}"
-      register: networkOutput
+        name: "{{ vmw.network_vip.name }}"
+        configured_subnets: "{{ configured_subnets }}"
+        dhcp_enabled: "{{ vmw.network_vip.dhcp_enabled }}"
+        exclude_discovered_subnets: "{{ vmw.network_vip.exclude_discovered_subnets }}"
+        vcenter_dvs: "{{ vmw.network_vip.vcenter_dvs }}"
+      register: output_network_vip_vmw
       when:
-        - avi_network_vip is defined
-        - vmw is defined
+        - vmw.network_vip is defined
       tags:
         - ipam
 
-    - name: Define subnet variable for backend network
+    - name: Define subnet variable for backend network - VMW
       set_fact:
-        backendConfigured_subnets:
+        configured_subnets:
           - prefix:
-              mask: "{{ avi_network_backend.cidr.split('/')[1] }}"
+              mask: "{{ vmw.network_backend.cidr.split('/')[1] }}"
               ip_addr:
-                type: "{{ avi_network_backend.type }}"
-                addr: "{{ avi_network_backend.cidr.split('/')[0] }}"
+                type: "{{ vmw.network_backend.type | default('V4') }}"
+                addr: "{{ vmw.network_backend.cidr.split('/')[0] }}"
       when:
-        - avi_network_backend is defined
-        - vmw is defined
+        - vmw.network_backend is defined
       tags:
         - ipam
 
-    - name: Update Network backend
+    - name: Update Network backend - VMW
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        name: "{{ avi_network_backend.name }}"
-        configured_subnets: "{{ backendConfigured_subnets }}"
-        dhcp_enabled: "{{ avi_network_backend.dhcp_enabled }}"
-        exclude_discovered_subnets: "{{ avi_network_backend.exclude_discovered_subnets }}"
-        vcenter_dvs: "{{ avi_network_backend.vcenter_dvs }}"
+        name: "{{ vmw.network_backend.name }}"
+        configured_subnets: "{{ configured_subnets }}"
+        dhcp_enabled: "{{ vmw.network_backend.dhcp_enabled }}"
+        exclude_discovered_subnets: "{{ vmw.network_backend.exclude_discovered_subnets }}"
+        vcenter_dvs: "{{ vmw.network_backend.vcenter_dvs }}"
       when:
-        - avi_network_backend is defined
-        - vmw is defined
+        - vmw.network_backend is defined
       tags:
         - ipam
 
-    - name: Update Avi IPAM
+    - name: Create Avi IPAM - VMW
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:
           usable_networks:
-            - nw_ref: "/api/network/{{ networkOutput.obj.uuid | default(networkVipUuid) }}"
+            - nw_ref: "/api/network/{{ output_network_vip_vmw.obj.uuid | default(networkVipUuid) }}"
         name: "{{ ipam.name | default('ipam-avi-vmw') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - avi_network_vip is defined
-        - vmw is defined
+        - vmw.network_vip is defined
       tags:
         - ipam
 
@@ -175,7 +224,6 @@
         - vmw is defined
       tags:
         - cloud
-        - debugnsxt
 
     - name: Update Avi Cloud (Vcenter)
       avi_cloud:
@@ -183,31 +231,41 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ vmw.name }}"
         vtype: CLOUD_VCENTER
-        vcenter_configuration: "{{ vmw.vcenter_configuration }}"
+        vcenter_configuration: "{{ vcenter_configuration }}"
         dhcp_enabled: "{{ vmw.dhcp_enabled }}"
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ vmw.ipam_provider_ref | default('ipam-avi-vmw') }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ vmw.dns_provider_ref | default('dns-avi') }}"
         se_group_template_ref: "/api/serviceenginegroup?name=Default-Group"
-      register: aviCloudVmw
       when:
-        - avi_network_vip is defined
-        - vmw is defined
+        - vmw.network_vip is defined
       tags:
         - cloud
         - ipam
         - dns
 
-#    - pause:
-#        minutes: 2
-#      when:
-#        - vmw is defined
-#      tags:
-#        - cloud
-
-    - set_fact:
-        cloud_uuid_vmw: "{{ aviCloudVmw.obj.uuid }}"
+    - name: Modify/Creating SE group - VMW
+      avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        avi_api_update_method: put
+        name: "{{ item.name }}"
+        ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.buffer_se | default(omit) }}"
+        extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
+        vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
+        vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
+      loop: "{{ vmw.serviceEngineGroup }}"
+      loop_control:
+        label: "Modifying SE group called {{ item.name }}"
       when:
-        - vmw is defined
+        - vmw.serviceEngineGroup is defined
       tags:
-        - cloud
-
+        - serviceEngineGroup

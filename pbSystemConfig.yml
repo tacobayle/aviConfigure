@@ -3,19 +3,10 @@
   connection: local
   gather_facts: no
 
-  # vars_files:
-  #   - "../vars/fromTerraform.yml"
-
   roles:
     - role: "avinetworks.avisdk"
 
   tasks:
-
-#    - name: Debug
-#      debug:
-#        msg: "{{ avi_credentials }}"
-#      tags:
-#        - debug
 
     - name: Create Backup Configuration passphrase
       avi_backupconfiguration:
@@ -35,28 +26,12 @@
       when:
         - ntpServers is defined
 
-#    - name: Debug ntp servers
-#      debug:
-#        msg: "{{ ntp_servers }}"
-#      tags:
-#        - debug
-#      when:
-#        - ntpServers is defined
-
     - name: Define dns_servers
       set_fact:
         server_list: "{{ server_list | default([]) + [{'type': 'V4', 'addr': item}] }}"
       loop: "{{ dnsServers }}"
       when:
         - dnsServers is defined
-
-#    - name: Debug dns servers
-#      debug:
-#        msg: "{{ server_list }}"
-#      tags:
-#        - debug
-#      when:
-#        - dnsServers is defined
 
     - name: Define avi_systemconfiguration
       set_fact:
@@ -77,15 +52,6 @@
       when:
         - ntp_servers is defined
         - server_list is defined
-
-#    - name: Debug avi_systemconfiguration
-#      debug:
-#        msg: "{{ avi_systemconfiguration }}"
-#      tags:
-#        - debug
-#      when:
-#        - ntp_servers is defined
-#        - server_list is defined
 
     - name: Configure Avi System parameters
       avi_systemconfiguration:
