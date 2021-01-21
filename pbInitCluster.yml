@@ -16,17 +16,17 @@
     - name: Set variable avi_credentials
       set_fact:
         avi_credentials: >
-                          {'api_version': "{{ controller.version }}",
+                          {'api_version': "{{ avi_version }}",
                            'controller': "{{ controllerPrivateIps.0 }}",
-                           'password': "{{ controller.password }}",
-                           'username': "{{ controller.username }}"}
+                           'password': "{{ avi_password }}",
+                           'username': "{{ avi_username }}"}
       tags:
         - creds
       when:
-        - controller.version is defined
+        - avi_version is defined
         - controllerPrivateIps is defined
-        - controller.password is defined
-        - controller.username is defined
+        - avi_password is defined
+        - avi_username is defined
 
     - name: Debug variable avi_credentials
       debug:

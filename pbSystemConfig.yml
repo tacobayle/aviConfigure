@@ -3,6 +3,9 @@
   connection: local
   gather_facts: no
 
+  vars_files:
+    - "vars/params.yml"
+
   roles:
     - role: "avinetworks.avisdk"
 
@@ -22,14 +25,14 @@
     - name: Define ntp_servers
       set_fact:
         ntp_servers: "{{ ntp_servers | default([]) + [{ 'server': {'type': 'V4', 'addr': item}}] }}"
-      loop: "{{ ntpServers }}"
+      loop: "{{ controller.ntp }}"
       when:
         - ntpServers is defined
 
     - name: Define dns_servers
       set_fact:
         server_list: "{{ server_list | default([]) + [{'type': 'V4', 'addr': item}] }}"
-      loop: "{{ dnsServers }}"
+      loop: "{{ controller.dns }}"
       when:
         - dnsServers is defined
 
@@ -66,3 +69,34 @@
         - avi_systemconfiguration is defined
       tags:
         - system
+
+    #
+    # HM creation
+    #
+    - name: Create HTTP health monitor
+      avi_healthmonitor:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        http_monitor:
+          http_request: "{{ item.http_request }}"
+          http_response_code: "{{ item.http_response_code }}"
+        receive_timeout: "{{ item.receive_timeout }}"
+        failed_checks: "{{ item.failed_checks }}"
+        send_interval: "{{ item.send_interval }}"
+        successful_checks: "{{ item.successful_checks }}"
+        type: "{{ item.type }}"
+      loop: "{{ healthMonitor }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - healthMonitor is defined
+        - item.type == "HEALTH_MONITOR_HTTP"
+        - no_access is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined
+      tags:
+        - vsHttp
+        - hm
+        - pool
+        - vs

@@ -23,7 +23,7 @@
 - import_playbook: pbVsVipAws.yml
 - import_playbook: pbVsVipGcp.yml
 - import_playbook: pbVsVmw.yml
-- import_playbook: pbVsVipNsx.yml
+- import_playbook: pbVsNsx.yml
 - import_playbook: pbVsVipNoAccessVmware.yml
 - import_playbook: pbVs.yml
 - import_playbook: pbGslb.yml

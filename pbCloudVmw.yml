@@ -267,5 +267,6 @@
         label: "Modifying SE group called {{ item.name }}"
       when:
         - vmw.serviceEngineGroup is defined
+        - vmw.name is defined
       tags:
         - serviceEngineGroup

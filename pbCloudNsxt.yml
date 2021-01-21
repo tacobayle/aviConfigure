@@ -11,27 +11,27 @@
 
   tasks:
 
-    - name: python workaround to retrieve transport zone id
-      command: python3 python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.transportZone }}"
+    - name: python workaround to retrieve transport zone id - NSXT
+      command: python3 python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.transport_zone.name }}"
       ignore_errors: no
       register: nsxtTransportZoneId
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.transportZone is defined
-        - nsxt is defined
+        - nsxt.transport_zone.name is defined
+        - nsxt.server is defined
 
-    - name: python workaround to retrieve tier1s for mgt
-      command: python3 python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.tier1 }}"
+    - name: python workaround to retrieve tier1s for mgt - NSXT
+      command: python3 python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.management_network.tier1 }}"
       ignore_errors: no
       register: nsxtTier1sMgtJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.tier1 is defined
-        - nsxt is defined
+        - nsxt.management_network.tier1 is defined
+        - nsxt.server is defined
 
     - set_fact:
         nsxtTier1sMgt: "{{ nsxtTier1sMgtJson.stdout | from_json }}"
@@ -39,18 +39,20 @@
         - cloud
         - nsxtApi
       when:
-        - nsxt is defined
+        - nsxt.management_network.tier1 is defined
+        - nsxt.server is defined
 
-    - name: python workaround to retrieve tier1s for avi vip
-      command: python3 python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ avi_network_vip.tier1 }}"
+    - name: python workaround to retrieve tier1s for avi vip - NSXT
+      command: python3 python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.network_vip.tier1 }}"
       ignore_errors: no
       register: nsxtTier1sVipJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - avi_network_vip.tier1 is defined
-        - nsxt is defined
+        - nsxt.network_vip is defined
+        - nsxt.server is defined
+
 
     - set_fact:
         nsxtTier1sVip: "{{ nsxtTier1sVipJson.stdout | from_json }}"
@@ -58,19 +60,19 @@
         - cloud
         - nsxtApi
       when:
-        - avi_network_vip.tier1 is defined
-        - nsxt is defined
+        - nsxt.network_vip is defined
+        - nsxt.server is defined
 
-    - name: python workaround to retrieve segment details for avi management
-      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network }}"
+    - name: python workaround to retrieve segment details for avi management - NSXT
+      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.management_network.name }}"
       ignore_errors: no
       register: nsxtSegmentMgtJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.network is defined
-        - nsxt is defined
+        - nsxt.server is defined
+        - nsxt.management_network.name is defined
 
     - set_fact:
         nsxtSegmentMgt: "{{ nsxtSegmentMgtJson.stdout | from_json }}"
@@ -78,19 +80,19 @@
         - cloud
         - nsxtApi
       when:
-        - nsxt.network is defined
-        - nsxt is defined
+        - nsxt.server is defined
+        - nsxt.management_network.name is defined
 
-    - name: python workaround to retrieve segment details for avi vip
-      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ avi_network_vip.name }}"
+    - name: python workaround to retrieve segment details for avi vip - NSXT
+      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_vip.name }}"
       ignore_errors: no
       register: nsxtSegmentVipJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - avi_network_vip.name is defined
-        - nsxt is defined
+        - nsxt.network_vip.name is defined
+        - nsxt.server is defined
 
     - set_fact:
         nsxtSegmentVip: "{{ nsxtSegmentVipJson.stdout | from_json }}"
@@ -98,19 +100,19 @@
         - cloud
         - nsxtApi
       when:
-        - avi_network_vip.name is defined
-        - nsxt is defined
+        - nsxt.network_vip.name is defined
+        - nsxt.server is defined
 
-    - name: python workaround to retrieve segment details for avi backend network
-      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ avi_network_backend.name }}"
+    - name: python workaround to retrieve segment details for avi backend network - NSXT
+      command: python3 python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_backend.name }}"
       ignore_errors: no
       register: nsxtSegmentBacJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - avi_network_backend.name is defined
-        - nsxt is defined
+        - nsxt.network_backend.name is defined
+        - nsxt.server is defined
 
     - set_fact:
         nsxtSegmentBac: "{{ nsxtSegmentBacJson.stdout | from_json }}"
@@ -118,10 +120,10 @@
         - cloud
         - nsxtApi
       when:
-        - avi_network_backend.name is defined
-        - nsxt is defined
+        - nsxt.network_backend.name is defined
+        - nsxt.server is defined
 
-    - name: Configure Avi Cloud for NSXT
+    - name: Configure Avi Cloud for NSXT - NSXT
       avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -149,10 +151,13 @@
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
       register: aviCloudOutput
       when:
-        - nsxt is defined
+        - nsxt.name is defined
+        - nsxt.server is defined
+        - nsxt.dhcp_enabled is defined
+        - nsxt.network_vip is defined
+        - nsxt.management_network is defined
       tags:
         - cloud
-        - nsxtApi
 
     - pause:
         minutes: 1
@@ -160,18 +165,17 @@
         - nsxt is defined
       tags:
         - cloud
-        - nsxtApi
 
-    - name: python workaround to retrieve vcenter content library info
-      command: python3 python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenterContentLibrary }}"
+    - name: python workaround to retrieve vcenter content library info - NSXT
+      command: python3 python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ nsxt.vcenter.server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenter.content_library.name }}"
       ignore_errors: no
       register: vcenterContentLibraryJson
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.vcenterContentLibrary is defined
-        - nsxt is defined
+        - nsxt.vcenter.content_library.name is defined
+        - nsxt.vcenter.server is defined
 
     - set_fact:
         vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
@@ -179,17 +183,17 @@
         - cloud
         - nsxtApi
       when:
-        - nsxt.vcenterContentLibrary is defined
-        - nsxt is defined
+        - nsxt.vcenter.content_library.name is defined
+        - nsxt.vcenter.server is defined
 
-    - name: Configure Vcenter Server for NSXT cloud
+    - name: Configure Vcenter Server for NSXT cloud - NSXT
       avi_vcenterserver:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: vcenterserverOne
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
-        vcenter_url: "{{ vcenter.server }}"
+        vcenter_url: "{{ nsxt.vcenter.server }}"
         content_lib:
           id: "{{ vcenterContentLibrary.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
@@ -197,8 +201,8 @@
         - cloud
         - nsxtApi
       when:
-        - vcenter.server is defined
-        - nsxt is defined
+        - nsxt.vcenter.server is defined
+        - nsxt.vcenter.content_library.name is defined
 
     - pause:
         minutes: 1
@@ -206,9 +210,8 @@
         - nsxt is defined
       tags:
         - cloud
-        - nsxtApi
 
-    - name: get Network details
+    - name: get Network details - NSXT
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -224,7 +227,7 @@
       when:
         - nsxt is defined
 
-    - name: Retrieve Network Mgt Uuid
+    - name: Retrieve Network Mgt Uuid - NSXT
       set_fact:
         networkMgtUuid: "{{ item.uuid }}"
       loop: "{{ networkOutput.obj.results }}"
@@ -235,31 +238,33 @@
         - nsxtApi
       when:
         - nsxt is defined
-        - item.name == nsxt.network
+        - item.name == nsxt.management_network.name
 
-    - name: Set IP details of Mgt Network
+    - name: Set IP details of Mgmt Network - NSXT
       set_fact:
-        nsxtSegmentMgtSubnet:
+        configured_subnets_mgmt:
           - prefix:
-              mask: "{{ nsxtSegmentMgt.cidr.split('/')[1] }}"
+              mask: "{{ nsxt.management_network.cidr.split('/')[1] }}"
               ip_addr:
-                type: "{{ nsxt.networkType }}"
-                addr: "{{ nsxtSegmentMgt.cidr.split('/')[0] }}"
+                type: "{{ nsxt.management_network.type }}"
+                addr: "{{ nsxt.management_network.cidr.split('/')[0] }}"
             static_ip_ranges:
               - range:
                   begin:
-                    type: "{{ nsxt.networkType }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networkRangeBegin }}"
+                    type: "{{ nsxt.management_network.type }}"
+                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.management_network.ipStartPool }}"
                   end:
-                    type: "{{ nsxt.networkType }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networkRangeEnd }}"
+                    type: "{{ nsxt.management_network.type }}"
+                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.management_network.ipEndPool }}"
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt is defined
+        - nsxt.network_vip.cidr is defined
+        - nsxt.network_vip.ipStartPool is defined
+        - nsxt.network_vip.ipEndPool is defined
 
-    - name: Update Mgmt Network (for NSXT)
+    - name: Update Mgmt Network - NSXT
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -268,19 +273,21 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         uuid: "{{ networkMgtUuid | default(omit) }}"
-        name: "{{ nsxt.network }}"
-        dhcp_enabled: "{{ nsxt.networkDhcpEnabled | default(omit) }}"
-        exclude_discovered_subnets: "{{ nsxt.networkExcludeDiscoveredSubnets | default(omit) }}"
-        vcenter_dvs: "{{ nsxt.networkVcenterDvs | default(omit) }}"
-        configured_subnets: "{{ nsxtSegmentMgtSubnet | default(omit) }}"
+        name: "{{ nsxt.management_network.name }}"
+        dhcp_enabled: "{{ nsxt.management_network.dhcp_enabled | default(omit) }}"
+        exclude_discovered_subnets: "{{ nsxt.management_network.exclude_discovered_subnets | default(omit) }}"
+        vcenter_dvs: "{{ nsxt.management_network.vcenter_dvs | default(omit) }}"
+        configured_subnets: "{{ configured_subnets_mgmt | default(omit) }}"
       when:
-        - nsxt.network is defined
-        - nsxt is defined
+        - nsxt.management_network.cidr is defined
+        - nsxt.management_network.ipStartPool is defined
+        - nsxt.management_network.ipEndPool is defined
+        - nsxt.management_network.name is defined
+        - nsxt.name is defined
       tags:
         - cloud
-        - nsxtApi
 
-    - name: get Network details
+    - name: get Network details - NSXT
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -296,7 +303,7 @@
       when:
         - nsxt is defined
 
-    - name: Retrieve Network Vip Uuid
+    - name: Retrieve Network Vip Uuid  - NSXT
       set_fact:
         networkVipUuid: "{{ item.uuid }}"
       loop: "{{ networkOutput.obj.results }}"
@@ -307,42 +314,42 @@
         - nsxtApi
       when:
         - nsxt is defined
-        - item.name == avi_network_vip.name
+        - item.name == nsxt.network_vip.name
 
-    - name: Set IP details of Vip Network
+    - name: Set IP details of Vip Network - NSXT
       set_fact:
-        nsxtSegmentVipSubnet:
+        configured_subnets_vip:
           - prefix:
-              mask: "{{ nsxtSegmentVip.cidr.split('/')[1] }}"
+              mask: "{{ nsxt.network_vip.cidr.split('/')[1] }}"
               ip_addr:
-                type: "{{ avi_network_vip.type }}"
-                addr: "{{ nsxtSegmentVip.cidr.split('/')[0] }}"
+                type: "{{ nsxt.network_vip.type }}"
+                addr: "{{ nsxt.network_vip.cidr.split('/')[0] }}"
             static_ip_ranges:
               - range:
                   begin:
-                    type: "{{ avi_network_vip.type }}"
-                    addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.networkRangeBegin }}"
+                    type: "{{ nsxt.network_vip.type }}"
+                    addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_vip.ipStartPool }}"
                   end:
-                    type: "{{ avi_network_vip.type }}"
-                    addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.networkRangeEnd }}"
+                    type: "{{ nsxt.network_vip.type }}"
+                    addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_vip.ipEndPool }}"
       tags:
         - cloud
         - nsxtApi
       when:
-        - avi_network_vip is defined
-        - nsxt is defined
-        - nsxtSegmentVip is defined
+        - nsxt.network_vip.cidr is defined
+        - nsxt.network_vip.ipStartPool is defined
+        - nsxt.network_vip.ipEndPool is defined
 
-    - name: set vrf Vip (NSXT)
+    - name: set vrf Vip - NSXT
       set_fact:
-        vrfNsxt: "/api/vrfcontext/?name={{ avi_network_vip.tier1 }}"
+        vrfNsxt: "/api/vrfcontext/?name={{ nsxt.network_vip.tier1 }}"
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt is defined
+        - nsxt.network_vip.tier1 is defined
 
-    - name: Update Vip Network for NSXT
+    - name: Update Vip Network - NSXT
       avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -351,35 +358,35 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         uuid: "{{ networkVipUuid | default(omit) }}"
-        name: "{{ avi_network_vip.name }}"
-        dhcp_enabled: "{{ avi_network_vip.dhcp_enabled | default(omit) }}"
-        exclude_discovered_subnets: "{{ avi_network_vip.exclude_discovered_subnets | default(omit) }}"
-        vcenter_dvs: "{{ avi_network_vip.vcenter_dvs | default(omit) }}"
-        configured_subnets: "{{ nsxtSegmentVipSubnet | default(omit) }}"
+        name: "{{ nsxt.network_vip.name }}"
+        dhcp_enabled: "{{  nsxt.network_vip.dhcp_enabled | default(omit) }}"
+        exclude_discovered_subnets: "{{  nsxt.network_vip.exclude_discovered_subnets | default(omit) }}"
+        vcenter_dvs: "{{  nsxt.network_vip.vcenter_dvs | default(omit) }}"
+        configured_subnets: "{{ configured_subnets_vip | default(omit) }}"
         vrf_context_ref: "{{ vrfNsxt | default(omit) }}"
       register: networkOutput
       when:
-        - avi_network_vip is defined
-        - nsxt is defined
+        - nsxt.network_vip.cidr is defined
+        - nsxt.network_vip.ipStartPool is defined
+        - nsxt.network_vip.ipEndPool is defined
+        - nsxt.name is defined
+        - nsxt.network_vip.name is defined
       tags:
         - cloud
-        - nsxtApi
 
-    - name: Create Avi IPAM
+    - name: Create Avi IPAM - NSXT
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:
           usable_networks:
             - nw_ref: "/api/network/{{ networkOutput.obj.uuid | default(networkVipUuid) }}"
-        name: "{{ ipam.name | default('ipam-avi') }}"
+        name: "{{ ipam.name | default('ipam-avi-nsxt') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - avi_network_vip is defined
-        - nsxt is defined
+        - nsxt.network_vip.name is defined
       tags:
         - cloud
-        - nsxtApi
 
     - pause:
         minutes: 1
@@ -397,22 +404,22 @@
         avi_api_update_method: patch
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        name: "{{ avi_network_vip.tier1 }}"
+        name: "{{ nsxt.network_vip.tier1 }}"
         static_routes:
           - prefix:
               ip_addr:
                 addr: "0.0.0.0"
-                type: "{{ avi_network_vip.type }}"
+                type: "{{ nsxt.network_vip.type | default('V4') }}"
               mask: "0"
             next_hop:
-              addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ avi_network_vip.gwAddr | default('1') }}"
-              type: "{{ avi_network_vip.type }}"
+              addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_vip.gateway | default('1') }}"
+              type: "{{ nsxt.network_vip.type | default('V4') }}"
             route_id: "1"
       when:
-        - nsxt is defined
+        - nsxt.name is defined
+        - nsxt.network_vip.tier1 is defined
       tags:
         - cloud
-        - nsxtApi
 
     - name: Update Avi Cloud for NSXT
       avi_cloud:
@@ -439,20 +446,50 @@
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi') }}"
-        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.ipam_provider_ref | default('ipam-avi') }}"
+        ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
         se_group_template_ref: "/api/serviceenginegroup?name=Default-Group"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
-      register: aviCloudOutput
+      register: output_cloud_nsxt
+      when:
+        - nsxt.name is defined
+        - nsxt.server is defined
+        - nsxt.dhcp_enabled is defined
+      tags:
+        - cloud
+        - nsxtApi
+
+    - set_fact:
+        cloud_nsxt_uuid: "{{ output_cloud_nsxt.obj.uuid }}"
       when:
         - nsxt is defined
       tags:
         - cloud
         - nsxtApi
 
-    - set_fact:
-        cloud_uuid_nsxt: "{{ aviCloudOutput.obj.uuid }}"
+    - name: Modify/Creating SE group - NSXT
+      avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
+        avi_api_update_method: put
+        name: "{{ item.name }}"
+        ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.buffer_se | default(omit) }}"
+        extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
+        vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
+        vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
+      loop: "{{ nsxt.serviceEngineGroup }}"
+      loop_control:
+        label: "Modifying SE group called {{ item.name }}"
       when:
-        - nsxt is defined
+        - nsxt.serviceEngineGroup is defined
+        - nsxt.name is defined
       tags:
-        - cloud
-        - nsxtApi
+        - serviceEngineGroup
