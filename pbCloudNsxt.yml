@@ -149,7 +149,6 @@
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi') }}"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
-      register: aviCloudOutput
       when:
         - nsxt.name is defined
         - nsxt.server is defined
