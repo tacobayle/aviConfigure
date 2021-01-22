@@ -1,11 +1,19 @@
 ---
 - hosts: localhost
   connection: local
+  gather_facts: no
 
   roles:
     - role: "avinetworks.avisdk"
 
   tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ cloud_nsxt_uuid }}"
+      when:
+        - nsxt.name is defined
+
 
     - name: Debug
       debug:
