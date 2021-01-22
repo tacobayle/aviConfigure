@@ -27,14 +27,14 @@
         ntp_servers: "{{ ntp_servers | default([]) + [{ 'server': {'type': 'V4', 'addr': item}}] }}"
       loop: "{{ controller.ntp }}"
       when:
-        - ntpServers is defined
+        - controller.ntp is defined
 
     - name: Define dns_servers
       set_fact:
         server_list: "{{ server_list | default([]) + [{'type': 'V4', 'addr': item}] }}"
       loop: "{{ controller.dns }}"
       when:
-        - dnsServers is defined
+        - controller.dns is defined
 
     - name: Define avi_systemconfiguration
       set_fact:
