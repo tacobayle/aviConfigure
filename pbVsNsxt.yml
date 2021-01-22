@@ -125,7 +125,7 @@
     #
 
         - name: retrieve details for NSXT Group - NSXT
-          command: python3 python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
+          command: python3 python/retrieveNsxtGroups.py "{{ aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
           ignore_errors: no
           register: nsxtGroupsJson
           when:
