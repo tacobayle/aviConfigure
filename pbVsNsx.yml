@@ -14,7 +14,6 @@
       when:
         - nsxt.name is defined
 
-
     - name: Debug
       debug:
         msg: "{{ avi_credentials }}"
@@ -108,7 +107,7 @@
     #
 
         - name: retrieve details for NSXT Group - NSXT
-          command: python3 python/retrieveNsxtGroups.py ../vars/creds.json "{{ cloud_nsxt_uuid }}"
+          command: "python3 python/retrieveNsxtGroups.py ../vars/creds.json {{ cloud_nsxt_uuid }}"
           ignore_errors: no
           register: nsxtGroupsJson
           when:
