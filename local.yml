@@ -1,30 +1,49 @@
 ---
 - import_playbook: pbInstallDocker.yml
+  when: lsc is defined
 - import_playbook: pbPreCheck.yml
 - import_playbook: pbAwsUpdatePassword.yml
+  when: aws is defined
 - import_playbook: pbInitCluster.yml
 - import_playbook: pbSystemConfig.yml
 - import_playbook: pbCloudConnectUser.yml
+  when: nsxt is defined or lsc is defined
 - import_playbook: pbSe.yml
+  when: lsc is defined
 - import_playbook: pbDnsIpam.yml
 - import_playbook: pbCloudLsc.yml
+  when: lsc is defined
 - import_playbook: pbCloudVmw.yml
+  when: vmw is defined
 - import_playbook: pbCloudOpenstack.yml
+  when: openstack is defined
 - import_playbook: pbCloudGcp.yml
+  when: gcp is defined
 - import_playbook: pbCloudAzure.yml
+  when: azure is defined
 - import_playbook: pbCloudAws.yml
+  when: aws is defined
 - import_playbook: pbCloudNsxt.yml
+  when: nsxt is defined
 - import_playbook: pbCloudNoAccess.yml
+  when: no_access is defined
 - import_playbook: pbCloudCheck.yml
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: pbSeGroup.yml
 - import_playbook: pbVsLsc.yml
+  when: lsc is defined
 - import_playbook: pbVsVipAzure.yml
+  when: azure is defined
 - import_playbook: pbVsVipAws.yml
+  when: aws is defined
 - import_playbook: pbVsVipGcp.yml
+  when: gcp is defined
 - import_playbook: pbVsVmw.yml
-- import_playbook: pbVsNsx.yml
+  when: vmw is defined
+- import_playbook: pbVsNsxt.yml
+  when: nsxt is defined
 - import_playbook: pbVsVipNoAccessVmware.yml
+  when: no_access is defined
 - import_playbook: pbVs.yml
 - import_playbook: pbGslb.yml
 - import_playbook: pbGslbService.yml

@@ -8,6 +8,24 @@
 
   tasks:
 
+    - name: Get Clouds list
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        path: cloud
+      register: cloudResults
+
+    - name: retrieve cloud uuid
+      set_fact:
+        cloud_nsxt_uuid: "{{ item.uuid }}"
+      tags:
+        - cloud
+        - nsxtApi
+      loop: "{{ cloudResults.obj.results }}"
+      when:
+        - item.name == nsxt.name
+
     - name: Debug
       debug:
         msg: "{{ cloud_nsxt_uuid }}"
@@ -107,7 +125,7 @@
     #
 
         - name: retrieve details for NSXT Group - NSXT
-          command: "python3 python/retrieveNsxtGroups.py ../vars/creds.json {{ cloud_nsxt_uuid }}"
+          command: python3 python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
           ignore_errors: no
           register: nsxtGroupsJson
           when:
@@ -121,8 +139,7 @@
           set_fact:
             nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
           when:
-            - nsxt.pool_nsxt_group is defined
-            - cloud_nsxt_uuid is defined
+            - nsxtGroupsJson.stdout is defined
           tags:
             - pool
             - vs
@@ -147,7 +164,7 @@
         - nsxtGroups.resource.nsxt_groups is defined
         - nsxt.pool_nsxt_group is defined
         - nsxt.name is defined
-        - item.name == nsxt.management_network.nsxt_group_name
+        - item.name == nsxt.pool_nsxt_group.nsxt_group_name
       tags:
         - pool
         - vs
