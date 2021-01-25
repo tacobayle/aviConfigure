@@ -16,7 +16,7 @@
       tags:
         - debug
 
-    - name: Create pool without server (AWS, Azure, GCP, NoAccessVMware)
+    - name: Create pool without server (AWS, Azure, NoAccessVMware)
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
