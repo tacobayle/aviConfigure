@@ -167,6 +167,7 @@
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ gcp.pool_opencart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        application_persistence_profile_ref: "{{ gcp.pool_opencart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         servers:
           - ip:
               addr: "{{ item }}"
