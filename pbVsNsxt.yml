@@ -240,7 +240,9 @@
             throttle: 10
             enabled: true
           all_headers: true
-      loop: "{{ avi_virtualservice.http }}"
+      loop: "{{ nsxt.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - nsxt.virtualservices.http is defined
         - nsxt.name is defined
