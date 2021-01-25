@@ -197,7 +197,6 @@
         - output_cloud_nsxt is defined
       tags:
         - cloud
-        - nsxtApi
 
     - name: Debug
       debug:

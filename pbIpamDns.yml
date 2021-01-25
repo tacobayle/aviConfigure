@@ -42,7 +42,7 @@
         dhcp_enabled: "{{ network.dhcp_enabled }}"
       when:
         - network is defined
-        - gcp is defined or no_access is defined
+        - no_access is defined
       tags:
         - ipam
 
@@ -56,7 +56,7 @@
       register: networkUuid
       when:
         - network is defined
-        - gcp is defined or no_access is defined
+        - no_access is defined
       tags:
         - ipam
 
@@ -68,7 +68,7 @@
        label: "{{ item.uuid }}"
       when:
         - network is defined
-        - gcp is defined or no_access is defined
+        - no_access is defined
       tags:
         - ipam
 
@@ -87,7 +87,7 @@
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - network is defined
-        - gcp is defined or no_access is defined
+        - no_access is defined
       tags:
         - ipam
 

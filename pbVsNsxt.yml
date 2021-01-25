@@ -47,7 +47,7 @@
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ nsxtTier1sVip.id }}"
         dns_info:
-          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
+          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + nsxt.domains.0.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
         vip:
           - auto_allocate_ip: true
@@ -63,6 +63,7 @@
         - nsxt.virtualservices.dns is defined
         - nsxt.name is defined
         - nsxt.network_vip.name is defined
+        - nsxt.domains is defined
       tags:
         - vsvip
         - vs
@@ -76,7 +77,7 @@
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ nsxtTier1sVip.id }}"
         dns_info:
-          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
+          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + nsxt.domains.0.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
         vip:
           - auto_allocate_ip: true
@@ -92,6 +93,7 @@
         - nsxt.virtualservices.http is defined
         - nsxt.name is defined
         - nsxt.network_vip.name is defined
+        - nsxt.domains is defined
       tags:
         - vsvip
         - vs
