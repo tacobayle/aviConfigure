@@ -16,7 +16,7 @@
         cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "{{ item.name + '.' + domain.name }}"
+          - fqdn: "{{ item.name + '.' + lsc.domains.0.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
@@ -43,7 +43,7 @@
         cloud_ref: "/api/cloud/?name={{ lsc.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "{{ item.name + '.' + domain.name }}"
+          - fqdn: "{{ item.name + '.' + lsc.domains.0.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:

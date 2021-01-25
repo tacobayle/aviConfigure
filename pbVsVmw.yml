@@ -21,7 +21,7 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "{{ item.name + '.' + domain.name }}"
+          - fqdn: "{{ item.name + '.' + vmw.domains.0.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
@@ -34,6 +34,10 @@
       loop: "{{ vmw.virtualservices.dns }}"
       when:
         - vmw.virtualservices.dns is defined
+        - vmw.name is defined
+        - vmw.domains.0.name is defined
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.name is defined
       tags:
         - vmw
         - vsvip_dns
@@ -46,7 +50,7 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         dns_info:
-          - fqdn: "{{ item.name + '.' + domain.name }}"
+          - fqdn: "{{ item.name + '.' + vmw.domains.0.name }}"
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
@@ -59,6 +63,10 @@
       loop: "{{ vmw.virtualservices.http }}"
       when:
         - vmw.virtualservices.http is defined
+        - vmw.name is defined
+        - vmw.domains.0.name is defined
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.name is defined
       tags:
         - vmw
         - vsvip_http
@@ -72,6 +80,7 @@
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
       when:
         - vmw.pool is defined
+        - vmw.name is defined
       tags:
         - vmw
         - pool
@@ -94,6 +103,7 @@
       when:
         - avi_servers_vmw is defined
         - vmw.pool is defined
+        - vmw.name is defined
       tags:
         - pool
         - vmw
@@ -106,7 +116,8 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
       when:
-        - vmw.pool_opencart is defined
+        - vmw.pool_opencart.name is defined
+        - vmw.name is defined
       tags:
         - vmw
         - pool
@@ -125,9 +136,10 @@
           - ip:
               addr: "{{ item }}"
               type: 'V4'
-      loop: "{{ avi_servers_opencart }}"
+      loop: "{{ avi_servers_opencart_vmw }}"
       when:
-        - avi_servers_opencart is defined
+        - avi_servers_opencart.name is defined
+        - vmw.name is defined
         - vmw.pool_opencart is defined
       tags:
         - pool
@@ -190,3 +202,43 @@
       tags:
         - vs
         - vmw
+
+    - name: Update system config with first DNS VS - VMW
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        dns_virtualservice_refs: "/api/virtualservice/?name={{ vmw.virtualservices.dns.0.name }}"
+      tags:
+        - vsDns
+        - vs
+      when:
+        - vmw.virtualservices.dns.0.name is defined
+
+
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns }}"
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns.results.1.obj.uuid }}"
+
+    - name: Wait for the First VS Http to be ready - VMW
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice-inventory
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+      register: statusVs
+      until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
+      retries: 120
+      delay: 10
+      when: vmw.virtualservices.http is defined
+      ignore_errors: yes
+      tags:
+        - vsHttp
+        - vs

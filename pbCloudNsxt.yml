@@ -15,7 +15,7 @@
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ nsxt.dns.name | default('dns-avi-nsxt')}}"
+        name: "{{ nsxt.dns_provider_ref | default('dns-avi-nsxt')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       when:
         - nsxt.domains is defined
@@ -35,7 +35,7 @@
               pass_through: true
               record_ttl: 100
           ttl: 300
-        name: "{{ nsxt.dns.name | default('dns-avi-nsxt')}}"
+        name: "{{ nsxt.dns_provider_ref | default('dns-avi-nsxt')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       loop: "{{ nsxt.domains }}"
       when:
@@ -426,7 +426,7 @@
         internal_profile:
           usable_networks:
             - nw_ref: "/api/network/{{ networkOutput.obj.uuid | default(networkVipUuid) }}"
-        name: "{{ ipam.name | default('ipam-avi-nsxt') }}"
+        name: "{{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - nsxt.network_vip.name is defined

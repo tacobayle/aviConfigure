@@ -1,0 +1,286 @@
+---
+- hosts: localhost
+  connection: local
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Debug
+      debug:
+        msg: "{{ avi_credentials }}"
+      tags:
+        - debug
+
+    - name: get Networks to retrieve Uuid - GCP
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: network
+      register: networkUuid
+      when:
+        - gcp.network_vip.cidr is defined
+      tags:
+        - ipam
+
+    - name: Append Network uuid to the list - GCP
+      set_fact:
+        listNetworkUuid: "{{ listNetworkUuid }} + [ '{{ item.uuid }}' ]"
+      loop: "{{ networkUuid.obj.results }}"
+      loop_control:
+        label: "{{ item.uuid }}"
+      when:
+        - gcp.network_vip.cidr is defined
+      tags:
+        - ipam
+
+    - name: Define vip data - GCP
+      set_fact:
+        vipGcp:
+          - ipam_network_subnet:
+              network_ref: "{{ listNetworkUuid.0 | default('Null') }}"
+              subnet:
+                mask: "{{ gcp.network_vip.cidr.split('/')[1] }}"
+                ip_addr:
+                  type: "{{ gcp.network_vip.type | default('V4') }}"
+                  addr: "{{ gcp.network_vip.cidr.split('/')[0] }}"
+            avi_allocated_fip: true
+            auto_allocate_ip: true
+            auto_allocate_floating_ip: true
+      when:
+        - gcp.network_vip.cidr is defined
+        - listNetworkUuid is defined
+
+    - name: Create vsvip for dns VS - GCP
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + gcp.domains.0.name ) }}"
+            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vipGcp }}"
+      loop: "{{ gcp.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - gcp.virtualservices.dns is defined
+        - gcp.domains is defined
+        - gcp.name is defined
+        - item.name is defined
+      tags:
+        - vsVip
+        - vsDns
+        - vs
+
+    - name: Create vsvip for http VS - GCP
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + gcp.domains.0.name) }}"
+            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vipGcp }}"
+      loop: "{{ gcp.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - gcp.virtualservices.dns is defined
+        - gcp.domains is defined
+        - gcp.name is defined
+        - item.name is defined
+      tags:
+        - vsvip
+        - vsHttp
+        - vs
+
+    - name: Create pool without server - GCP
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ gcp.pool.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      when:
+        - gcp.name is defined
+        - gcp.pool.name is defined
+      tags:
+        - pool
+        - vsHttp
+        - vs
+
+    - name: update pool with servers - GCP
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ gcp.pool.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ gcp.pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        health_monitor_refs:
+          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+        servers:
+          - ip:
+              addr: "{{ item }}"
+              type: 'V4'
+      loop: "{{ avi_backend_servers_gcp }}"
+      when:
+        - avi_backend_servers_gcp is defined
+        - gcp.pool.name is defined
+        - gcp.name is defined
+      tags:
+        - pool
+        - vsHttp
+        - vs
+
+    - name: Create pool opencart without server - GCP
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ gcp.pool_opencart.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      when:
+        - gcp.pool_opencart.name is defined
+        - gcp.name is defined
+      tags:
+        - vmw
+        - pool
+
+    - name: update pool opencart with servers - GCP
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ gcp.pool_opencart.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ gcp.pool_opencart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        servers:
+          - ip:
+              addr: "{{ item }}"
+              type: 'V4'
+      loop: "{{ avi_servers_opencart_gcp }}"
+      when:
+        - avi_servers_opencart.name is defined
+        - avi_servers_opencart_gcp is defined
+        - gcp.name is defined
+      tags:
+        - pool
+        - vmw
+
+    #
+    # VS creation
+    #
+    - name: Create HTTP Virtualservice (based on vsvip) - GCP
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ gcp.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - gcp.virtualservices.http is defined
+        - gcp.name is defined
+      register: outputVsHttp
+      tags:
+        - vsHttp
+        - vs
+
+    - name: Create DNS Virtualservice
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-DNS') }}"
+        network_profile_ref: "/api/networkprofile/?name={{ item.network_profile_ref | default('System-UDP-Per-Pkt') }}"
+        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        services: "{{ item.services }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+      loop: "{{ gcp.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - gcp.virtualservices.dns is defined
+        - gcp.name is defined
+      register: outputVsDns
+      tags:
+        - vsDns
+        - vs
+
+    - name: Update system config with first DNS VS
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        dns_virtualservice_refs: "/api/virtualservice/?name={{ gcp.virtualservices.dns.0.name }}"
+      tags:
+        - vsDns
+        - vs
+      when:
+        - gcp.virtualservices.dns.0.name is defined
+
+
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns }}"
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns.results.1.obj.uuid }}"
+
+    - name: Wait for the First VS Http to be ready
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice-inventory
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+      register: statusVs
+      until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
+      retries: 120
+      delay: 10
+      when: gcp.virtualservices.http is defined
+      ignore_errors: yes
+      tags:
+        - vsHttp
+        - vs

@@ -36,7 +36,7 @@
   when: azure is defined
 - import_playbook: pbVsVipAws.yml
   when: aws is defined
-- import_playbook: pbVsVipGcp.yml
+- import_playbook: pbVsGcp.yml
   when: gcp is defined
 - import_playbook: pbVsVmw.yml
   when: vmw is defined
