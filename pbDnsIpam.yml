@@ -25,7 +25,7 @@
         name: "{{ dns.name | default('dns-avi')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
       when:
-        - gcp is defined or vmw is defined or nsxt is defined or no_access is defined or openstack is defined or lsc is defined
+        - gcp is defined or vmw is defined or no_access is defined or openstack is defined or lsc is defined
         - domain.name is defined
       tags:
         - dns

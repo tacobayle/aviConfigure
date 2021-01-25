@@ -56,7 +56,7 @@
               subnet:
                 mask: "{{ nsxtSegmentVip.cidr.split('/')[1] }}"
                 ip_addr:
-                  type: "{{ nsxt.network_vip..type | default('V4') }}"
+                  type: "{{ nsxt.network_vip.type | default('V4') }}"
                   addr: "{{ nsxtSegmentVip.cidr.split('/')[0] }}"
       loop: "{{ nsxt.virtualservices.dns }}"
       when:
