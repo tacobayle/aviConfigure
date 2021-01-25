@@ -179,7 +179,7 @@
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
-        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
       register: output_cloud_nsxt
       when:
@@ -491,7 +491,7 @@
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
-        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi') }}"
+        dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
         se_group_template_ref: "/api/serviceenginegroup?name=Default-Group"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"

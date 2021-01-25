@@ -37,7 +37,7 @@
         name: "{{ ipam.name | default('ipam-avi') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - gcp is defined or no_access is defined
+        - no_access is defined
       tags:
         - ipam
 
