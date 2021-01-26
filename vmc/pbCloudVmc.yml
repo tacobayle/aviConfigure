@@ -145,7 +145,7 @@
         name: "{{ vmc.ipam_provider_ref | default('ipam-avi-vmc') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - listNetworkUuid is defined
+        - output_network_vip_vmc.obj.uuid is defined
       tags:
         - ipam
 
