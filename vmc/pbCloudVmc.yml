@@ -68,7 +68,7 @@
     - set_fact:
         cloud_vmc_uuid: "{{ output_cloud_vmc.obj.uuid }}"
       when:
-        - lsc is defined
+        - vmc.name is defined
       tags:
         - cloud
 
@@ -129,7 +129,7 @@
         cloud_ref: "/api/cloud/?name={{ vmc.name }}"
         configured_subnets: "{{ configured_subnets }}"
         dhcp_enabled: "{{ network.dhcp_enabled | default('false')}}"
-        register: output_network_vip_vmc
+      register: output_network_vip_vmc
       when:
         - vmc.name is defined
       tags:
