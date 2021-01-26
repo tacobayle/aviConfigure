@@ -117,7 +117,7 @@
               mask: "{{ vmc.network_vip.cidr.split('/')[1] }}"
               ip_addr:
                 type: "{{ vmc.network_vip.type | default('V4') }}"
-                addr: "{{ vmc.network_vip.split('/')[0] }}"
+                addr: "{{ vmc.network_vip.cidr.split('/')[0] }}"
             static_ip_ranges:
               - range:
                   begin:
