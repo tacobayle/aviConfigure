@@ -286,7 +286,7 @@
             - se_master_ctl_version < "18.2.6"
 
       when:
-        - no_access is defined
+        - vmc.name is defined
 
     #### end of block
 
@@ -312,7 +312,7 @@
             - se_master_ctl_version >= "18.2.6"
 
       when:
-        - no_access is defined
+        - vmc.name is defined
 
     #### end of block
 
