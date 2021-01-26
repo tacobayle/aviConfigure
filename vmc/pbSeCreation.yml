@@ -10,7 +10,7 @@
 
 # This playbook requires the following variable:
 #   - avi_credentials
-#   - cloud_uuid_no_access
+#   - cloud_vmc_uuid
 #   - ova_path
 #   - vcenter variable
 #   - seg variable
@@ -38,7 +38,7 @@
 
     # - name: Debug variable cloud uuid
     #   debug:
-    #     msg: "{{ cloud_uuid_no_access }}"
+    #     msg: "{{ cloud_vmc_uuid }}"
     #   tags:
     #     - debug
 
@@ -61,7 +61,7 @@
         http_method: get
         path: securetoken-generate
         params:
-          cloud_uuid: "{{ cloud_uuid_no_access }}"
+          cloud_uuid: "{{ cloud_vmc_uuid }}"
       register: token_results
       loop: "{{ range(0, seg.numberOfSe | int, 1) | list }}"
       when:
@@ -85,9 +85,9 @@
 
     - name: Define networks data for SE(s) for management
       set_fact:
-        networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : vcenter.networkManagementSe }) }}"
+        networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : vmc.network_mgmt.name }) }}"
       when:
-        - vcenter.networkManagementSe is defined
+        - vmc.network_mgmt.name is defined
 
     - name: Adding the netorks defined in the variable networksList
       set_fact:
@@ -120,10 +120,10 @@
 
     - name: Create a VM folder on given datacenter
       vcenter_folder:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
-        datacenter_name: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
+        hostname: "{{ vmc_vsphere_server }}"
+        username: "{{ vmc_vsphere_user }}"
+        password: "{{ vmc_vsphere_password }}"
+        datacenter_name: "{{ vmc.vcenter.dc | default('SDDC-Datacenter',true) }}"
         folder_name: "Avi-SEG-{{ seg.name }}"
         folder_type: vm
         state: present
@@ -133,13 +133,13 @@
 
     - name:  deploy Avi SE(S)
       vmware_deploy_ovf:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
+        hostname: "{{ vmc_vsphere_server }}"
+        username: "{{ vmc_vsphere_user }}"
+        password: "{{ vmc_vsphere_password }}"
         folder: "{{ vm_folder_creation_result.result.path }}"
-        datacenter: "{{ vcenter.datacenter | default('SDDC-Datacenter',true) }}"
-        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
-        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
+        datacenter: "{{ vmc.vcenter.dc | default('SDDC-Datacenter',true) }}"
+        cluster: "{{ vmc.vcenter.cluster | default('Cluster-1',true) }}"
+        datastore: "{{ vmc.vcenter.datastore | default('WorkloadDatastore',true) }}"
         name: "{{ seg.name }}-{{ 'se%02x' | format(item.0) }}"
         validate_certs: False
         networks: "{{ networksSe }}"
@@ -166,9 +166,9 @@
 
     - name: Modify SE(s) Hardware
       vmware_guest:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
+        hostname: "{{ vmc_vsphere_server }}"
+        username: "{{ vmc_vsphere_user }}"
+        password: "{{ vmc_vsphere_password }}"
         validate_certs: False
         uuid: "{{ item.instance.hw_product_uuid }}"
         hardware:
@@ -186,9 +186,9 @@
 
     - name: Power On SE(s)
       vmware_guest:
-        hostname: "{{ vcenter.hostname }}"
-        username: "{{ vcenter.username }}"
-        password: "{{ vcenter.password }}"
+        hostname: "{{ vmc_vsphere_server }}"
+        username: "{{ vmc_vsphere_user }}"
+        password: "{{ vmc_vsphere_password }}"
         validate_certs: False
         uuid: "{{ item.instance.hw_product_uuid }}"
         wait_for_ip_address: yes
@@ -256,7 +256,7 @@
         path: serviceenginegroup
         params:
           name: "{{ seg.name | default('Default-Group',true) }}"
-          cloud_ref.name: "{{ no_access.name | default('Default-Cloud',true) }}"
+          cloud_ref.name: "{{ vmc.name | default('Default-Cloud',true) }}"
       register: seg_results
       when:
         - seg.name != 'Default-Group'
