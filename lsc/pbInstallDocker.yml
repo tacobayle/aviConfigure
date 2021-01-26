@@ -5,7 +5,7 @@
   become_method: sudo
 
   vars_files:
-    - "vars/params.yml"
+    - "../vars/params.yml"
 
   tasks:
 

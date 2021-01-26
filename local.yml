@@ -45,5 +45,3 @@
 - import_playbook: vmc/pbVsVmc.yml
   when: vmc is defined
 - import_playbook: pbVs.yml
-- import_playbook: pbGslb.yml
-- import_playbook: pbGslbService.yml
