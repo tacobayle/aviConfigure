@@ -330,15 +330,16 @@
         - vmc.name is defined
 
 - hosts: avicontroller
-  gather_facts: no
+  gather_facts: yes
 
   tasks:
 
     - set_fact:
         se_image_path: "{{ hostvars['localhost']['se_image_path'] }}"
 
-    - pause:
-        minutes: 1
+    - name: Debug
+      debug:
+        msg: "{{ se_image_path }}"
 
     - name: Download SE image
       fetch:
@@ -346,14 +347,12 @@
         dest: ./
         flat: yes
         validate_checksum: False
-      when:
-        - vmc.name is defined
+
 
     - name: Define ova path (in controller variable)
       set_fact:
         ova_path: "./se.ova"
-      when:
-        - vmc.name is defined
+
 
 
 - hosts: localhost
