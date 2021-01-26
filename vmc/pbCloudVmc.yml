@@ -175,6 +175,29 @@
       when:
         - vmc.name is defined
 
+    - name: Define Default Gw for VIP Network - VMC
+      set_fact:
+        ipGw: "{{ vmc.network_vip.cidr | ipaddr(vmc.network_vip.defaultGateway) }}"
+      when:
+        - vmc.network_vip.cidr is defined
+        - vmc.network_vip.defaultGateway is defined
+
+    - name: Define Default Gw for VIP Network - VMC
+      set_fact:
+        ipGw: "{{ ipGw.split('/')[0] }}"
+      when:
+        - vmc.network_vip.cidr is defined
+        - vmc.network_vip.defaultGateway is defined
+
+    - name: Debug
+      debug:
+        msg: "{{ ipGw }}"
+      tags:
+        - debug
+      when:
+        - vmc.network_vip.cidr is defined
+        - vmc.network_vip.defaultGateway is defined
+
     - name: Update vrf global with default route for VIP network - VMC
       avi_vrfcontext:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -191,7 +214,7 @@
                 type: "{{ vmc.network_vip.type | default('V4') }}"
               mask: "0"
             next_hop:
-              addr: "{{ vmc.network_vip.cidr | ipaddr(vmc.network_vip.defaultGateway) }}"
+              addr: "{{ ipGw }}"
               type: "{{ vmc.network_vip.type | default('V4') }}"
             route_id: "1"
       when:
