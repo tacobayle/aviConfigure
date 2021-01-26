@@ -259,8 +259,8 @@
         hostname: avicontroller
         ansible_host: "{{ avi_credentials.controller }}"
         ansible_port: 22
-        ansible_user: "{{ controller.username }}"
-        ansible_ssh_pass: "{{ controller.password }}"
+        ansible_user: "{{ avi_credentials.username }}"
+        ansible_ssh_pass: "{{ avi_credentials.password }}"
 
     #### start of block
 
