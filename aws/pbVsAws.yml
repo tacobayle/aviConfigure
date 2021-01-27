@@ -302,7 +302,7 @@
         - vsDns
         - vs
       when:
-        - avi_virtualservice.dns.0.name is defined
+        - aws.virtualservices.dns.0.name is defined
 
 
     # - name: Debug
