@@ -259,8 +259,8 @@
         hostname: avicontroller
         ansible_host: "{{ avi_credentials.controller }}"
         ansible_port: 22
-        ansible_user: "{{ avi_credentials.username }}"
-        ansible_ssh_pass: "{{ avi_credentials.password }}"
+        ansible_user: "{{ avi_username }}"
+        ansible_ssh_pass: "{{ avi_password }}"
 
     #### start of block
 
@@ -330,16 +330,16 @@
         - vmc.name is defined
 
 - hosts: avicontroller
-  gather_facts: yes
+  gather_facts: no
 
   tasks:
 
     - set_fact:
         se_image_path: "{{ hostvars['localhost']['se_image_path'] }}"
 
-    - name: Debug
-      debug:
-        msg: "{{ se_image_path }}"
+#    - name: Debug
+#      debug:
+#        msg: "{{ se_image_path }}"
 
     - name: Download SE image
       fetch:
