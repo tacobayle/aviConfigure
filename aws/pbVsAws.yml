@@ -83,7 +83,7 @@
         - vsDns
         - vs
 
-    - name: Create vsvip for http VSv - AWS
+    - name: Create vsvip for http VS - AWS
       avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -100,7 +100,7 @@
       when:
         - aws.name is defined
         - vipAwsMultiAz is defined
-        - aws.domains.0.name is defned
+        - aws.domains.0.name is defined
         - aws.virtualservices.http is defined
       tags:
         - vsvip
