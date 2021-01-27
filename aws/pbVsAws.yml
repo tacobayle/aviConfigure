@@ -76,7 +76,7 @@
       when:
         - aws.name is defined
         - vipAwsSingleAz is defined
-        - aws.domains.0.name is defned
+        - aws.domains.0.name is defined
         - aws.virtualservices.dns is defined
       tags:
         - vsVip
