@@ -34,7 +34,7 @@
   when: lsc is defined
 - import_playbook: azure/pbVsVipAzure.yml
   when: azure is defined
-- import_playbook: aws/pbVsVipAws.yml
+- import_playbook: aws/pbVsAws.yml
   when: aws is defined
 - import_playbook: gcp/pbVsGcp.yml
   when: gcp is defined

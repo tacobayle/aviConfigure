@@ -56,3 +56,31 @@
         - output_cloud_aws.obj.uuid is defined
       tags:
         - cloud
+
+    - name: Modify/Creating SE group - AWS
+      avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        cloud_ref: "/api/cloud/?name={{ aws.name }}"
+        avi_api_update_method: put
+        name: "{{ item.name }}"
+        ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.buffer_se | default(omit) }}"
+        extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
+        vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
+        vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
+      loop: "{{ aws.serviceEngineGroup }}"
+      loop_control:
+        label: "Modifying SE group called {{ item.name }}"
+      when:
+        - aws.serviceEngineGroup is defined
+        - aws.name is defined
+      tags:
+        - serviceEngineGroup
