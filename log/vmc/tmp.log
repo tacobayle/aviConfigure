@@ -1,0 +1,65 @@
+ubuntu@jump:~/ansible/aviConfigure/python$
+ubuntu@jump:~/ansible/aviConfigure/python$ more ../vmc/play.yml
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Set variable avi_credentials
+      set_fact:
+        avi_credentials: >
+                          {'api_version': "{{ avi_version }}",
+                           'controller': "10.1.1.12",
+                           'password': "{{ avi_password }}",
+                           'username': "{{ avi_username }}"}
+
+    - set_fact:
+        cloud_vmc_uuid: "cloud-058d3fb8-23b0-4a1c-b462-2463736b399d"
+
+
+
+
+    - set_fact:
+        ova_path: "./se.ova"
+
+    - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
+      command: python3 ../python/loopOverSeGroup.py ../vmc/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_vmc_uuid | to_json }}" "{{ ova_path | to_json }}" "{{
+ vmc_vsphere_user | to_json }}" "{{ vmc_vsphere_password | to_json }}" "{{ vmc_vsphere_server | to_json }}" "{{ vmc | to_json }}" "{{ vmc | to_yaml }}"
+      register: logPbSeCreation
+
+    - name: debugging SE creation
+      debug:
+        msg: "{{ logPbSeCreation }}"
+
+
+
+ubuntu@jump:~/ansible/aviConfigure/python$ more loopOverSeGroup.py
+import requests, json, os, yaml, sys
+#
+# this python script is used to iterate over a list of tasks and using the loop inside the list of tasks
+#
+playbook = sys.argv[1]
+avi_credentials = sys.argv[2]
+cloud_vmc_uuid = sys.argv[3]
+ova_path = sys.argv[4]
+vmc_vsphere_user = sys.argv[5]
+vmc_vsphere_password = sys.argv[6]
+vmc_vsphere_server = sys.argv[7]
+vmc = sys.argv[8]
+#print(str(sys.argv[9]))
+#print(str(sys.argv[9]).replace("'", '"'))
+#print(sys.argv[9].encode('ascii', 'ignore'))
+#print(str(sys.argv[9]).replace("'", '"').encode('ascii', 'ignore'))
+#print(type(sys.argv[9]))
+data_loaded = yaml.load(sys.argv[9])
+#data_loaded = json.loads(sys.argv[9].encode('ascii', 'ignore').replace("'", '"').decode())
+for item in data_loaded['serviceEngineGroup']:
+    os.system('ansible-playbook {0} --extra-vars \'{{"seg":{1}}}\' --extra-vars \'{{"avi_credentials":{2}}}\' --extra-vars \'{{"cloud_vmc_uuid":{3}}}\' --extra-vars \'{{"ova
+_path":{4}}}\' --extra-vars \'{{"vmc_vsphere_user":{5}}}\' --extra-vars \'{{"vmc_vsphere_password":{6}}}\' --extra-vars \'{{"vmc_vsphere_server":{7}}}\' --extra-vars \'{{"vm
+c":{8}}}\''.format(playbook, json.dumps(item), avi_credentials, cloud_vmc_uuid, ova_path, vmc_vsphere_user, vmc_vsphere_password, vmc_vsphere_server, vmc))
+ubuntu@jump:~/ansible/aviConfigure/python$

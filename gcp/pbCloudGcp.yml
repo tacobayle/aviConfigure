@@ -154,34 +154,35 @@
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"
         configured_subnets: "{{ configured_subnets }}"
         dhcp_enabled: "{{ gcp.network_vip.dhcp_enabled | default('false')}}"
+      register: output_network_vip_gcp
       when:
         - configured_subnets is defined
       tags:
         - ipam
 
-    - name: get Networks to retrieve Uuid - GCP
-      avi_api_session:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        http_method: get
-        timeout: 300
-        path: network
-      register: networkUuid
-      when:
-        - gcp.network_vip.cidr is defined
-      tags:
-        - ipam
-
-    - name: Append Network uuid to the list - GCP
-      set_fact:
-        listNetworkUuid: "{{ listNetworkUuid | default([]) }} + [ '{{ item.uuid }}' ]"
-      loop: "{{ networkUuid.obj.results }}"
-      loop_control:
-        label: "{{ item.uuid }}"
-      when:
-        - gcp.network_vip.cidr is defined
-      tags:
-        - ipam
+#    - name: get Networks to retrieve Uuid - GCP
+#      avi_api_session:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        http_method: get
+#        timeout: 300
+#        path: network
+#      register: networkUuid
+#      when:
+#        - gcp.network_vip.cidr is defined
+#      tags:
+#        - ipam
+#
+#    - name: Append Network uuid to the list - GCP
+#      set_fact:
+#        listNetworkUuid: "{{ listNetworkUuid | default([]) }} + [ '{{ item.uuid }}' ]"
+#      loop: "{{ networkUuid.obj.results }}"
+#      loop_control:
+#        label: "{{ item.uuid }}"
+#      when:
+#        - gcp.network_vip.cidr is defined
+#      tags:
+#        - ipam
 
     - name: Update Avi IPAM - GCP
       avi_ipamdnsproviderprofile:
@@ -191,11 +192,11 @@
         avi_api_update_method: patch
         gcp_profile:
           usable_network_refs:
-            - "/api/network/{{ listNetworkUuid.0 }}"
+            - "/api/network/{{ output_network_vip_gcp.obj.uuid }}"
         name: "{{ gcp.ipam_provider_ref | default('ipam-avi-gcp') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - listNetworkUuid is defined
+        - output_network_vip_gcp.obj.uuid is defined
       tags:
         - ipam
 

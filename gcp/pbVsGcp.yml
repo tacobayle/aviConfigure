@@ -28,7 +28,7 @@
 
     - name: Append Network uuid to the list - GCP
       set_fact:
-        listNetworkUuid: "{{ listNetworkUuid }} + [ '{{ item.uuid }}' ]"
+        listNetworkUuid: "{{ listNetworkUuid | default([]) }} + [ '{{ item.uuid }}' ]"
       loop: "{{ networkUuid.obj.results }}"
       loop_control:
         label: "{{ item.uuid }}"

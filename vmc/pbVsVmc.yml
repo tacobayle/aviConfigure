@@ -28,7 +28,7 @@
 
     - name: Append Network uuid to the list - VMC
       set_fact:
-        listNetworkUuid: "{{ listNetworkUuid }} + [ '{{ item.uuid }}' ]"
+        listNetworkUuid: "{{ listNetworkUuid | default([]) }} + [ '{{ item.uuid }}' ]"
       loop: "{{ networkUuid.obj.results }}"
       loop_control:
         label: "{{ item.uuid }}"
@@ -36,7 +36,6 @@
         - vmc.network_vip.cidr is defined
       tags:
         - ipam
-
 
     - name: Define vip data - VMC
       set_fact:
@@ -142,7 +141,7 @@
         - vsHttp
         - vs
 
-    - name: Create pool opencart  without server - VMC
+    - name: Create pool opencart without server - VMC
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -212,6 +211,8 @@
             enabled: true
           all_headers: true
       loop: "{{ vmc.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - vmc.name is defined
         - vmc.virtualservices.http is defined
@@ -232,13 +233,12 @@
         se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
         services: "{{ item.services }}"
         vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
-      loop: "{{ avi_virtualservice.dns }}"
+      loop: "{{ vmc.virtualservices.dns }}"
       loop_control:
-        label: "{{ vmc.virtualservices.dns }}"
+        label: "{{ item.name }}"
       when:
         - vmc.name is defined
         - vmc.virtualservices.dns is defined
-
       register: outputVsDns
       tags:
         - vsDns

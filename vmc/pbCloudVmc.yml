@@ -377,7 +377,7 @@
     #         - no_access is defined
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
-      command: python3 ../python/loopOverSeGroup.py vmc/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_vmc_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vmc_vsphere_user | to_json }}" "{{ vmc_vsphere_password | to_json }}" "{{ vmc_vsphere_server | to_json }}" "{{ vmc | to_json }}" "{{ vmc | string }}"
+      command: python3 ../python/loopOverSeGroup.py ../vmc/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_vmc_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vmc_vsphere_user | to_json }}" "{{ vmc_vsphere_password | to_json }}" "{{ vmc_vsphere_server | to_json }}" "{{ vmc | to_json }}" "{{ vmc | to_yaml }}"
       register: logPbSeCreation
       when:
         - vmc.name is defined
