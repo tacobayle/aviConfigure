@@ -68,7 +68,7 @@
     - set_fact:
         cloud_vmc_uuid: "{{ output_cloud_vmc.obj.uuid }}"
       when:
-        - vmc.name is defined
+        - output_cloud_vmc.obj.uuid is defined
       tags:
         - cloud
 

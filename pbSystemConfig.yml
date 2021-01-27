@@ -70,9 +70,6 @@
       tags:
         - system
 
-    #
-    # HM creation
-    #
     - name: Create HTTP health monitor
       avi_healthmonitor:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -94,7 +91,7 @@
       when:
         - healthMonitor is defined
         - item.type == "HEALTH_MONITOR_HTTP"
-        - no_access is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined
+        - vmc is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined
       tags:
         - vsHttp
         - hm
