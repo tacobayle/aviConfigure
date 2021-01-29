@@ -23,6 +23,8 @@
         - cloud
         - nsxtApi
       loop: "{{ cloudResults.obj.results }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - item.name == nsxt.name
 
@@ -59,6 +61,8 @@
                   type: "{{ nsxt.network_vip.type | default('V4') }}"
                   addr: "{{ nsxtSegmentVip.cidr.split('/')[0] }}"
       loop: "{{ nsxt.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - nsxt.virtualservices.dns is defined
         - nsxt.name is defined
@@ -89,6 +93,8 @@
                   type: "{{ nsxt.network_vip.type | default('V4') }}"
                   addr: "{{ nsxtSegmentVip.cidr.split('/')[0] }}"
       loop: "{{ nsxt.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - nsxt.virtualservices.http is defined
         - nsxt.name is defined
@@ -161,6 +167,8 @@
         health_monitor_refs:
           - "/api/healthmonitor?name={{ item.health_monitor_refs | default('hm1') }}"
       loop: "{{ nsxtGroups.resource.nsxt_groups }}"
+      loop_control:
+        label: "{{ item.name }}"
       ignore_errors: yes
       when:
         - nsxtGroups.resource.nsxt_groups is defined
@@ -307,8 +315,8 @@
         tenant: "{{ item.tenant_ref | default('admin') }}"
       register: statusVs
       until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
-      retries: 120
-      delay: 10
+      retries: 60
+      delay: 30
       when: nsxt.virtualservices.http is defined
       ignore_errors: yes
       tags:

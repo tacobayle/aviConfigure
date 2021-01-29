@@ -31,8 +31,8 @@
         path: cloud-inventory
       register: cloudStatusResults
       until: 'cloudStatusResults.obj.results.0.status.se_image_state.0.state == "IMG_GEN_COMPLETE"'
-      retries: 120
-      delay: 10
+      retries: 60
+      delay: 30
       ignore_errors: yes
 
     - name: Wait for the cloud 1 to be ready // this is expected to fail for vmc
@@ -43,8 +43,8 @@
         path: cloud-inventory
       register: cloudStatusResults
       until: 'cloudStatusResults.obj.results.1.status.se_image_state.0.state == "IMG_GEN_COMPLETE"'
-      retries: 120
-      delay: 10
+      retries: 60
+      delay: 30
       ignore_errors: yes
 
     - name: Wait for the cloud 2 to be ready // this is expected to fail for vmc
@@ -55,6 +55,6 @@
         path: cloud-inventory
       register: cloudStatusResults
       until: 'cloudStatusResults.obj.results.2.status.se_image_state.0.state == "IMG_GEN_COMPLETE"'
-      retries: 120
-      delay: 10
+      retries: 60
+      delay: 30
       ignore_errors: yes
