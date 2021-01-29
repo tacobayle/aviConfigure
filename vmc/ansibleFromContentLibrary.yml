@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    vmc_vsphere_password: "blablabla"
+    vmc_vsphere_user: "cloudadmin@vmc.local"
+    vmc_vsphere_server: "vcenter.sddc-18-135-66-223.vmwarevmc.com"
+    ova_path: "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+
+  tasks:
+
+    - name: Create a content library through Go VC
+      become: true
+      shell: |
+        export GOVC_PASSWORD="{{ vmc_vsphere_password }}"
+        export GOVC_USERNAME="{{ vmc_vsphere_user }}"
+        export GOVC_URL="{{ vmc_vsphere_server }}"
+        export GOVC_DATASTORE="{{ vmc.vcenter.datastore | default('WorkloadDatastore',true) }}"
+        /usr/local/bin/govc/govc library.create "Avi-SE-CreatedByGovc"
+        /usr/local/bin/govc/govc library.ls "/Avi-SE-CreatedByGovc/"
+        /usr/local/bin/govc/govc library.import "/Avi-SE-CreatedByGovc/" "{{ ova_path }}"
+      register: output
+
+    - name: Debug variable cluster uuid
+      debug:
+        msg: "{{ output }}"
+
+
+## to be tested
