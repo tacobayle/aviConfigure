@@ -219,6 +219,7 @@
         auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
         auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
         auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
+        instance_flavor: "{{ item.instance_flavor | default(omit) }}"
       loop: "{{ gcp.serviceEngineGroup }}"
       loop_control:
         label: "Modifying SE group called {{ item.name }}"
