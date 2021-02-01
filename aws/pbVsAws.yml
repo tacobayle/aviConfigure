@@ -2,9 +2,6 @@
 - hosts: localhost
   connection: local
 
-  # vars_files:
-  #   - "vars/params.yml"
-
   roles:
     - role: "avinetworks.avisdk"
 
