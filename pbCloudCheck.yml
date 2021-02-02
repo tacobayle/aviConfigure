@@ -47,6 +47,12 @@
       delay: 30
       ignore_errors: yes
 
+    - name: Debug
+      debug:
+        msg: "{{ cloudStatusResults }}"
+      tags:
+        - debug
+
     - name: Wait for the cloud 2 to be ready // this is expected to fail for vmc
       avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
