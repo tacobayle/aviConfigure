@@ -200,6 +200,25 @@
       tags:
         - ipam
 
+    - name: sleep for 120 seconds and continue with play
+      wait_for: timeout=120
+      when:
+        - gcp.name is defined
+      tags:
+        - cloud
+
+    - name: Run a python script against a specific cloud - this takes several minutes
+      command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_gcp_uuid }}"
+      register: logCloudStatus
+      until: logCloudStatus.stdout == "IMG_GEN_COMPLETE"
+      retries: 30
+      delay: 120
+      ignore_errors: yes
+      when:
+        - gcp.name is defined
+      tags:
+        - cloud
+
     - name: Modify/Creating SE group - GCP
       avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
