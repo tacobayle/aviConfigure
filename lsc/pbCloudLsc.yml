@@ -210,3 +210,15 @@
         - lsc.name is defined
       tags:
         - cloud
+
+    - name: Run a python script against a specific cloud - this takes several minutes
+      command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_lsc_uuid }}"
+      register: logCloudStatus
+      until: logCloudStatus.stdout == "IMG_GEN_COMPLETE"
+      retries: 30
+      delay: 120
+      ignore_errors: yes
+      when:
+        - lsc.name is defined
+      tags:
+        - cloud
