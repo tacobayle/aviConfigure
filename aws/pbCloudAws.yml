@@ -64,6 +64,18 @@
       tags:
         - cloud
 
+    - name: Run a python script against cloud and check the status of the specific cloud - this takes several minutes
+      command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_aws_uuid }}"
+      register: logCloudStatus
+      until: logCloudStatus.stdout == "IMG_GEN_COMPLETE"
+      retries: 60
+      delay: 30
+      ignore_errors: yes
+      when:
+        - aws.name is defined
+      tags:
+        - cloud
+
     - name: Modify/Creating SE group - AWS
       avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
