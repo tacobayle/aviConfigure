@@ -138,9 +138,9 @@
               type: 'V4'
       loop: "{{ avi_servers_opencart_vmw }}"
       when:
-        - avi_servers_opencart.name is defined
+        - avi_servers_opencart is defined
         - vmw.name is defined
-        - vmw.pool_opencart is defined
+        - vmw.pool_opencart.name is defined
       tags:
         - pool
         - vmw
