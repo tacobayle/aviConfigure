@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  connection: local
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  vars:
+    httppolicyset:
+      - name: "http-request-policy-app3-content-switching-vmw"
+        http_request_policy:
+          rules:
+            - name: Rule 1
+              index: 1
+              enable: true
+              match:
+                path:
+                  match_criteria: BEGINS_WITH
+                  match_case: INSENSITIVE
+                  match_str:
+                    - "/hello"
+              rewrite_url_action:
+                path:
+                  type: URI_PARAM_TYPE_TOKENIZED
+                  tokens:
+                    - type: URI_TOKEN_TYPE_STRING
+                      str_value: index.html
+                query:
+                  keep_query: true
+              switching_action:
+                action: HTTP_SWITCHING_SELECT_POOL
+                status_code: HTTP_LOCAL_RESPONSE_STATUS_CODE_200
+                pool_ref: https://10.41.135.222/api/pool/pool-42e63eab-5342-4360-aac1-5a09ebb3404a
+
+
+  tasks:
+
+    - name: Create a HTTP Policy set two switch between testpool1 and testpool2
+      avi_httppolicyset:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy }}"
+      loop: "{{ httppolicyset }}"
+
