@@ -32,6 +32,8 @@
                   type: "{{ vmw.network_vip.type | default('V4') }}"
                   addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
       loop: "{{ vmw.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - vmw.virtualservices.dns is defined
         - vmw.name is defined
@@ -61,6 +63,8 @@
                   type: "{{ vmw.network_vip.type | default('V4') }}"
                   addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
       loop: "{{ vmw.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - vmw.virtualservices.http is defined
         - vmw.name is defined
@@ -79,6 +83,8 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
       loop: "{{ vmw.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - vmw.pools is defined
         - vmw.name is defined
@@ -102,6 +108,8 @@
               addr: "{{ item.1 }}"
               type: 'V4'
       loop: "{{ vmw.pools | product(avi_servers_vmw)|list }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - avi_servers_vmw is defined
         - vmw.pools is defined
