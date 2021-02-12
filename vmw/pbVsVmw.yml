@@ -109,7 +109,7 @@
               type: 'V4'
       loop: "{{ vmw.pools | product(avi_servers_vmw)|list }}"
       loop_control:
-        label: "{{ item.name }}"
+        label: "{{ item.1 }}"
       when:
         - avi_servers_vmw is defined
         - vmw.pools is defined
