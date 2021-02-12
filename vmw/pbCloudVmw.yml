@@ -302,3 +302,31 @@
         - vmw.name is defined
       tags:
         - serviceEngineGroup
+
+    - name: Modify/Creating SE group - VMW - for K8S cluster
+      avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        avi_api_update_method: put
+        name: "{{ item.serviceEngineGroup.name }}"
+        ha_mode: "{{ item.serviceEngineGroup.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.serviceEngineGroup.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.serviceEngineGroup.buffer_se | default(omit) }}"
+        extra_shared_config_memory: "{{ item.serviceEngineGroup.extra_shared_config_memory | default(omit) }}"
+        vcenter_folder: "{{ item.serviceEngineGroup.vcenter_folder | default(omit) }}"
+        vcpus_per_se: "{{ item.serviceEngineGroup.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.serviceEngineGroup.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.serviceEngineGroup.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.serviceEngineGroup.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.serviceEngineGroup.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.serviceEngineGroup.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.serviceEngineGroup.auto_rebalance_criteria | default(omit) }}"
+      loop: "{{ vmw.kubernetes.clusters }}"
+      loop_control:
+        label: "Modifying SE group called {{ item.serviceEngineGroup.name }}"
+      when:
+        - vmw.kubernetes.clusters is defined
+        - vmw.name is defined
+      tags:
+        - serviceEngineGroup
