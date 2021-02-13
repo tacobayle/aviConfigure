@@ -89,7 +89,6 @@
         - vmw.pools is defined
         - vmw.name is defined
       tags:
-        - vmw
         - pool
 
     - name: update pool with servers - VMW
@@ -116,7 +115,6 @@
         - vmw.name is defined
       tags:
         - pool
-        - vmw
 
 #    - name: Create pool opencart without server - VMW
 #      avi_pool:
@@ -165,6 +163,8 @@
       loop: "{{ vmw.httppolicyset }}"
       loop_control:
         label: "{{ item.name }}"
+      when:
+        - vmw.httppolicyset is defined
 
     - name: Create DNS Virtualservice (based on vsvip) - VMW
       avi_virtualservice:

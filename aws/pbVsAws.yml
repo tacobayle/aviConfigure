@@ -241,6 +241,8 @@
       loop: "{{ aws.httppolicyset }}"
       loop_control:
         label: "{{ item.name }}"
+      when:
+        - aws.httppolicyset is defined
 
     - name: Create HTTP Virtualservice (based on vsvip) - AWS
       avi_virtualservice:

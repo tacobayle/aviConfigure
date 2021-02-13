@@ -102,20 +102,21 @@
         - vsHttp
         - vs
 
-    - name: Create pool without server - GCP
+    - name: Create pools without server - GCP
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ gcp.pool.name }}"
+        name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+      loop: "{{ gcp.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
+        - gcp.pools is defined
         - gcp.name is defined
-        - gcp.pool.name is defined
       tags:
         - pool
-        - vsHttp
-        - vs
 
     - name: update pool with servers - GCP
       avi_pool:
@@ -123,64 +124,72 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        name: "{{ gcp.pool.name }}"
+        name: "{{ item.0.name }}"
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ gcp.pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
+        default_server_port: "{{ item.0.default_server_port | default(omit) }}"
         servers:
           - ip:
-              addr: "{{ item }}"
+              addr: "{{ item.1 }}"
               type: 'V4'
-      loop: "{{ avi_backend_servers_gcp }}"
+      loop: "{{ gcp.pools | product(avi_servers_gcp)|list }}"
+      loop_control:
+        label: "pool {{ item.0.name }} patch with {{ item.1 }}"
       when:
-        - avi_backend_servers_gcp is defined
-        - gcp.pool.name is defined
+        - avi_servers_gcp is defined
+        - gcp.pools is defined
         - gcp.name is defined
       tags:
         - pool
-        - vsHttp
-        - vs
 
-    - name: Create pool opencart without server - GCP
-      avi_pool:
+#    - name: Create pool opencart without server - GCP
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        name: "{{ gcp.pool_opencart.name }}"
+#        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#      when:
+#        - gcp.pool_opencart.name is defined
+#        - gcp.name is defined
+#      tags:
+#        - pool
+
+#    - name: update pool opencart with servers - GCP
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        avi_api_patch_op : add
+#        avi_api_update_method: patch
+#        name: "{{ gcp.pool_opencart.name }}"
+#        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        lb_algorithm: "{{ gcp.pool_opencart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+#        #application_persistence_profile_ref: "{{ gcp.pool_opencart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
+#        servers:
+#          - ip:
+#              addr: "{{ item }}"
+#              type: 'V4'
+#      loop: "{{ avi_servers_opencart_gcp }}"
+#      when:
+#        - gcp.pool_opencart.name is defined
+#        - avi_servers_opencart_gcp is defined
+#        - gcp.name is defined
+#      tags:
+#        - pool
+
+    - name: Create HTTP Policy(ies)
+      avi_httppolicyset:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ gcp.pool_opencart.name }}"
-        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy | default(omit) }}"
+      loop: "{{ gcp.httppolicyset }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
-        - gcp.pool_opencart.name is defined
-        - gcp.name is defined
-      tags:
-        - vmw
-        - pool
-
-    - name: update pool opencart with servers - GCP
-      avi_pool:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        avi_api_patch_op : add
-        avi_api_update_method: patch
-        name: "{{ gcp.pool_opencart.name }}"
-        cloud_ref: "/api/cloud/?name={{ gcp.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ gcp.pool_opencart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        #application_persistence_profile_ref: "{{ gcp.pool_opencart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
-        servers:
-          - ip:
-              addr: "{{ item }}"
-              type: 'V4'
-      loop: "{{ avi_servers_opencart_gcp }}"
-      when:
-        - gcp.pool_opencart.name is defined
-        - avi_servers_opencart_gcp is defined
-        - gcp.name is defined
-      tags:
-        - pool
-        - vmw
-
+        - gcp.httppolicyset is defined
     #
     # VS creation
     #
@@ -192,6 +201,7 @@
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"
         enabled: "{{ item.enabled | default('true') }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
         ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
