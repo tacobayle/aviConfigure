@@ -211,7 +211,7 @@
       command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_gcp_uuid }}"
       register: logCloudStatus
       until: logCloudStatus.stdout == "IMG_GEN_COMPLETE"
-      retries: 30
+      retries: 3 # should be 30 # gcp bug // 'HTTP Error: 400 Error Msg {\"error\": \"Versioning failed converting from 16.4.2 to 20.1.3\"}', <Response [400]>)"], "stdout": "", "stdout_lines": []
       delay: 120
       ignore_errors: yes
       when:
