@@ -108,12 +108,15 @@
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ aws.pool.name }}"
+        name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ aws.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      loop: "{{ aws.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
         - aws.name is defined
-        - aws.pool.name is defined
+        - aws.pools is defined
       tags:
         - pool
         - vsHttp
@@ -125,67 +128,70 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        name: "{{ aws.pool.name }}"
+        name: "{{ item.0.name }}"
         cloud_ref: "/api/cloud/?name={{ aws.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ gcp.pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
+        default_server_port: "{{ item.0.default_server_port | default(omit) }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
         servers:
           - ip:
-              addr: "{{ item }}"
+              addr: "{{ item.1 }}"
               type: 'V4'
-      loop: "{{ avi_backend_servers_aws }}"
+      loop: "{{ aws.pools | product(avi_backend_servers_aws)|list }}"
+      loop_control:
+        label: "pool {{ item.0.name }} patch with {{ item.1 }}"
       when:
-        - aws.name is defined
-        - aws.pool.name is defined
         - avi_backend_servers_aws is defined
+        - aws.pools is defined
+        - aws.name is defined
       tags:
         - pool
         - vsHttp
         - vs
 
-    - name: Create pool without server for OpenCart - AWS
-      avi_pool:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ aws.pool_opencart.name }}"
-        cloud_ref: "/api/cloud/?name={{ aws.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-      when:
-        - aws.name is defined
-        - aws.pool_opencart.name is defined
-      tags:
-        - pool
-        - vsHttp
-        - vs
+#    - name: Create pool without server for OpenCart - AWS
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        name: "{{ aws.pool_opencart.name }}"
+#        cloud_ref: "/api/cloud/?name={{ aws.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#      when:
+#        - aws.name is defined
+#        - aws.pool_opencart.name is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
 
-    - name: update pool with servers for OpenCart - AWS
-      avi_pool:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        avi_api_patch_op : add
-        avi_api_update_method: patch
-        name: "{{ aws.pool_opencart.name }}"
-        cloud_ref: "/api/cloud/?name={{ aws.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        #application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
-        health_monitor_refs:
-          - "/api/healthmonitor?name={{ aws.pool_opencart.health_monitor_refs | default('hm1') }}"
-        servers:
-          - ip:
-              addr: "{{ item }}"
-              type: 'V4'
-      loop: "{{ avi_backend_servers_opencart_aws }}"
-      when:
-        - aws.name is defined
-        - aws.pool_opencart.name is defined
-        - avi_backend_servers_opencart_aws is defined
-      tags:
-        - pool
-        - vsHttp
-        - vs
+#    - name: update pool with servers for OpenCart - AWS
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        avi_api_patch_op : add
+#        avi_api_update_method: patch
+#        name: "{{ aws.pool_opencart.name }}"
+#        cloud_ref: "/api/cloud/?name={{ aws.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        lb_algorithm: "{{ avi_pool_open_cart.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+#        #application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ avi_pool_open_cart.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
+#        health_monitor_refs:
+#          - "/api/healthmonitor?name={{ aws.pool_opencart.health_monitor_refs | default('hm1') }}"
+#        servers:
+#          - ip:
+#              addr: "{{ item }}"
+#              type: 'V4'
+#      loop: "{{ avi_backend_servers_opencart_aws }}"
+#      when:
+#        - aws.name is defined
+#        - aws.pool_opencart.name is defined
+#        - avi_backend_servers_opencart_aws is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
 
     - name: create autoscalepolicy for ASG - AWS
       avi_serverautoscalepolicy:
@@ -204,7 +210,7 @@
       tags:
         - asg
 
-    - name: create pool with servers based on Auto Scaling Group - AWS
+    - name: create pool with servers based on ASG - AWS
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -226,6 +232,16 @@
       tags:
         - asg
 
+    - name: Create HTTP Policy(ies)
+      avi_httppolicyset:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy | default(omit) }}"
+      loop: "{{ aws.httppolicyset }}"
+      loop_control:
+        label: "{{ item.name }}"
+
     - name: Create HTTP Virtualservice (based on vsvip) - AWS
       avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -235,6 +251,7 @@
         enabled: "{{ item.enabled | default('true') }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
         ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
         services: "{{ item.services }}"
