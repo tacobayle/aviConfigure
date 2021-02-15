@@ -27,9 +27,7 @@
   when: nsxt is defined
 - import_playbook: vmc/pbCloudVmc.yml
   when: vmc is defined
-- import_playbook: pbCloudCheck.yml
 - import_playbook: pbApplicationProfile.yml
-- import_playbook: pbSeGroup.yml
 - import_playbook: lsc/pbVsLsc.yml
   when: lsc is defined
 - import_playbook: azure/pbVsVipAzure.yml
