@@ -179,46 +179,101 @@
         - pool
         - vs
 
-    - name: Create pool without server (NSX-T)
+#    - name: Create pool without server (NSX-T)
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        name: "{{ nsxt.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        tier1_lr: "{{ nsxtTier1sVip.id }}"
+#      when:
+#        - nsxt.name is defined
+#        - nsxt.pool.name is defined
+#      tags:
+#        - pool
+#        - vs
+#
+#    - name: update pool with servers (NSXT)
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        avi_api_patch_op : add
+#        avi_api_update_method: patch
+#        name: "{{ nsxt.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+#        tier1_lr: "{{ nsxtTier1sVip.id }}"
+#        health_monitor_refs:
+#          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+#        servers:
+#          - ip:
+#              addr: "{{ item }}"
+#              type: 'V4'
+#      loop: "{{ avi_backend_servers_nsxt }}"
+#      when:
+#        - nsxt.name is defined
+#        - nsxt.pool.name is defined
+#        - avi_backend_servers_nsxt is defined
+#      tags:
+#        - pool
+#        - vs
+
+    - name: Create pools without server - NSX
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ nsxt.pool.name }}"
+        name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         tier1_lr: "{{ nsxtTier1sVip.id }}"
+      loop: "{{ nsxt.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
+        - nsxt.pools is defined
         - nsxt.name is defined
-        - nsxt.pool.name is defined
       tags:
         - pool
-        - vs
 
-    - name: update pool with servers (NSXT)
+    - name: update pool with servers - NSX
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        name: "{{ nsxt.pool.name }}"
+        name: "{{ item.0.name }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
         tier1_lr: "{{ nsxtTier1sVip.id }}"
-        health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
+        default_server_port: "{{ item.0.default_server_port | default(omit) }}"
         servers:
           - ip:
-              addr: "{{ item }}"
+              addr: "{{ item.1 }}"
               type: 'V4'
-      loop: "{{ avi_backend_servers_nsxt }}"
+      loop: "{{ nsxt.pools | product(avi_backend_servers_nsxt)|list }}"
+      loop_control:
+        label: "pool {{ item.0.name }} patch with {{ item.1 }}"
       when:
-        - nsxt.name is defined
-        - nsxt.pool.name is defined
         - avi_backend_servers_nsxt is defined
+        - nsxt.pools is defined
+        - nsxt.name is defined
       tags:
         - pool
-        - vs
+
+    - name: Create HTTP Policy(ies)
+      avi_httppolicyset:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy | default(omit) }}"
+      loop: "{{ nsxt.httppolicyset }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - nsxt.httppolicyset is defined
 
     - name: Create HTTP Virtualservice (based on vsvip)
       avi_virtualservice:
@@ -229,6 +284,7 @@
         enabled: "{{ item.enabled | default('true') }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
         ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
         services: "{{ item.services }}"
