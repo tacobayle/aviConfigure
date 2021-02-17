@@ -235,19 +235,31 @@
       avi_vcenterserver:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: vcenterserverOne
+        name: "{{ nsxt.vcenter.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         vcenter_url: "{{ nsxt.vcenter.server }}"
         content_lib:
           id: "{{ vcenterContentLibrary.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
+        register: output_nsxt_vcenter
       tags:
         - cloud
         - nsxtApi
       when:
         - nsxt.vcenter.server is defined
-        - nsxt.vcenter.content_library.name is defined
+        - vcenterContentLibrary.id is defined
+        - nsxt.vcenter.name is defined
+        - nsxt.name
+        - vcenterUserOutput.obj.uuid is defined
+
+
+    - set_fact:
+        nsxt_vcenter_uuid: "{{ output_nsxt_vcenter.obj.uuid }}"
+      when:
+        - output_nsxt_vcenter is defined
+      tags:
+        - cloud
 
     - pause:
         minutes: 1
@@ -521,30 +533,55 @@
       tags:
         - cloud
 
+    - name: python workaround to retrieve folders uuid  - NSXT
+      command: python3 ../python/retrieveNsxtVcenterFolders.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "{{ nsxt_vcenter_uuid }}"
+      ignore_errors: no
+      register: vcenterFoldersJson
+      tags:
+        - cloud
+        - nsxtApi
+      when:
+        - controller.aviCredsJsonFile is defined
+        - cloud_nsxt_uuid is defined
+        - nsxt_vcenter_uuid is defined
+
+    - set_fact:
+        vcenterFolders: "{{ vcenterFoldersJson.stdout | from_json }}"
+      tags:
+        - cloud
+        - nsxtApi
+      when:
+        - vcenterFoldersJson.stdout is defined
+
     - name: Modify/Creating SE group - NSXT
       avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         avi_api_update_method: put
-        name: "{{ item.name }}"
-        ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
-        min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
-        buffer_se: "{{ item.buffer_se | default(omit) }}"
-        extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
-        vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
-        vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
-        memory_per_se: "{{ item.memory_per_se | default(omit) }}"
-        disk_per_se: "{{ item.disk_per_se | default(omit) }}"
-        realtime_se_metrics: "{{ item.realtime_se_metrics | default(omit) }}"
-        auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
-        auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
-        auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
-      loop: "{{ nsxt.serviceEngineGroup }}"
+        name: "{{ item.0.name }}"
+        ha_mode: "{{ item.0.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.0.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.0.buffer_se | default(omit) }}"
+        vcenters:
+          - vcenter_ref: "/api/vcenterserver?name={{ nsxt.vcenter.name }}"
+            vcenter_folder: "{{ item.1.vc_mobj_id }}"
+        extra_shared_config_memory: "{{ item.0.extra_shared_config_memory | default(omit) }}"
+        vcpus_per_se: "{{ item.0.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.0.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.0.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.0.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.0.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.0.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.0.auto_rebalance_criteria | default(omit) }}"
+      loop: "{{ nsxt.vcenter.serviceEngineGroup | product(vcenterFolders)|list}}"
       loop_control:
-        label: "Modifying SE group called {{ item.name }}"
+        label: "Modifying/creating SE group called {{ item.0.name }}"
       when:
-        - nsxt.serviceEngineGroup is defined
+        - nsxt.vcenter.serviceEngineGroup is defined
+        - nsxt.vcenter.name is defined
         - nsxt.name is defined
+        - vcenterFolders is defined
+        - item.0.vcenter_folder == item.1.name
       tags:
         - serviceEngineGroup
