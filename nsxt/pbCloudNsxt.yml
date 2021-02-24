@@ -562,6 +562,10 @@
         name: "{{ item.0.name }}"
         ha_mode: "{{ item.0.ha_mode | default('HA_MODE_SHARED') }}"
         min_scaleout_per_vs: "{{ item.0.min_scaleout_per_vs | default(omit) }}"
+        max_scaleout_per_vs: "{{ item.0.max_scaleout_per_vs | default(omit) }}"
+        max_cpu_usage: "{{ item.0.max_cpu_usage | default(omit) }}"
+        min_cpu_usage: "{{ item.0.min_cpu_usage | default(omit) }}"
+        vs_scaleout_timeout: "{{ item.0.vs_scaleout_timeout | default(omit) }}"
         buffer_se: "{{ item.0.buffer_se | default(omit) }}"
         vcenters:
           - vcenter_ref: "/api/vcenterserver?name={{ nsxt.vcenter.name }}"
