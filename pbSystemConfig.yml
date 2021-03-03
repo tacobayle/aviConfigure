@@ -91,7 +91,7 @@
       when:
         - healthMonitor is defined
         - item.type == "HEALTH_MONITOR_HTTP"
-        - vmc is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined
+        - vmc is defined or gcp is defined or aws is defined or azure is defined or vmw is defined or nsxt is defined or no_access_vcenter is defined
       tags:
         - vsHttp
         - hm
