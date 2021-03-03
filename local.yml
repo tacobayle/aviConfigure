@@ -27,6 +27,8 @@
   when: nsxt is defined
 - import_playbook: vmc/pbCloudVmc.yml
   when: vmc is defined
+- import_playbook: no_access_vcenter/pbCloud.yml
+  when: no_access_vcenter is defined
 - import_playbook: pbApplicationProfile.yml
 - import_playbook: lsc/pbVsLsc.yml
   when: lsc is defined
