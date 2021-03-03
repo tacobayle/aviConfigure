@@ -330,7 +330,7 @@
         - no_access_vcenter.name is defined
 
 - hosts: avicontroller
-  gather_facts: no
+  gather_facts: yes
 
   tasks:
 
