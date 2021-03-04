@@ -127,6 +127,7 @@
         folder_name: "Avi-SEG-{{ seg.name }}"
         folder_type: vm
         state: present
+        validate_certs: false
       register: vm_folder_creation_result
       delegate_to: localhost
 
@@ -140,7 +141,6 @@
         cluster: "{{ no_access_vcenter.vcenter.cluster | default('Cluster-1',true) }}"
         datastore: "{{ no_access_vcenter.vcenter.datastore | default('WorkloadDatastore',true) }}"
         name: "{{ seg.name }}-{{ 'se%02x' | format(item.0) }}"
-        validate_certs: False
         networks: "{{ networksSe }}"
         properties:
           AVICNTRL: "{{ avi_credentials.controller }}"
@@ -151,6 +151,7 @@
           avi.default-gw.SE: "{{ no_access_vcenter.network_mgmt.cidr | ipmath(1) | default(omit) }}"
         power_on: no
         ova: "{{ ova_path }}"
+        validate_certs: false
       register: se_status_se_group
       delegate_to: "localhost"
       loop: "{{ range(0, seg.numberOfSe | int, 1) | zip(auth_token_list) | list }}"
@@ -196,7 +197,6 @@
         hostname: "{{ vsphere_server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
-        validate_certs: False
         uuid: "{{ item.instance.hw_product_uuid }}"
         hardware:
           memory_mb: "{{ seg.memory_per_se | int | default(2048,true) }}"
@@ -206,6 +206,7 @@
         disk:
         - size_gb: "{{ seg.disk_per_se | default(20,true) }}"
         state: present
+        validate_certs: false
       delegate_to: "localhost"
       loop: "{{ se_status_se_group_list }}"
       when:
