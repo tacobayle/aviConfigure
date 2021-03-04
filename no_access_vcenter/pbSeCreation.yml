@@ -3,6 +3,9 @@
   connection: local
   gather_facts: no
 
+  vars_files:
+    - "no_access_vcenter.json"
+
   roles:
     - role: "avinetworks.avisdk"
 
@@ -85,9 +88,9 @@
 
     - name: Define networks data for SE(s) for management
       set_fact:
-        networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : no_access_vcenter.network_mgmt.name }) }}"
+        networksSe: "{{ networksSe | default({}) | combine ({ 'Management' : network_mgmt.name }) }}"
       when:
-        - no_access_vcenter.network_mgmt.name is defined
+        - network_mgmt.name is defined
 
     - name: Adding the netorks defined in the variable networksList
       set_fact:
@@ -120,10 +123,10 @@
 
     - name: Create a VM folder on given datacenter
       vcenter_folder:
-        hostname: "{{ vsphere_server }}"
+        hostname: "{{ vcenter.server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
-        datacenter_name: "{{ no_access_vcenter.vcenter.dc | default('SDDC-Datacenter',true) }}"
+        datacenter_name: "{{ vcenter.dc | default('SDDC-Datacenter',true) }}"
         folder_name: "Avi-SEG-{{ seg.name }}"
         folder_type: vm
         state: present
@@ -133,22 +136,22 @@
 
     - name:  deploy Avi SE(S) with static IP address
       vmware_deploy_ovf:
-        hostname: "{{ vsphere_server }}"
+        hostname: "{{ vcenter.server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
         folder: "{{ vm_folder_creation_result.result.path }}"
-        datacenter: "{{ no_access_vcenter.vcenter.dc | default('SDDC-Datacenter',true) }}"
-        cluster: "{{ no_access_vcenter.vcenter.cluster | default('Cluster-1',true) }}"
-        datastore: "{{ no_access_vcenter.vcenter.datastore | default('WorkloadDatastore',true) }}"
+        datacenter: "{{ vcenter.dc | default('SDDC-Datacenter',true) }}"
+        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
+        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
         name: "{{ seg.name }}-{{ 'se%02x' | format(item.0) }}"
         networks: "{{ networksSe }}"
         properties:
           AVICNTRL: "{{ avi_credentials.controller }}"
           AVICNTRL_AUTHTOKEN: "{{ item.1.obj.auth_token }}"
           AVICNTRL_CLUSTERUUID: "{{ cluster_uuid }}"
-          avi.mgmt-ip.SE: "{{ no_access_vcenter.network_mgmt.cidr | ipmath(no_access_vcenter.network_mgmt.ipStartPool + count + my_idx ) | default(omit) }}"
-          avi.mgmt-mask.SE: "{{ no_access_vcenter.network_mgmt.cidr | ipaddr('netmask') | default(omit) }}"
-          avi.default-gw.SE: "{{ no_access_vcenter.network_mgmt.cidr | ipmath(1) | default(omit) }}"
+          avi.mgmt-ip.SE: "{{ network_mgmt.cidr | ipmath(network_mgmt.ipStartPool + count + my_idx ) | default(omit) }}"
+          avi.mgmt-mask.SE: "{{ network_mgmt.cidr | ipaddr('netmask') | default(omit) }}"
+          avi.default-gw.SE: "{{ network_mgmt.cidr | ipmath(1) | default(omit) }}"
         power_on: no
         ova: "{{ ova_path }}"
         validate_certs: false
@@ -159,17 +162,17 @@
         index_var: my_idx
       when:
         - seg.numberOfSe is defined
-        - no_access_vcenter.dhcp_enabled is false
+        - dhcp_enabled is false
 
     - name:  deploy Avi SE(S) with dynamic IP address
       vmware_deploy_ovf:
-        hostname: "{{ vsphere_server }}"
+        hostname: "{{ vcenter.server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
         folder: "{{ vm_folder_creation_result.result.path }}"
-        datacenter: "{{ no_access_vcenter.vcenter.dc | default('SDDC-Datacenter',true) }}"
-        cluster: "{{ no_access_vcenter.vcenter.cluster | default('Cluster-1',true) }}"
-        datastore: "{{ no_access_vcenter.vcenter.datastore | default('WorkloadDatastore',true) }}"
+        datacenter: "{{ vcenter.dc | default('SDDC-Datacenter',true) }}"
+        cluster: "{{ vcenter.cluster | default('Cluster-1',true) }}"
+        datastore: "{{ vcenter.datastore | default('WorkloadDatastore',true) }}"
         name: "{{ seg.name }}-{{ 'se%02x' | format(item.0) }}"
         validate_certs: False
         networks: "{{ networksSe }}"
@@ -184,7 +187,7 @@
       loop: "{{ range(0, seg.numberOfSe | int, 1) | zip(auth_token_list) | list }}"
       when:
         - seg.numberOfSe is defined
-        - no_access_vcenter.dhcp_enabled is true
+        - dhcp_enabled is true
 
     - name: Recording SE(s) creation output
       set_fact:
@@ -194,7 +197,7 @@
 
     - name: Modify SE(s) Hardware
       vmware_guest:
-        hostname: "{{ vsphere_server }}"
+        hostname: "{{ vcenter.server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
         uuid: "{{ item.instance.hw_product_uuid }}"
@@ -214,7 +217,7 @@
 
     - name: Power On SE(s)
       vmware_guest:
-        hostname: "{{ vsphere_server }}"
+        hostname: "{{ vcenter.server }}"
         username: "{{ vsphere_username }}"
         password: "{{ vsphere_password }}"
         validate_certs: False
@@ -284,7 +287,7 @@
         path: serviceenginegroup
         params:
           name: "{{ seg.name | default('Default-Group',true) }}"
-          cloud_ref.name: "{{ no_access_vcenter.name | default('Default-Cloud',true) }}"
+          cloud_ref.name: "{{ name | default('Default-Cloud',true) }}"
       register: seg_results
       when:
         - seg.name != 'Default-Group'
