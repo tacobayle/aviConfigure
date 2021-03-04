@@ -377,7 +377,7 @@
     #         - no_access is defined
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
-      command: python3 ../python/loopOverSeGroupCount.py ../no_access_vcenter/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_no_access_vcenter_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vsphere_username | to_json }}" "{{ vsphere_password | to_json }}" "{{ no_access_vcenter.vcenter.server | to_json }}" "{{ no_access_vcenter | to_json }}" "{{ no_access_vcenter | to_yaml }}"
+      command: python3 ../python/loopOverSeGroupCount.py ../no_access_vcenter/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_no_access_vcenter_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vsphere_username | to_json }}" "{{ vsphere_password | to_json }}" "{{ no_access_vcenter.vcenter.server | to_json }}" "{{ no_access_vcenter }}" "{{ no_access_vcenter | to_yaml }}"
       register: logPbSeCreation
       when:
         - no_access_vcenter.name is defined
