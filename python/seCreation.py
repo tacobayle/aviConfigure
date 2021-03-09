@@ -175,6 +175,7 @@ if __name__ == '__main__':
       if seg['name'] != 'Default-Group':
         params = {'name': seg['name'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
         seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
+        params = {'name': ip}
         se_data = defineClass.getObject('serviceengine', params)['results'][0]
         se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
         update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
@@ -306,6 +307,7 @@ if __name__ == '__main__':
       if seg['name'] != 'Default-Group':
         params = {'name': seg['name'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
         seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
+        params = {'name': ip}
         se_data = defineClass.getObject('serviceengine', params)['results'][0]
         se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
         update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
