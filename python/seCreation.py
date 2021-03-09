@@ -156,17 +156,19 @@ if __name__ == '__main__':
       count = 0
 #       if se == 1:
 #         print('SE seen by controller')
-      while se_connected != True:
-        se_data = defineClass.getObject('serviceengine', params)['results'][0]
-        se_connected = se_data['se_connected']
-        print(se_connected)
+      while defineClass.getObject('serviceengine', params)['count'] == 0:
         time.sleep(20)
         count += 1
         if count == 10:
-          print('timeout to wait SE to connect after deployment')
+          print('timeout for SE to be seen after deployment')
           exit()
-      if se_connected == True:
-        print('SE connected to controller')
+      count = 0
+      while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+        time.sleep(20)
+        count += 1
+        if count == 10:
+          print('timeout for SE to be connected after deployment')
+          exit()
       #
       # seg update
       #
@@ -178,17 +180,19 @@ if __name__ == '__main__':
         time.sleep(60)
         se_connected = ''
         count = 0
-        while se_connected != True:
-          se_data = defineClass.getObject('serviceengine', params)['results'][0]
-          se_connected = se_data['se_connected']
-          print(se_connected)
+        while defineClass.getObject('serviceengine', params)['count'] == 0:
           time.sleep(20)
           count += 1
           if count == 10:
-            print('timeout to wait SE to connect after seg update')
+            print('timeout for SE to be seen after deployment')
             exit()
-        if se_connected == True:
-          print('SE connected to controller')
+        count = 0
+        while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+          time.sleep(20)
+          count += 1
+          if count == 10:
+            print('timeout for SE to be connected after deployment')
+            exit()
   ipCount = 0
   if seg['dhcp'] == False:
     print('static IP use case')
@@ -280,17 +284,19 @@ if __name__ == '__main__':
       count = 0
 #       if se == 1:
 #         print('SE seen by controller')
-      while se_connected != True:
-        se_data = defineClass.getObject('serviceengine', params)['results'][0]
-        se_connected = se_data['se_connected']
-        print(se_connected)
+      while defineClass.getObject('serviceengine', params)['count'] == 0:
         time.sleep(20)
         count += 1
         if count == 10:
-          print('timeout to wait SE to connect after deployment')
+          print('timeout for SE to be seen after deployment')
           exit()
-      if se_connected == True:
-        print('SE connected to controller')
+      count = 0
+      while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+        time.sleep(20)
+        count += 1
+        if count == 10:
+          print('timeout for SE to be connected after deployment')
+          exit()
       #
       # seg update
       #
@@ -302,16 +308,18 @@ if __name__ == '__main__':
         time.sleep(60)
         se_connected = ''
         count = 0
-        while se_connected != True:
-          se_data = defineClass.getObject('serviceengine', params)['results'][0]
-          se_connected = se_data['se_connected']
-          print(se_connected)
+        while defineClass.getObject('serviceengine', params)['count'] == 0:
           time.sleep(20)
           count += 1
           if count == 10:
-            print('timeout to wait SE to connect after seg update')
+            print('timeout for SE to be seen after deployment')
             exit()
-        if se_connected == True:
-          print('SE connected to controller')
+        count = 0
+        while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+          time.sleep(20)
+          count += 1
+          if count == 10:
+            print('timeout for SE to be connected after deployment')
+            exit()
     ipCount += 1
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
