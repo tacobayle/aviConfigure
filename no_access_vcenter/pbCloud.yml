@@ -214,7 +214,7 @@
                 type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
               mask: "0"
             next_hop:
-              addr: "{{ no_access_vcenter.network_mgmt.cidr | ipmath(no_access_vcenter.network_vip.defaultGateway) }}"
+              addr: "{{ no_access_vcenter.network_vip.cidr | ipmath(no_access_vcenter.network_vip.defaultGateway) }}"
               type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
             route_id: "1"
       when:
