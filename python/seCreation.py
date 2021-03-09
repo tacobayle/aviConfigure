@@ -89,7 +89,7 @@ if __name__ == '__main__':
                                           'Value': 'NETWORK_ADMIN'
                                         },
                                         {
-                                          'Key': 'AVICNTRL_AUTHauth_details',
+                                          'Key': 'AVICNTRL_AUTHTOKEN',
                                           'Value': auth_details['auth_token']
                                         },
                                         {
@@ -217,7 +217,7 @@ if __name__ == '__main__':
                                           'Value': 'NETWORK_ADMIN'
                                         },
                                         {
-                                          'Key': 'AVICNTRL_AUTHauth_details',
+                                          'Key': 'AVICNTRL_AUTHTOKEN',
                                           'Value': auth_details['auth_token']
                                         },
                                         {
