@@ -376,17 +376,31 @@
     #       when:
     #         - no_access is defined
 
-    - name: dump variable to file
-      copy:
-        content: "{{ no_access_vcenter }}"
-        dest: no_access_vcenter.json
-      when:
-        - no_access_vcenter is defined
+#    - name: dump variable to file
+#      copy:
+#        content: "{{ no_access_vcenter }}"
+#        dest: no_access_vcenter.json
+#      when:
+#        - no_access_vcenter is defined
 
+
+#    - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
+#      command: python3 ../python/loopOverSeGroupCount.py ../no_access_vcenter/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_no_access_vcenter_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vsphere_username | to_json }}" "{{ vsphere_password | to_json }}" "no_access_vcenter.json"
+#      register: logPbSeCreation
+#      when:
+#        - no_access_vcenter.name is defined
+#
+#    - name: debugging SE creation
+#      debug:
+#        msg: "{{ logPbSeCreation }}"
+#      when:
+#        - no_access_vcenter.name is defined
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
-      command: python3 ../python/loopOverSeGroupCount.py ../no_access_vcenter/pbSeCreation.yml "{{ avi_credentials | to_json }}" "{{ cloud_no_access_vcenter_uuid | to_json }}" "{{ ova_path | to_json }}" "{{ vsphere_username | to_json }}" "{{ vsphere_password | to_json }}" "no_access_vcenter.json"
+      #      command: python3 seCreation.py "avi_credentials.json"
+      command: python3 seCreation.py "{{ avi_credentials | to_yaml}}" "{{ item | to_yaml }}" "{{ cloud_no_access_vcenter_uuid | to_json }}" "{{ no_access_vcenter.network_management.name }}" "{{ no_access_vcenter.network_vip.name }}" "{{ no_access_vcenter.vcenter | to_yaml }}" "{{ vsphere_username }}" "{{ vsphere_password }}" "{{ vsphere_server }}" "{{ ova_path | to_json }}"
       register: logPbSeCreation
+      loop: "{{ no_access_vcenter.serviceEngineGroup }}"
       when:
         - no_access_vcenter.name is defined
 
@@ -394,4 +408,4 @@
       debug:
         msg: "{{ logPbSeCreation }}"
       when:
-        - no_access_vcenter.name is defined
+        - logPbSeCreation is defined

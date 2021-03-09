@@ -100,20 +100,63 @@
         - vsHttp
         - vs
 
-    - name: Create pool without server - no_access_vcenter
+#    - name: Create pool without server - no_access_vcenter
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        name: "{{ no_access_vcenter.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#      when:
+#        - no_access_vcenter.name is defined
+#        - no_access_vcenter.pool.name is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+#
+#    - name: update pool with servers - no_access_vcenter
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        avi_api_patch_op : add
+#        avi_api_update_method: patch
+#        name: "{{ no_access_vcenter.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+#        health_monitor_refs:
+#          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+#        servers:
+#          - ip:
+#              addr: "{{ item.0 }}"
+#              type: 'V4'
+#      loop: "{{ avi_backend_servers_no_access_vcenter }}"
+#      when:
+#        - no_access_vcenter.name is defined
+#        - no_access_vcenter.pool.name is defined
+#        - avi_backend_servers_no_access_vcenter is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+
+
+    - name: Create pools without server - no_access_vcenter
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ no_access_vcenter.pool.name }}"
+        name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+      loop: "{{ no_access_vcenter.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
+        - no_access_vcenter.pools is defined
         - no_access_vcenter.name is defined
-        - no_access_vcenter.pool.name is defined
       tags:
         - pool
-        - vsHttp
-        - vs
 
     - name: update pool with servers - no_access_vcenter
       avi_pool:
@@ -121,25 +164,36 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
         avi_api_update_method: patch
-        name: "{{ no_access_vcenter.pool.name }}"
+        name: "{{ item.0.name }}"
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
-        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
-        health_monitor_refs:
-          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
+        default_server_port: "{{ item.0.default_server_port | default(omit) }}"
         servers:
           - ip:
-              addr: "{{ item.0 }}"
+              addr: "{{ item.1 }}"
               type: 'V4'
-      loop: "{{ avi_backend_servers_no_access_vcenter }}"
+      loop: "{{ no_access_vcenter.pools | product(avi_backend_servers_no_access_vcenter)|list }}"
+      loop_control:
+        label: "pool {{ item.0.name }} patch with {{ item.1 }}"
       when:
-        - no_access_vcenter.name is defined
-        - no_access_vcenter.pool.name is defined
         - avi_backend_servers_no_access_vcenter is defined
+        - no_access_vcenter.pools is defined
+        - no_access_vcenter.name is defined
       tags:
         - pool
-        - vsHttp
-        - vs
+
+    - name: Create HTTP Policy(ies) - no_access_vcenter
+      avi_httppolicyset:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy | default(omit) }}"
+      loop: "{{ no_access_vcenter.httppolicyset }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.httppolicyset is defined
 
     - name: Create HTTP Virtualservice (based on vsvip)
       avi_virtualservice:
@@ -148,6 +202,7 @@
         name: "{{ item.name }}"
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
         enabled: "{{ item.enabled | default('true') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
