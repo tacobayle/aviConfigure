@@ -185,10 +185,9 @@ if __name__ == '__main__':
           count += 1
           if count == 10:
             print('timeout to wait SE to connect after seg update')
-            break
+            exit()
         if se_connected == True:
           print('SE connected to controller')
-          exit()
   if seg['dhcp'] == False:
     print('static IP use case')
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
