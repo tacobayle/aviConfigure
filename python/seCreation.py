@@ -57,8 +57,6 @@ if __name__ == '__main__':
   defineClass = aviSession(avi_credentials['controller'], avi_credentials['username'], avi_credentials['password'], tenant)
   cluster_uuid = defineClass.getObject('cluster', '')['uuid']
 #   print(cluster_uuid)
-  params = {"cloud_uuid": cloud_no_access_vcenter_uuid}
-  auth_details = defineClass.getObject('securetoken-generate', params)
 #   print(auth_details)
 #   print(seg['folder'])
 #   print(ova_path)
@@ -67,6 +65,8 @@ if __name__ == '__main__':
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
   if seg['dhcp'] == True:
     for se in range (1, seg['numberOfSe'] + 1):
+      params = {"cloud_uuid": cloud_no_access_vcenter_uuid}
+      auth_details = defineClass.getObject('securetoken-generate', params)
 #       print(se)
 #       print('dhcp is true')
       se_name = 'EasyAvi - ' + seg['name'] +  ' - SE' + str(se)
@@ -195,6 +195,8 @@ if __name__ == '__main__':
             exit()
   ipCount = 0
   if seg['dhcp'] == False:
+    params = {"cloud_uuid": cloud_no_access_vcenter_uuid}
+    auth_details = defineClass.getObject('securetoken-generate', params)
     print('static IP use case')
     for se in range (1, seg['numberOfSe'] + 1):
 #       print(se)
