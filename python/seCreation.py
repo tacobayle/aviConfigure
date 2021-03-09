@@ -1,5 +1,6 @@
 import requests, json, os, yaml, sys, time
 from avi.sdk.avi_api import ApiSession
+from ipaddress import IPv4Network
 
 class aviSession:
   def __init__(self, fqdn, username, password, tenant):
@@ -128,7 +129,7 @@ if __name__ == '__main__':
       properties['NetworkMapping'] = NetworkMapping
 #       print(properties)
       with open('properties.json', 'w') as f:
-          json.dump(properties, f)
+        json.dump(properties, f)
 #       print('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc library.deploy -folder=/{0}/vm/{3} -options=./properties.json /{4}/se {5}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], seg['folder'], cl_name, se_name))
       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc library.deploy -folder=/{0}/vm/\'{3}\' -options=./properties.json /{4}/se \'{5}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], seg['folder'], cl_name, se_name))
       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.change -vm \'{3}\' -c {4} -m {5}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name, seg['vcpus_per_se'], seg['memory_per_se']))
@@ -188,6 +189,129 @@ if __name__ == '__main__':
             exit()
         if se_connected == True:
           print('SE connected to controller')
+  ipCount = 0
   if seg['dhcp'] == False:
     print('static IP use case')
+    for se in range (1, seg['numberOfSe'] + 1):
+#       print(se)
+#       print('dhcp is true')
+      ip = IPv4Network(network_management['cidr'])[seg['ipStartPool'] + ipCount]
+      se_name = 'EasyAvi - ' + seg['name'] +  ' - SE' + str(se)
+      properties = {
+                    'IPAllocationPolicy': 'dhcpPolicy',
+                    'IPProtocol': 'IPv4',
+                    'MarkAsTemplate': False,
+                    'PowerOn': False,
+                    'InjectOvfEnv': False,
+                    'WaitForIP': False,
+                    'Name': se_name
+                   }
+
+      properties['PropertyMapping'] = [
+                                        {
+                                          'Key': 'AVICNTRL',
+                                          'Value': avi_credentials['controller']
+                                        },
+                                        {
+                                          'Key': 'AVISETYPE',
+                                          'Value': 'NETWORK_ADMIN'
+                                        },
+                                        {
+                                          'Key': 'AVICNTRL_AUTHauth_details',
+                                          'Value': auth_details['auth_token']
+                                        },
+                                        {
+                                          'Key': 'AVICNTRL_CLUSTERUUID',
+                                          'Value': cluster_uuid
+                                        },
+                                        {
+                                          'Key': 'avi.mgmt-ip.SE',
+                                          'Value': ip
+                                        },
+                                        {
+                                          'Key': 'avi.mgmt-mask.SE',
+                                          'Value': IPv4Network(network_management['cidr']).netmask
+                                        },
+                                        {
+                                          'Key': 'avi.default-gw.SE',
+                                          'Value': IPv4Network(network_management['cidr'])[network_management['defaultGateway']]
+                                        },
+                                        {
+                                          'Key': 'avi.DNS.SE',
+                                          'Value': ''
+                                        },
+                                        {
+                                          'Key': 'avi.sysadmin-public-key.SE',
+                                          'Value': ''
+                                        }
+                                      ]
+      NetworkMapping = []
+      NetworkMapping.append({'Name': 'Management', 'Network': network_management})
+      count = 1
+      for item in networks_data:
+        NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item})
+        count += 1
+      for i in range(len(networks_data) + 1, 10):
+        NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': ''})
+#         print(i)
+      properties['NetworkMapping'] = NetworkMapping
+#       print(properties)
+      with open('properties.json', 'w') as f:
+        json.dump(properties, f)
+      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc library.deploy -folder=/{0}/vm/\'{3}\' -options=./properties.json /{4}/se \'{5}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], seg['folder'], cl_name, se_name))
+      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.change -vm \'{3}\' -c {4} -m {5}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name, seg['vcpus_per_se'], seg['memory_per_se']))
+      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.disk.change -vm \'{3}\' -size {4}G'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name, seg['disk_per_se']))
+      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.power -on \'{3}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name))
+      time.sleep(180)
+#       print(ip)
+      params = {'name': ip}
+      time.sleep(120)
+#       se = 0
+#       count = 0
+#       while se != 1:
+#         se = defineClass.getObject('serviceengine', params)['count']
+#         print(se)
+#         time.sleep(20)
+#         count += 1
+#         if count == 8:
+#           print('timeout')
+#           break
+      se_connected = ''
+      count = 0
+#       if se == 1:
+#         print('SE seen by controller')
+      while se_connected != True:
+        se_data = defineClass.getObject('serviceengine', params)['results'][0]
+        se_connected = se_data['se_connected']
+        print(se_connected)
+        time.sleep(20)
+        count += 1
+        if count == 10:
+          print('timeout to wait SE to connect after deployment')
+          exit()
+      if se_connected == True:
+        print('SE connected to controller')
+      #
+      # seg update
+      #
+      if seg['serviceEngineGroup'] != 'Default-Group':
+        params = {'name': seg['serviceEngineGroup'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
+        seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
+        se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
+        update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
+        time.sleep(60)
+        se_connected = ''
+        count = 0
+        while se_connected != True:
+          se_data = defineClass.getObject('serviceengine', params)['results'][0]
+          se_connected = se_data['se_connected']
+          print(se_connected)
+          time.sleep(20)
+          count += 1
+          if count == 10:
+            print('timeout to wait SE to connect after seg update')
+            exit()
+        if se_connected == True:
+          print('SE connected to controller')
+    ipCount += 1
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
