@@ -171,11 +171,11 @@
         default_server_port: "{{ item.0.default_server_port | default(omit) }}"
         servers:
           - ip:
-              addr: "{{ item.1 }}"
+              addr: "{{ item.1.0 }}"
               type: 'V4'
       loop: "{{ no_access_vcenter.pools | product(avi_backend_servers_no_access_vcenter)|list }}"
       loop_control:
-        label: "pool {{ item.0.name }} patch with {{ item.1 }}"
+        label: "pool {{ item.0.name }} patch with {{ item.1.0 }}"
       when:
         - avi_backend_servers_no_access_vcenter is defined
         - no_access_vcenter.pools is defined
