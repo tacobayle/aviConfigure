@@ -45,3 +45,5 @@
 - import_playbook: vmc/pbVsVmc.yml
   when: vmc is defined
 - import_playbook: pbVs.yml
+- import_playbook: no_access_vcenter/pbVs.yml
+  when: no_access_vcenter is defined
