@@ -241,10 +241,10 @@ if __name__ == '__main__':
     se_connected = ''
     count = 0
     while defineClass.getObject('serviceengine', params)['count'] == 0:
-      time.sleep(20)
+      time.sleep(10)
       count += 1
-      if count == 10:
-        print('timeout for SE to be seen after deployment')
+      if count == 20:
+        print('timeout for SE to be seen after seg update')
         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
@@ -252,7 +252,7 @@ if __name__ == '__main__':
       time.sleep(20)
       count += 1
       if count == 10:
-        print('timeout for SE to be connected after deployment')
+        print('timeout for SE to be connected after seg update')
         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
