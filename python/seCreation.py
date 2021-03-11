@@ -240,6 +240,7 @@ if __name__ == '__main__':
     time.sleep(60)
     se_connected = ''
     count = 0
+    params = {'name': ip}
     while defineClass.getObject('serviceengine', params)['count'] == 0:
       time.sleep(10)
       count += 1
