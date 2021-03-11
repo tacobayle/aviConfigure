@@ -1,4 +1,4 @@
-import requests, json, os, yaml, sys, time
+import requests, json, os, yaml, sys, time, random, string
 from avi.sdk.avi_api import ApiSession
 from ipaddress import IPv4Network
 
@@ -69,7 +69,22 @@ if __name__ == '__main__':
     auth_details = defineClass.getObject('securetoken-generate', params)
 #     print(se)
 #     print('dhcp is true')
-    se_name = 'EasyAvi - ' + seg['name'] +  ' - SE' + str(se)
+    os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc find -json / -type m | tee vm_inventory.json'.format(vcenter['dc'], vsphere_url))
+    with open('vm_inventory.json', 'r') as vm_json:
+      vm_inventory = json.load(vm_json)
+    while True:
+        countVm = 0
+        se_name = 'EasyAvi-se-' + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+        duplicate = False
+        for item in vm_inventory:
+          if se_name == item.split('/')[-1]:
+            duplicate = True
+            #print('duplicate')
+          countVm += 1
+        if duplicate == False and countVm == len(vm_inventory):
+          #print('No duplicate')
+          break
+#     se_name = 'EasyAvi - ' + seg['name'] +  ' - SE' + str(se)
     properties = {
                   'IPAllocationPolicy': 'dhcpPolicy',
                   'IPProtocol': 'IPv4',
@@ -210,32 +225,32 @@ if __name__ == '__main__':
         print('timeout for SE to be connected after deployment')
         exit()
     #
-    # seg update
+    # seg update and name update
     #
+    params = {'name': ip}
+    se_data = defineClass.getObject('serviceengine', params)['results'][0]
+    se_data['name'] = se_name
     if seg['name'] != 'Default-Group':
       params = {'name': seg['name'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
       seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
-      params = {'name': ip}
-      se_data = defineClass.getObject('serviceengine', params)['results'][0]
       se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
-      update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
-      time.sleep(60)
-      se_connected = ''
-      count = 0
-      while defineClass.getObject('serviceengine', params)['count'] == 0:
-        time.sleep(20)
-        count += 1
-        if count == 10:
-          print('timeout for SE to be seen after deployment')
-          exit()
-      count = 0
-      while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
-        time.sleep(20)
-        count += 1
-        if count == 10:
-          print('timeout for SE to be connected after deployment')
-          exit()
-    seCount += 1
+    update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
+    time.sleep(60)
+    se_connected = ''
+    count = 0
+    while defineClass.getObject('serviceengine', params)['count'] == 0:
+      time.sleep(20)
+      count += 1
+      if count == 10:
+        print('timeout for SE to be seen after deployment')
+        exit()
+    count = 0
+    while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+      time.sleep(20)
+      count += 1
+      if count == 10:
+        print('timeout for SE to be connected after deployment')
+        exit()
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
 #   ipCount = 0
 #   if seg['dhcp'] == False:
