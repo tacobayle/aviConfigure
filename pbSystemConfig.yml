@@ -102,7 +102,6 @@
       avi_networkprofile:
         avi_api_update_method: "patch"
         avi_api_patch_op: "replace"
-        api_version: "{{ ctl_version }}"
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         tenant: "{{ tenant_ref | default('admin') }}"
