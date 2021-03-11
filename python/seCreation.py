@@ -186,7 +186,7 @@ if __name__ == '__main__':
     with open('properties.json', 'w') as f:
       json.dump(properties, f)
 #     print('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc library.deploy -folder=/{0}/vm/{3} -options=./properties.json /{4}/se {5}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], seg['folder'], cl_name, se_name))
-    os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc library.deploy -folder=/{0}/vm/\'{3}\' -options=./properties.json /{4}/se \'{5}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], seg['folder'], cl_name, se_name))
+    os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; export GOVC_RESOURCE_POOL={3} ; govc library.deploy -folder=/{0}/vm/\'{4}\' -options=./properties.json /{5}/se \'{6}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg['folder'], cl_name, se_name))
     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.change -vm \'{3}\' -c {4} -m {5}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name, seg['vcpus_per_se'], seg['memory_per_se']))
     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.disk.change -vm \'{3}\' -size {4}G'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name, seg['disk_per_se']))
     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; govc vm.power -on \'{3}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], se_name))
@@ -216,6 +216,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be seen after deployment')
+        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
@@ -223,6 +224,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be connected after deployment')
+        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     #
     # seg update and name update
@@ -243,6 +245,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be seen after deployment')
+        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
@@ -250,6 +253,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be connected after deployment')
+        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
 #   ipCount = 0
