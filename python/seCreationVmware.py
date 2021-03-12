@@ -36,12 +36,10 @@ if __name__ == '__main__':
   vsphere_password = sys.argv[8]
   vsphere_server = sys.argv[9]
   ova_path = sys.argv[10]
+  cl_to_delete = sys.argv[11]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = 'Easy-Avi-CL-SE-NoAccess'
   tenant = "admin"
-  if seg['numberOfSe'] == 0:
-    print('no SE to create')
-    exit()
 #   network_mgmt = "MGMT"
 #   network_data = ['vip1', 'vip2', 'vip3']
 #   print(avi_credentials['controller'])
@@ -61,6 +59,10 @@ if __name__ == '__main__':
 #   print(auth_details)
 #   print(seg_folder)
 #   print(ova_path)
+  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_to_delete))
+  if seg['numberOfSe'] == 0:
+    print('no SE to create')
+    exit()
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc folder.create /{0}/vm/\'{2}\''.format(vcenter['dc'], vsphere_url, seg_folder))
   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
   if govc_result != 0:
