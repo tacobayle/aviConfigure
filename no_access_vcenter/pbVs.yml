@@ -39,7 +39,7 @@
 
     - name: Define vip data - no_access_vcenter
       set_fact:
-        vipno_access_vcenter:
+        vip_no_access_vcenter:
           - ipam_network_subnet:
               network_ref: "{{ listNetworkUuid.0 | default('Null') }}"
               subnet:
@@ -64,7 +64,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + no_access_vcenter.domains.0.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipno_access_vcenter }}"
+        vip: "{{ vip_no_access_vcenter }}"
       loop: "{{ no_access_vcenter.virtualservices.http }}"
       loop_control:
         label: "{{ item.name }}"
@@ -87,7 +87,7 @@
         dns_info:
           - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + no_access_vcenter.domains.0.name) }}"
             type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipno_access_vcenter }}"
+        vip: "{{ vip_no_access_vcenter }}"
       loop: "{{ no_access_vcenter.virtualservices.dns }}"
       loop_control:
         label: "{{ item.name }}"
