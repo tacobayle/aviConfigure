@@ -23,6 +23,7 @@
       register: networkUuid
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
+        - no_access_vcenter.application is true
       tags:
         - ipam
 
@@ -34,6 +35,7 @@
         label: "{{ item.uuid }}"
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
+        - no_access_vcenter.application is true
       tags:
         - ipam
 
@@ -53,6 +55,7 @@
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
         - listNetworkUuid is defined
+        - no_access_vcenter.application is true
 
     - name: Create vsvip for http VS - no_access_vcenter
       avi_vsvip:
@@ -72,6 +75,7 @@
         - no_access_vcenter.name is defined
         - no_access_vcenter.domains.0.name is defined
         - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
       tags:
         - vsvip
         - vsHttp
@@ -95,6 +99,7 @@
         - no_access_vcenter.name is defined
         - no_access_vcenter.domains.0.name is defined
         - no_access_vcenter.virtualservices.dns is defined
+        - no_access_vcenter.application is true
       tags:
         - vsvip
         - vsHttp
@@ -155,6 +160,7 @@
       when:
         - no_access_vcenter.pools is defined
         - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
       tags:
         - pool
 
@@ -180,6 +186,7 @@
         - avi_backend_servers_no_access_vcenter is defined
         - no_access_vcenter.pools is defined
         - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
       tags:
         - pool
 
@@ -194,6 +201,7 @@
         label: "{{ item.name }}"
       when:
         - no_access_vcenter.httppolicyset is defined
+        - no_access_vcenter.application is true
 
     - name: Create HTTP Virtualservice (based on vsvip)
       avi_virtualservice:
@@ -230,6 +238,7 @@
       when:
         - no_access_vcenter.name is defined
         - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
       register: outputVsHttp
       tags:
         - vsHttp
@@ -253,6 +262,7 @@
       when:
         - no_access_vcenter.name is defined
         - no_access_vcenter.virtualservices.dns is defined
+        - no_access_vcenter.application is true
       register: outputVsDns
       tags:
         - vsDns
@@ -270,6 +280,8 @@
         - vs
       when:
         - no_access_vcenter.virtualservices.dns.0.name is defined
+        - no_access_vcenter.application is true
+
 
 
     # - name: Debug
@@ -292,7 +304,9 @@
       until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
       retries: 120
       delay: 10
-      when: no_access_vcenter.virtualservices.http is defined
+      when:
+        - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
       ignore_errors: yes
       tags:
         - vsHttp

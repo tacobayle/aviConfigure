@@ -14,8 +14,8 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.dns_provider_ref | default('dns-avi-no_access_vcenter')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
-      when:
-        - no_access_vcenter.domains is defined
+#      when:
+#        - no_access_vcenter.domains is defined
       tags:
         - dns
 
@@ -37,6 +37,7 @@
       loop: "{{ no_access_vcenter.domains }}"
       when:
         - no_access_vcenter.domains is defined
+        - no_access_vcenter.application is true
       tags:
         - dns
 
@@ -78,6 +79,7 @@
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipStartPool is defined
+        - no_access_vcenter.application is true
 
     - name: Define Network Range IP Begin - no_access_vcenter
       set_fact:
@@ -85,6 +87,7 @@
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipStartPool is defined
+        - no_access_vcenter.application is true
 
     - name: Define Network Range IP End - no_access_vcenter
       set_fact:
@@ -92,6 +95,7 @@
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipEndPool is defined
+        - no_access_vcenter.application is true
 
     - name: Define Network Range IP End - no_access_vcenter
       set_fact:
@@ -99,6 +103,8 @@
       when:
         - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipEndPool is defined
+        - no_access_vcenter.application is true
+
 
     - name: Define configured_subnets for network - no_access_vcenter
       set_fact:
@@ -120,6 +126,7 @@
         - ipBegin is defined
         - ipEnd is defined
         - no_access_vcenter.network_vip.defaultGateway is defined
+        - no_access_vcenter.application is true
 
     - name: Create Network for IPAM - no_access_vcenter
       avi_network:
@@ -132,6 +139,7 @@
       register: output_network_vip_no_access_vcenter
       when:
         - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
       tags:
         - ipam
 
@@ -146,6 +154,7 @@
         type: IPAMDNS_TYPE_INTERNAL
       when:
         - output_network_vip_no_access_vcenter.obj.uuid is defined
+        - no_access_vcenter.application is true
       tags:
         - ipam
 
@@ -174,6 +183,7 @@
         - cloud
       when:
         - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
 
     - name: Update vrf global with default route for VIP network - no_access_vcenter
       avi_vrfcontext:
