@@ -237,6 +237,7 @@
         buffer_se: "{{ item.buffer_se | default(omit) }}"
         extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
         vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
+        se_tunnel_mode: "{{ item.se_tunnel_mode | default(omit) }}"
         vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
         memory_per_se: "{{ item.memory_per_se | default(omit) }}"
         disk_per_se: "{{ item.disk_per_se | default(omit) }}"

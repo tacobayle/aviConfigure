@@ -59,7 +59,7 @@ if __name__ == '__main__':
 #   print(auth_details)
 #   print(seg_folder)
 #   print(ova_path)
-  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_to_delete))
+  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm \'{2}\''.format(vcenter['dc'], vsphere_url, cl_to_delete))
   if seg['numberOfSe'] == 0:
     print('no SE to create')
     exit()
@@ -203,6 +203,7 @@ if __name__ == '__main__':
                                export GOVC_RESOURCE_POOL={3}
                                govc library.deploy -folder=/{0}/vm/\'{4}\' -options=./properties.json /{5}/se \'{6}\'
                                govc vm.change -vm \'{6}\' -c {7} -m {8}; govc vm.disk.change -vm \'{6}\' -size {9}G
+                               govc device.disconnect -vm \'{6}\' ethernet-2
                                govc vm.power -on \'{6}\'
                                sleep 180
                                govc vm.ip \'{6}\' | tee ip.txt'''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg_folder, cl_name, se_name, seg['vcpus_per_se'], seg['memory_per_se'], seg['disk_per_se']))
