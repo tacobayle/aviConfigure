@@ -74,40 +74,40 @@
 
     - name: Define Network Range IP Begin - no_access_vcenter
       set_fact:
-        ipBegin: "{{ no_access_vcenter.network_vip.cidr | ipaddr(no_access_vcenter.network_vip.ipStartPool) }}"
+        ipBegin: "{{ no_access_vcenter.network_vip.defaultGateway | ipaddr(no_access_vcenter.network_vip.ipStartPool) }}"
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipStartPool is defined
 
     - name: Define Network Range IP Begin - no_access_vcenter
       set_fact:
         ipBegin: "{{ ipBegin.split('/')[0] }}"
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipStartPool is defined
 
     - name: Define Network Range IP End - no_access_vcenter
       set_fact:
-        ipEnd: "{{ no_access_vcenter.network_vip.cidr | ipaddr(no_access_vcenter.network_vip.ipEndPool) }}"
+        ipEnd: "{{ no_access_vcenter.network_vip.defaultGateway | ipaddr(no_access_vcenter.network_vip.ipEndPool) }}"
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipEndPool is defined
 
     - name: Define Network Range IP End - no_access_vcenter
       set_fact:
         ipEnd: "{{ ipEnd.split('/')[0] }}"
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
         - no_access_vcenter.network_vip.ipEndPool is defined
 
     - name: Define configured_subnets for network - no_access_vcenter
       set_fact:
         configured_subnets:
           - prefix:
-              mask: "{{ no_access_vcenter.network_vip.cidr.split('/')[1] }}"
+              mask: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('prefix') }}"
               ip_addr:
                 type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
-                addr: "{{ no_access_vcenter.network_vip.cidr.split('/')[0] }}"
+                addr: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('network') }}"
             static_ip_ranges:
               - range:
                   begin:
@@ -119,7 +119,7 @@
       when:
         - ipBegin is defined
         - ipEnd is defined
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
 
     - name: Create Network for IPAM - no_access_vcenter
       avi_network:
@@ -174,28 +174,6 @@
         - cloud
       when:
         - no_access_vcenter.name is defined
-
-#    - name: Define Default Gw for VIP Network - no_access_vcenter
-#      set_fact:
-#        ipGw: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('address') }}"
-#      when:
-#        - no_access_vcenter.network_vip.defaultGateway is defined
-
-#    - name: Define Default Gw for VIP Network - no_access_vcenter
-#      set_fact:
-#        ipGw: "{{ ipGw.split('/')[0] }}"
-#      when:
-#        - no_access_vcenter.network_vip.cidr is defined
-#        - no_access_vcenter.network_vip.defaultGateway is defined
-#
-#    - name: Debug
-#      debug:
-#        msg: "{{ ipGw }}"
-#      tags:
-#        - debug
-#      when:
-#        - no_access_vcenter.network_vip.cidr is defined
-#        - no_access_vcenter.network_vip.defaultGateway is defined
 
     - name: Update vrf global with default route for VIP network - no_access_vcenter
       avi_vrfcontext:
