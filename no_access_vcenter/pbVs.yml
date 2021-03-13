@@ -22,7 +22,7 @@
         path: network
       register: networkUuid
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
       tags:
         - ipam
 
@@ -33,7 +33,7 @@
       loop_control:
         label: "{{ item.uuid }}"
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
       tags:
         - ipam
 
@@ -43,15 +43,15 @@
           - ipam_network_subnet:
               network_ref: "{{ listNetworkUuid.0 | default('Null') }}"
               subnet:
-                mask: "{{ no_access_vcenter.network_vip.cidr.split('/')[1] }}"
+                mask: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('prefix') }}"
                 ip_addr:
                   type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
-                  addr: "{{ no_access_vcenter.network_vip.cidr.split('/')[0] }}"
+                  addr: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('network') }}"
             avi_allocated_fip: true
             auto_allocate_ip: true
             auto_allocate_floating_ip: true
       when:
-        - no_access_vcenter.network_vip.cidr is defined
+        - no_access_vcenter.network_vip.defaultGateway is defined
         - listNetworkUuid is defined
 
     - name: Create vsvip for http VS - no_access_vcenter
