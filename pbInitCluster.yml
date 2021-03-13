@@ -234,6 +234,6 @@
     - name: save json creds
       copy:
         content: '{"avi_credentials": {{ avi_credentials }} }'
-        dest: "{{ controller.aviCredsJsonFile | default('~/ansible/vars/creds.json') }}"
+        dest: "{{ controller.aviCredsJsonFile | default('~/.creds.json') }}"
       tags:
         - creds
