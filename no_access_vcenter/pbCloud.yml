@@ -37,7 +37,6 @@
       loop: "{{ no_access_vcenter.domains }}"
       when:
         - no_access_vcenter.domains is defined
-        - no_access_vcenter.application is true
       tags:
         - dns
 
