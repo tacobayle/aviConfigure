@@ -36,7 +36,7 @@ if __name__ == '__main__':
   vsphere_password = sys.argv[8]
   vsphere_server = sys.argv[9]
   ova_path = sys.argv[10]
-  cl_to_delete = sys.argv[11]
+#   cl_to_delete = sys.argv[11]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = 'Easy-Avi-CL-SE-NoAccess'
   tenant = "admin"
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 #   print(auth_details)
 #   print(seg_folder)
 #   print(ova_path)
-  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm \'{2}\''.format(vcenter['dc'], vsphere_url, cl_to_delete))
+#   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm \'{2}\''.format(vcenter['dc'], vsphere_url, cl_to_delete))
   if seg['numberOfSe'] == 0:
     print('no SE to create')
     exit()

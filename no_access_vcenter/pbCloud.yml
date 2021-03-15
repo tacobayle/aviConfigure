@@ -8,6 +8,30 @@
 
   tasks:
 
+    - name: Remove Content Library - "{{ contentLibrary.name }}"
+      shell: |
+        export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
+        export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
+        export GOVC_INSECURE=true
+        govc library.rm \'{{ no_access_vcenter.vcenter.contentLibrary.name }}\'
+      when:
+        - no_access_vcenter.vcenter.dc is defined
+        - vsphere_username is defined
+        - vsphere_password is defined
+        - vsphere_server is defined
+        - no_access_vcenter.vcenter.contentLibrary.name is defined
+
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ no_access_vcenter.dns_provider_ref | default('dns-avi-no_access_vcenter')}}"
+        type: IPAMDNS_TYPE_INTERNAL_DNS
+      #      when:
+      #        - no_access_vcenter.domains is defined
+      tags:
+        - dns
+
+
     - name: Create Avi DNS provider Without donain names - no_access_vcenter
       avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -384,7 +408,7 @@
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
       #      command: python3 seCreation.py "avi_credentials.json"
-      command: python3 ../python/seCreationVmware.py "{{ avi_credentials | to_yaml}}" "{{ item | to_yaml }}" "{{ cloud_no_access_vcenter_uuid }}" "{{ no_access_vcenter.network_management.name }}" "{{ no_access_vcenter.network_vip.name }}" "{{ no_access_vcenter.vcenter | to_yaml }}" "{{ vsphere_username }}" "{{ vsphere_password }}" "{{ vsphere_server }}" "{{ ova_path | to_json }}" "{{ contentLibrary.name }}"
+      command: python3 ../python/seCreationVmware.py "{{ avi_credentials | to_yaml}}" "{{ item | to_yaml }}" "{{ cloud_no_access_vcenter_uuid }}" "{{ no_access_vcenter.network_management.name }}" "{{ no_access_vcenter.network_vip.name }}" "{{ no_access_vcenter.vcenter | to_yaml }}" "{{ vsphere_username }}" "{{ vsphere_password }}" "{{ vsphere_server }}" "{{ ova_path | to_json }}"
       register: logPbSeCreation
       loop: "{{ no_access_vcenter.serviceEngineGroup }}"
       when:
