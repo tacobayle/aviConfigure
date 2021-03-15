@@ -13,7 +13,8 @@
         export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
         export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
         export GOVC_INSECURE=true
-        govc library.rm \'{{ no_access_vcenter.vcenter.contentLibrary.name }}\'
+        env | grep GOVC
+        govc library.rm '{{ no_access_vcenter.vcenter.contentLibrary.name }}'
       when:
         - no_access_vcenter.vcenter.dc is defined
         - vsphere_username is defined
