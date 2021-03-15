@@ -1,6 +1,7 @@
 import requests, json, os, yaml, sys, time, random, string
 from avi.sdk.avi_api import ApiSession
 from ipaddress import IPv4Network
+from ipaddress import IPv4Interface
 
 class aviSession:
   def __init__(self, fqdn, username, password, tenant):
@@ -167,11 +168,11 @@ if __name__ == '__main__':
                                         },
                                         {
                                           'Key': 'avi.mgmt-mask.SE',
-                                          'Value': IPv4Network(network_management['cidr']).netmask
+                                          'Value': IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask
                                         },
                                         {
                                           'Key': 'avi.default-gw.SE',
-                                          'Value': IPv4Network(network_management['cidr'])[network_management['defaultGateway']]
+                                          'Value': network_management['defaultGateway'].split('/')[0]
                                         },
                                         {
                                           'Key': 'avi.DNS.SE',
@@ -281,6 +282,7 @@ if __name__ == '__main__':
         print('timeout for SE to be connected after seg update')
         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
+    seCount += 1
   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
 #   ipCount = 0
 #   if seg['dhcp'] == False:
