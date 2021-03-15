@@ -21,16 +21,6 @@
         - vsphere_server is defined
         - no_access_vcenter.vcenter.contentLibrary.name is defined
 
-      avi_ipamdnsproviderprofile:
-        avi_credentials: "{{ avi_credentials | default(omit) }}"
-        api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ no_access_vcenter.dns_provider_ref | default('dns-avi-no_access_vcenter')}}"
-        type: IPAMDNS_TYPE_INTERNAL_DNS
-      #      when:
-      #        - no_access_vcenter.domains is defined
-      tags:
-        - dns
-
 
     - name: Create Avi DNS provider Without donain names - no_access_vcenter
       avi_ipamdnsproviderprofile:
