@@ -30,7 +30,7 @@ if __name__ == '__main__':
   avi_credentials = yaml.load(sys.argv[1])
   seg = yaml.load(sys.argv[2])
   cloud_no_access_vcenter_uuid = sys.argv[3]
-  network_management = sys.argv[4]
+  network_management = yaml.load(sys.argv[4])
   networks_data = [sys.argv[5]]
   vcenter = yaml.load(sys.argv[6])
   vsphere_username = sys.argv[7]
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                                         }
                                       ]
     NetworkMapping = []
-    NetworkMapping.append({'Name': 'Management', 'Network': network_management})
+    NetworkMapping.append({'Name': 'Management', 'Network': network_management['name']})
     count = 1
     for item in networks_data:
       NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item})
