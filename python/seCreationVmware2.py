@@ -211,9 +211,8 @@ if __name__ == '__main__':
     NetworkMapping = []
     NetworkMapping.append({'Name': 'Management', 'Network': network_management['name']})
     count = 1
-    for item in seg['data_networks']:
-      NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item['name']})
-      count += 1
+    for count_network, item in enumerate(seg['data_networks']):
+      NetworkMapping.append({'Name': 'Data Network ' + str(count_network), 'Network': item['name']})
     for i in range(len(seg['data_networks']) + 1, 10):
       NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': ''})
 #       print(i)
@@ -303,14 +302,14 @@ if __name__ == '__main__':
       for item in vm_devices['elements'][0]['Object']['Config']['Hardware']['Device']:
         for count in range(1, 11):
           if item['DeviceInfo']['Label'] == 'Network adapter ' + str(count):
-            index_networks = 0
-              for network in networks:
-                try:
-                  if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey']:
-                    networks[index_networks]['MacAddress'] = item['MacAddress']
-                except:
-                  pass
-                index_networks += 1
+#             index_networks = 0
+            for index_networks, network in enumerate(networks):
+              try:
+                if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey']:
+                  networks[index_networks]['MacAddress'] = item['MacAddress']
+              except:
+                pass
+#                 index_networks += 1
       # update se nic data
       for count_vnic, vnic in enumerate(se_data['data_vnics'], start=0):
         for network in networks:
