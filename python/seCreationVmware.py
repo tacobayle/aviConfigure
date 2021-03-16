@@ -145,6 +145,12 @@ if __name__ == '__main__':
                                         }
                                       ]
     if seg['dhcp'] == False:
+      print(avi_credentials['controller'])
+      print(auth_details['auth_token'])
+      print(cluster_uuid)
+      print(seg['ips_management'][seCount])
+      print(IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask)
+      print(network_management['defaultGateway'].split('/')[0])
       properties['PropertyMapping'] = [
                                         {
                                           'Key': 'AVICNTRL',
