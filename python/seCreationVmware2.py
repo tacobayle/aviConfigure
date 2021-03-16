@@ -190,7 +190,7 @@ if __name__ == '__main__':
       NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item})
       count += 1
     for i in range(len(networks_data) + 1, 10):
-      NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': ''})
+      NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': 'none'})
 #       print(i)
     properties['NetworkMapping'] = NetworkMapping
 #     print(properties)
