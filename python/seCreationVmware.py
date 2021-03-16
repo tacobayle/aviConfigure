@@ -145,12 +145,6 @@ if __name__ == '__main__':
                                         }
                                       ]
     if seg['dhcp'] == False:
-      print(avi_credentials['controller'])
-      print(auth_details['auth_token'])
-      print(cluster_uuid)
-      print(seg['ips_management'][seCount])
-      print(IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask)
-      print(network_management['defaultGateway'].split('/')[0])
       properties['PropertyMapping'] = [
                                         {
                                           'Key': 'AVICNTRL',
@@ -170,15 +164,15 @@ if __name__ == '__main__':
                                         },
                                         {
                                           'Key': 'avi.mgmt-ip.SE',
-                                          'Value': seg['ips_management'][seCount]
+                                          'Value': str(seg['ips_management'][seCount])
                                         },
                                         {
                                           'Key': 'avi.mgmt-mask.SE',
-                                          'Value': IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask
+                                          'Value': str(IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask)
                                         },
                                         {
                                           'Key': 'avi.default-gw.SE',
-                                          'Value': network_management['defaultGateway'].split('/')[0]
+                                          'Value': str(network_management['defaultGateway'].split('/')[0])
                                         },
                                         {
                                           'Key': 'avi.DNS.SE',
