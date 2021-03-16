@@ -399,7 +399,7 @@
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
       #      command: python3 seCreation.py "avi_credentials.json"
-      command: python3 ../python/seCreationVmware.py "{{ avi_credentials | to_yaml}}" "{{ item | to_yaml }}" "{{ cloud_no_access_vcenter_uuid }}" "{{ no_access_vcenter.network_management | to_yaml }}" "{{ no_access_vcenter.network_vip.name }}" "{{ no_access_vcenter.vcenter | to_yaml }}" "{{ vsphere_username }}" "{{ vsphere_password }}" "{{ vsphere_server }}" "{{ ova_path | to_json }}"
+      command: python3 ../python/seCreationVmware2.py "{{ avi_credentials | to_yaml}}" "{{ item | to_yaml }}" "{{ cloud_no_access_vcenter_uuid }}" "{{ no_access_vcenter.network_management | to_yaml }}" "{{ no_access_vcenter.network_vip.name }}" "{{ no_access_vcenter.vcenter | to_yaml }}" "{{ vsphere_username }}" "{{ vsphere_password }}" "{{ vsphere_server }}" "{{ ova_path | to_json }}"
       register: logPbSeCreation
       loop: "{{ no_access_vcenter.serviceEngineGroup }}"
       ignore_errors: yes

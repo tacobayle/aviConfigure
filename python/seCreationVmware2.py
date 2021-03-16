@@ -64,12 +64,37 @@ if __name__ == '__main__':
   if seg['numberOfSe'] == 0:
     print('no SE to create')
     exit()
-  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc folder.create /{0}/vm/\'{2}\''.format(vcenter['dc'], vsphere_url, seg_folder))
+  # SE folder creation - don't check if it fails in case of existing folder
+  os.system('''export GOVC_DATACENTER={0}
+               export GOVC_URL={1}
+               export GOVC_INSECURE=true
+               govc folder.create /{0}/vm/\'{2}\''''.format(vcenter['dc'], vsphere_url, seg_folder))
+  # Get network PortgroupKey if dhcp is false for a data network - exit if it fails
+  if any(network['dhcp'] == False for network in seg['data_networks']):
+    for item in seg['data_networks']:
+      if item['dhcp'] == False:
+        network = {}
+        govc_result = os.system('''export GOVC_DATACENTER={0}
+                                   export GOVC_URL={1}
+                                   export GOVC_INSECURE=true
+                                   govc ls -json /{0}/network/{2} | tee network.json >/dev/null'''.format(vcenter['dc'], vsphere_url, item['name']))
+        if govc_result != 0:
+          os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+          print('Error when browsing the data networks to retrieve the PortgroupKey')
+          exit()
+        with open('network.json', 'r') as stream:
+          network_info = json.load(stream)
+        network['name'] = item['name']
+        network['PortgroupKey'] = network_info['elements'][0]['Object']['Summary']['Network']['Value']
+        network['ips'] = item['ips']
+        networks.append(network)
+  # Create a content library and import the SE ova - exit if it fails
   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
   if govc_result != 0:
     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
     print('Error when creating content library or importing item in the content library')
     exit()
+  # Spin up SE from Content library
   seCount = 0
   for se in range (1, seg['numberOfSe'] + 1):
     params = {"cloud_uuid": cloud_no_access_vcenter_uuid}
@@ -186,11 +211,11 @@ if __name__ == '__main__':
     NetworkMapping = []
     NetworkMapping.append({'Name': 'Management', 'Network': network_management['name']})
     count = 1
-    for item in networks_data:
-      NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item})
+    for item in seg['data_networks']:
+      NetworkMapping.append({'Name': 'Data Network ' + str(count), 'Network': item['name']})
       count += 1
-    for i in range(len(networks_data) + 1, 10):
-      NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': 'none'})
+    for i in range(len(seg['data_networks']) + 1, 10):
+      NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': ''})
 #       print(i)
     properties['NetworkMapping'] = NetworkMapping
 #     print(properties)
@@ -262,6 +287,36 @@ if __name__ == '__main__':
       params = {'name': seg['name'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
       seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
       se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
+    # discover VM device if DHCP is false for data networks
+    if any(network['dhcp'] == False for network in seg['data_networks']):
+      govc_result = os.system('''export GOVC_DATACENTER={0}
+                                 export GOVC_URL={1}
+                                 export GOVC_INSECURE=true
+                                 govc ls -json \'/{0}/vm/{2}/{3}\' | tee vm_devices.json >/dev/null'''.format(vcenter['dc'], vsphere_url, seg_folder, se_name))
+      if govc_result != 0:
+        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+        print('Error when discovering SE Hardware')
+        exit()
+      with open('vm_devices.json', 'r') as stream:
+        vm_devices = json.load(stream)
+      # link mac address to Network
+      for item in vm_devices['elements'][0]['Object']['Config']['Hardware']['Device']:
+        for count in range(1, 11):
+          if item['DeviceInfo']['Label'] == 'Network adapter ' + str(count):
+            index_networks = 0
+              for network in networks:
+                try:
+                  if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey']:
+                    networks[index_networks]['MacAddress'] = item['MacAddress']
+                except:
+                  pass
+                index_networks += 1
+      # update se nic data
+      for count_vnic, vnic in enumerate(se_data['data_vnics'], start=0):
+        for network in networks:
+          if vnic['mac_address'] == network['MacAddress']:
+            print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}])
+            se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}]
     update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
     time.sleep(60)
     se_connected = ''
