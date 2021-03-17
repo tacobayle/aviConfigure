@@ -30,13 +30,13 @@ if __name__ == '__main__':
   avi_credentials = yaml.load(sys.argv[1])
   seg = yaml.load(sys.argv[2])
   cloud_no_access_vcenter_uuid = sys.argv[3]
-  network_management = yaml.load(sys.argv[4])
-  networks_data = [sys.argv[5]]
-  vcenter = yaml.load(sys.argv[6])
-  vsphere_username = sys.argv[7]
-  vsphere_password = sys.argv[8]
-  vsphere_server = sys.argv[9]
-  ova_path = sys.argv[10]
+#   network_management = yaml.load(sys.argv[4])
+#   networks_data = [sys.argv[4]]
+  vcenter = yaml.load(sys.argv[4])
+  vsphere_username = sys.argv[5]
+  vsphere_password = sys.argv[6]
+  vsphere_server = sys.argv[7]
+  ova_path = sys.argv[8]
 #   cl_to_delete = sys.argv[11]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = 'Easy-Avi-CL-SE-NoAccess'
@@ -190,15 +190,15 @@ if __name__ == '__main__':
                                         },
                                         {
                                           'Key': 'avi.mgmt-ip.SE',
-                                          'Value': str(seg['ips_management'][seCount])
+                                          'Value': str(seg['management_network']['ips'][seCount])
                                         },
                                         {
                                           'Key': 'avi.mgmt-mask.SE',
-                                          'Value': str(IPv4Network(IPv4Interface(network_management['defaultGateway']).network).netmask)
+                                          'Value': str(IPv4Network(IPv4Interface(seg['management_network']['defaultGateway']).network).netmask)
                                         },
                                         {
                                           'Key': 'avi.default-gw.SE',
-                                          'Value': str(network_management['defaultGateway'].split('/')[0])
+                                          'Value': str(seg['management_network']['defaultGateway'].split('/')[0])
                                         },
                                         {
                                           'Key': 'avi.DNS.SE',
@@ -210,7 +210,7 @@ if __name__ == '__main__':
                                         }
                                       ]
     NetworkMapping = []
-    NetworkMapping.append({'Name': 'Management', 'Network': network_management['name']})
+    NetworkMapping.append({'Name': 'Management', 'Network': seg['management_network']['name']})
 #     count = 1
     for count_network, item in enumerate(seg['data_networks'], start=1):
       NetworkMapping.append({'Name': 'Data Network ' + str(count_network), 'Network': item['name']})
