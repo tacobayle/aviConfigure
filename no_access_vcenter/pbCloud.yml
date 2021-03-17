@@ -199,6 +199,14 @@
         - no_access_vcenter.name is defined
         - no_access_vcenter.application is true
 
+    - name: Debug
+      debug:
+        msg: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('address') }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.network_vip.defaultGateway
+        - no_access_vcenter.network_vip.defaultGatewaySe is true
+
     - name: Update vrf global with default route for VIP network - no_access_vcenter
       avi_vrfcontext:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -221,6 +229,7 @@
       when:
         - no_access_vcenter.name is defined
         - no_access_vcenter.network_vip.defaultGateway
+        - no_access_vcenter.network_vip.defaultGatewaySe is true
       tags:
         - vrf
         - route

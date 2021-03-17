@@ -71,6 +71,7 @@ if __name__ == '__main__':
                govc folder.create /{0}/vm/\'{2}\''''.format(vcenter['dc'], vsphere_url, seg_folder))
   # Get network PortgroupKey if dhcp is false for a data network - exit if it fails
   if any(network['dhcp'] == False for network in seg['data_networks']):
+    networks = []
     for item in seg['data_networks']:
       if item['dhcp'] == False:
         network = {}
@@ -277,7 +278,7 @@ if __name__ == '__main__':
         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     #
-    # seg update and name update
+    # seg update name update and IP update if needed.
     #
     params = {'name': ip}
     se_data = defineClass.getObject('serviceengine', params)['results'][0]
@@ -305,7 +306,7 @@ if __name__ == '__main__':
 #             index_networks = 0
             for index_networks, network in enumerate(networks):
               try:
-                if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey']:
+                if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey'] and item['Connectable']['Connected'] == True:
                   networks[index_networks]['MacAddress'] = item['MacAddress']
               except:
                 pass
@@ -314,8 +315,9 @@ if __name__ == '__main__':
       for count_vnic, vnic in enumerate(se_data['data_vnics'], start=0):
         for network in networks:
           if vnic['mac_address'] == network['MacAddress']:
-            print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}])
-            se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}]
+            print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount].split('/')[0], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}])
+            se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount].split('/')[0], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}]
+            se_data['data_vnics'][count_vnic]['dhcp_enabled'] = False
     update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
     time.sleep(60)
     se_connected = ''
