@@ -199,7 +199,15 @@
         - no_access_vcenter.name is defined
         - no_access_vcenter.application is true
 
-    - name: Debug
+    - name: Debug default gateway
+      debug:
+        msg: "{{ no_access_vcenter.network_vip.defaultGateway }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.network_vip.defaultGateway
+        - no_access_vcenter.network_vip.defaultGatewaySe is true
+
+    - name: Debug default gateway
       debug:
         msg: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('address') }}"
       when:

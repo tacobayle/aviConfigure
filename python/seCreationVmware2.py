@@ -211,8 +211,8 @@ if __name__ == '__main__':
                                       ]
     NetworkMapping = []
     NetworkMapping.append({'Name': 'Management', 'Network': network_management['name']})
-    count = 1
-    for count_network, item in enumerate(seg['data_networks']):
+#     count = 1
+    for count_network, item in enumerate(seg['data_networks'], start=1):
       NetworkMapping.append({'Name': 'Data Network ' + str(count_network), 'Network': item['name']})
     for i in range(len(seg['data_networks']) + 1, 10):
       NetworkMapping.append({'Name': 'Data Network ' + str(i), 'Network': ''})
