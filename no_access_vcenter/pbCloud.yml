@@ -242,6 +242,18 @@
         - vrf
         - route
 
+    - name: Define SE Tunnel Mode (if exclusion list is true)
+      set_fact:
+        se_tunnel_mode: 0
+      when:
+        - no_access_vcenter.nsxt_exclusion_list is true
+
+    - name: Define SE Tunnel Mode (if exclusion list is false)
+      set_fact:
+        se_tunnel_mode: 1
+      when:
+        - no_access_vcenter.nsxt_exclusion_list is false
+
     - name: Modify/Creating SE group - no_access_vcenter
       avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -254,7 +266,7 @@
         buffer_se: "{{ item.buffer_se | default(omit) }}"
         extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
         vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
-        se_tunnel_mode: "{{ item.se_tunnel_mode | default(omit) }}"
+        se_tunnel_mode: "{{ se_tunnel_mode }}"
         vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
         memory_per_se: "{{ item.memory_per_se | default(omit) }}"
         disk_per_se: "{{ item.disk_per_se | default(omit) }}"
