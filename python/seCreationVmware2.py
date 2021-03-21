@@ -36,7 +36,7 @@ if __name__ == '__main__':
   vsphere_username = sys.argv[5]
   vsphere_password = sys.argv[6]
   vsphere_server = sys.argv[7]
-  ova_path = sys.argv[8]
+#   ova_path = sys.argv[8]
 #   cl_to_delete = sys.argv[11]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = 'Easy-Avi-CL-SE-NoAccess'
