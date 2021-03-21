@@ -430,6 +430,7 @@
       shell: |
         export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
         export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
+        export GOVC_DATASTORE="{{ no_access_vcenter.vcenter.datastore }}"
         export GOVC_INSECURE=true
         env | grep GOVC
         govc library.create Easy-Avi-CL-SE-NoAccess
