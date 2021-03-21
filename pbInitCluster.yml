@@ -131,7 +131,7 @@
             addr: "{{ controller.floatingIp }}"
             type: V4
       when:
-        - controller.count == 3
+        - controller.cluster is true
         - controller.floatingIp is defined
         - controller.environment == "VMWARE"
       tags:
@@ -140,7 +140,7 @@
     - name: sleep for 300 seconds and continue with play - if cluster has been configured
       wait_for: timeout=300
       when:
-        - controller.count == 3
+        - controller.cluster is true
         - controller.floatingIp is defined
         - controller.environment == "VMWARE"
       tags:
@@ -169,7 +169,7 @@
       retries: 120
       delay: 10
       when:
-        - controller.count == 3
+        - controller.cluster is true
         - controller.floatingIp is defined
         - controller.environment == "VMWARE"
       tags:
@@ -225,7 +225,7 @@
                            'password': "{{ my_pass.0 }}",
                            'username': "{{ aviUser.0.name }}"}
       when:
-        - controller.count == 3
+        - controller.cluster is true
         - controller.floatingIp is defined
         - controller.environment == "VMWARE"
       tags:

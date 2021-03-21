@@ -80,7 +80,7 @@ if __name__ == '__main__':
                                    export GOVC_INSECURE=true
                                    govc ls -json /{0}/network/{2} | tee network.json >/dev/null'''.format(vcenter['dc'], vsphere_url, item['name']))
         if govc_result != 0:
-          os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#           os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
           print('Error when browsing the data networks to retrieve the PortgroupKey')
           exit()
         with open('network.json', 'r') as stream:
@@ -89,10 +89,10 @@ if __name__ == '__main__':
         network['PortgroupKey'] = network_info['elements'][0]['Object']['Summary']['Network']['Value']
         network['ips'] = item['ips']
         networks.append(network)
-  # Create a content library and import the SE ova - exit if it fails
-  govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
+#   # Create a content library and import the SE ova - exit if it fails
+#   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
   if govc_result != 0:
-    os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
     print('Error when creating content library or importing item in the content library')
     exit()
   # Spin up SE from Content library
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 #     print('dhcp is true')
     govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc find -json / -type m | tee vm_inventory.json'.format(vcenter['dc'], vsphere_url))
     if govc_result != 0:
-      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
       print('Error when retrieving inventory names of VM')
       exit()
     with open('vm_inventory.json', 'r') as vm_json:
@@ -234,7 +234,7 @@ if __name__ == '__main__':
                                govc vm.ip \'{6}\' | tee ip.txt'''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg_folder, cl_name, se_name, seg['vcpus_per_se'], seg['memory_per_se'], seg['disk_per_se']))
     # govc device.disconnect -vm \'{6}\' ethernet-2 need do disconnect in regards to the amount of data_networks
     if govc_result != 0:
-      os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
       print('Error when creating the SE')
       exit()
 #     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_GOVC_DATASTORE={2}; export GOVC_INSECURE=true; export GOVC_RESOURCE_POOL={3} ; govc library.deploy -folder=/{0}/vm/\'{4}\' -options=./properties.json /{5}/se \'{6}\''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg_folder, cl_name, se_name))
@@ -267,7 +267,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be seen after deployment')
-        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
@@ -275,7 +275,7 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be connected after deployment')
-        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     #
     # seg update name update and IP update if needed.
@@ -294,7 +294,7 @@ if __name__ == '__main__':
                                  export GOVC_INSECURE=true
                                  govc ls -json \'/{0}/vm/{2}/{3}\' | tee vm_devices.json >/dev/null'''.format(vcenter['dc'], vsphere_url, seg_folder, se_name))
       if govc_result != 0:
-        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         print('Error when discovering SE Hardware')
         exit()
       with open('vm_devices.json', 'r') as stream:
@@ -328,7 +328,7 @@ if __name__ == '__main__':
       count += 1
       if count == 20:
         print('timeout for SE to be seen after seg update')
-        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
@@ -336,10 +336,10 @@ if __name__ == '__main__':
       count += 1
       if count == 10:
         print('timeout for SE to be connected after seg update')
-        os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     seCount += 1
-  os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#   os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
 #   ipCount = 0
 #   if seg['dhcp'] == False:
 #     params = {"cloud_uuid": cloud_no_access_vcenter_uuid}

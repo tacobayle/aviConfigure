@@ -426,6 +426,21 @@
 #      when:
 #        - no_access_vcenter.name is defined
 
+    - name: Add Content Library - Easy-Avi-CL-SE-NoAccess - import SE image
+      shell: |
+        export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
+        export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
+        export GOVC_INSECURE=true
+        env | grep GOVC
+        govc library.create Easy-Avi-CL-SE-NoAccess
+        govc library.import Easy-Avi-CL-SE-NoAccess {{ ova_path }}
+      when:
+        - no_access_vcenter.vcenter.dc is defined
+        - vsphere_username is defined
+        - vsphere_password is defined
+        - vsphere_server is defined
+        - ova_path is defined
+
     - name: Debug
       debug:
         msg: "{{ avi_credentials | to_yaml }}"
@@ -480,3 +495,16 @@
         msg: "{{ logPbSeCreation }}"
       when:
         - logPbSeCreation is defined
+
+    - name: Remove Content Library - Easy-Avi-CL-SE-NoAccess
+      shell: |
+        export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
+        export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
+        export GOVC_INSECURE=true
+        env | grep GOVC
+        govc library.rm Easy-Avi-CL-SE-NoAccess
+      when:
+        - no_access_vcenter.vcenter.dc is defined
+        - vsphere_username is defined
+        - vsphere_password is defined
+        - vsphere_server is defined
