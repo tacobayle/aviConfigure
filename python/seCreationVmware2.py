@@ -32,7 +32,7 @@ if __name__ == '__main__':
   vsphere_password = sys.argv[6]
   vsphere_server = sys.argv[7]
   seg_folder = 'Avi-SE-' + seg['name']
-  cl_name = 'Easy-Avi-CL-SE-NoAccess'
+  cl_name = sys.argv[8]
   tenant = "admin"
   vsphere_url="https://" + vsphere_username + ":" + vsphere_password + "@" + vsphere_server
   defineClass = aviSession(avi_credentials['controller'], avi_credentials['username'], avi_credentials['password'], tenant)
@@ -208,7 +208,7 @@ if __name__ == '__main__':
     #       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
       print('Error when creating the SE')
       exit()
-    for network_data_index in range(len(seg['data_networks']) + 1, 11):
+    for network_data_index in range(len(seg['data_networks']) + 1, 10):
       govc_result = os.system('''export GOVC_DATACENTER={0}
                                  export GOVC_URL={1}
                                  export GOVC_GOVC_DATASTORE={2}
