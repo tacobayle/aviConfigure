@@ -57,13 +57,17 @@ if __name__ == '__main__':
                                    govc ls -json /{0}/network/{2} | tee network.json >/dev/null'''.format(vcenter['dc'], vsphere_url, item['name']))
         if govc_result != 0:
 #           os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
-          print('Error when browsing the data networks to retrieve the PortgroupKey')
+          print('Error when browsing the data network to retrieve the PortgroupKey')
           exit()
         with open('network.json', 'r') as stream:
           network_info = json.load(stream)
         network['name'] = item['name']
         network['PortgroupKey'] = network_info['elements'][0]['Object']['Summary']['Network']['Value']
         network['ips'] = item['ips']
+        try:
+          network['OpaqueNetworkId'] = network_info['elements'][0]['Object']['Summary']['OpaqueNetworkId']
+        except:
+          pass
         networks.append(network)
 #   # Create a content library and import the SE ova - exit if it fails
 #   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
@@ -209,6 +213,7 @@ if __name__ == '__main__':
       print('Error when creating the SE')
       exit()
     for network_data_index in range(len(seg['data_networks']) + 1, 10):
+      print('dsconnecting ethernet-{0}'.format(network_data_index))
       govc_result = os.system('''export GOVC_DATACENTER={0}
                                  export GOVC_URL={1}
                                  export GOVC_GOVC_DATASTORE={2}
@@ -270,6 +275,11 @@ if __name__ == '__main__':
           if item['DeviceInfo']['Label'] == 'Network adapter ' + str(count):
 #             index_networks = 0
             for index_networks, network in enumerate(networks):
+              try:
+                if item['Backing']['OpaqueNetworkId'] == network['OpaqueNetworkId'] and item['Connectable']['Connected'] == True:
+                  networks[index_networks]['MacAddress'] = item['MacAddress']
+              except:
+                pass
               try:
                 if item['Backing']['Port']['PortgroupKey'] == network['PortgroupKey'] and item['Connectable']['Connected'] == True:
                   networks[index_networks]['MacAddress'] = item['MacAddress']
