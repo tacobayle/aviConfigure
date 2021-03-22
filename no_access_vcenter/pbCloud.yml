@@ -110,7 +110,7 @@
     - set_fact:
         cloud_no_access_vcenter_uuid: "{{ output_cloud_no_access_vcenter.obj.uuid }}"
       when:
-        - no_access_vcenter.application is false
+        - no_access_vcenter.application is true
         - no_access_vcenter.name is defined
       tags:
         - cloud
@@ -118,7 +118,7 @@
     - set_fact:
         cloud_no_access_vcenter_uuid: "{{ output_cloud_no_access_vcenter_no_dns.obj.uuid }}"
       when:
-        - no_access_vcenter.application is true
+        - no_access_vcenter.application is false
         - no_access_vcenter.name is defined
       tags:
         - cloud
