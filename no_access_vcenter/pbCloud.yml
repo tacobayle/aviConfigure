@@ -240,6 +240,8 @@
       with_subelements:
         - "{{ no_access_vcenter.serviceEngineGroup }}"
         - data_networks
+      loop_control:
+        label: "Update default route for SE group called {{ item.0.name }}"
       when:
         - no_access_vcenter.name is defined
         - no_access_vcenter.serviceEngineGroup
