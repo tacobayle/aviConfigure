@@ -260,9 +260,6 @@
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         name: global
-        labels:
-          - key: EasyAvi
-            value: "{{ item.0.name }}"
         static_routes:
           - prefix:
               ip_addr:
@@ -273,6 +270,9 @@
               addr: "{{ item.1.defaultGateway | ipv4('address') }}"
               type: "{{ item.1.type | default('V4') }}"
             route_id: "1"
+            labels:
+              - key: EasyAvi
+                value: "{{ item.0.name }}"
       with_subelements:
         - "{{ no_access_vcenter.serviceEngineGroup }}"
         - data_networks
