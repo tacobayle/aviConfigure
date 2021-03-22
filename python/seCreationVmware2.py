@@ -169,7 +169,7 @@ if __name__ == '__main__':
                                         },
                                         {
                                           'Key': 'avi.mgmt-ip.SE',
-                                          'Value': IPv4Network(IPv4Interface(seg['management_network']['defaultGateway']).network)[int(seg['management_network']['ips'][seCount])]
+                                          'Value': str(IPv4Network(IPv4Interface(seg['management_network']['defaultGateway']).network)[int(seg['management_network']['ips'][seCount])])
 #                                           str(seg['management_network']['ips'][seCount])
                                         },
                                         {
