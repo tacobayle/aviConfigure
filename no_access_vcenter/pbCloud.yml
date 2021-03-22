@@ -29,8 +29,8 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.dns_provider_ref | default('dns-avi-no_access_vcenter')}}"
         type: IPAMDNS_TYPE_INTERNAL_DNS
-#      when:
-#        - no_access_vcenter.domains is defined
+      when:
+        - no_access_vcenter.application is true
       tags:
         - dns
 
@@ -52,6 +52,7 @@
       loop: "{{ no_access_vcenter.domains }}"
       when:
         - no_access_vcenter.domains is defined
+        - no_access_vcenter.application is true
       tags:
         - dns
 
@@ -79,11 +80,44 @@
         - cloud
       when:
         - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
+
+    - name: Configure Avi Cloud without IPAM without DNS - no_access_vcenter
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ no_access_vcenter.name }}"
+        vtype: CLOUD_NONE
+        apic_mode: false
+        dhcp_enabled: "{{ no_access_vcenter.dhcp_enabled | default('true') }}"
+        mtu: 1500
+        prefer_static_routes: false
+        enable_vip_static_routes: false
+        license_type: LIC_CORES
+        state_based_dns_registration: "{{ no_access_vcenter.state_based_dns_registration | default('false') }}"
+        ip6_autocfg_enabled: "{{ no_access_vcenter.ip6_autocfg_enabled | default('false') }}"
+        dns_resolution_on_se: false
+        enable_vip_on_all_interfaces: false
+        license_tier: ENTERPRISE
+        autoscale_polling_interval: 60
+      register: output_cloud_no_access_vcenter_no_dns
+      tags:
+        - cloud
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.application is false
 
     - set_fact:
         cloud_no_access_vcenter_uuid: "{{ output_cloud_no_access_vcenter.obj.uuid }}"
       when:
         - output_cloud_no_access_vcenter.obj.uuid is defined
+      tags:
+        - cloud
+
+    - set_fact:
+        cloud_no_access_vcenter_uuid: "{{ output_cloud_no_access_vcenter_no_dns.obj.uuid }}"
+      when:
+        - output_cloud_no_access_vcenter_no_dns.obj.uuid
       tags:
         - cloud
 

@@ -294,7 +294,7 @@ if __name__ == '__main__':
         for network in networks:
           if vnic['mac_address'] == network['MacAddress']:
 #             print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': network['ips'][seCount].split('/')[0], 'type': 'V4'}, 'mask': network['ips'][seCount].split('/')[1]}, 'mode': 'STATIC'}])
-            print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[network['ips'][seCount]]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}])
+            print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[int(network['ips'][seCount])]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}])
             se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[int(network['ips'][seCount])]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}]
             se_data['data_vnics'][count_vnic]['dhcp_enabled'] = False
     update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
