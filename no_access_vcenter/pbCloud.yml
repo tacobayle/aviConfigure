@@ -215,7 +215,7 @@
         - no_access_vcenter.network_vip.defaultGateway
         - no_access_vcenter.network_vip.defaultGatewaySe is true
 
-    - name: Update vrf global with default route for VIP network - no_access_vcenter
+    - name: Update vrf global with default route for each se group - no_access_vcenter
       avi_vrfcontext:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -224,20 +224,27 @@
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         name: global
+        labels:
+          - key: EasyAvi
+            value: "{{ item.0.name }}"
         static_routes:
           - prefix:
               ip_addr:
                 addr: "0.0.0.0"
-                type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
+                type: "{{ item.1.type | default('V4') }}"
               mask: "0"
             next_hop:
-              addr: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('address') }}"
-              type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
+              addr: "{{ item.1.defaultGateway | ipv4('address') }}"
+              type: "{{ item.1.type | default('V4') }}"
             route_id: "1"
+      with_subelements:
+        - "{{ no_access_vcenter.serviceEngineGroup }}"
+        - data_networks
       when:
         - no_access_vcenter.name is defined
-        - no_access_vcenter.network_vip.defaultGateway
-        - no_access_vcenter.network_vip.defaultGatewaySe is true
+        - no_access_vcenter.serviceEngineGroup
+        - item.1.defaultGatewaySeGroup is true
+        - item.1.defaultGateway is defined
       tags:
         - vrf
         - route
@@ -261,6 +268,9 @@
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
         avi_api_update_method: put
         name: "{{ item.name }}"
+        labels:
+          - key: EasyAvi
+            value: "{{ item.name }}"
         ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
         min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
         buffer_se: "{{ item.buffer_se | default(omit) }}"
