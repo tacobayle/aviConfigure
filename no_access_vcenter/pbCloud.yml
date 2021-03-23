@@ -269,7 +269,7 @@
             next_hop:
               addr: "{{ item.1.defaultGateway | ipv4('address') }}"
               type: "{{ item.1.type | default('V4') }}"
-            route_id: "1"
+            route_id: "{{ my_idx + 1 }}"
             labels:
               - key: EasyAvi
                 value: "{{ item.0.name }}"
@@ -278,6 +278,7 @@
         - data_networks
       loop_control:
         label: "Update default route for SE group called {{ item.0.name }}"
+        index_var: my_idx
       when:
         - no_access_vcenter.name is defined
         - no_access_vcenter.serviceEngineGroup
