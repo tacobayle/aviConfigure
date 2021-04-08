@@ -43,14 +43,14 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: credsNsxt
         nsxt_credentials:
-          username: "{{ nsx_user }}"
+          username: "{{ nsx_username }}"
           password: "{{ nsx_password }}"
       register: nsxtUserOutput
       tags:
         - cloud
       when:
         - nsxt is defined
-        - nsx_user is defined
+        - nsx_username is defined
         - nsx_password is defined
 
     - name: Create a Cloud connector user for NSX-T (vcenter)
