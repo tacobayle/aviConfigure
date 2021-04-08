@@ -400,7 +400,7 @@
       when:
         - nsxt is defined
 
-    - name: Retrieve Network Vip Uuid  - NSXT
+    - name: Retrieve Network Vip Uuid - NSXT
       set_fact:
         networkVipUuid: "{{ item.uuid }}"
       loop: "{{ networkOutput.obj.results }}"
@@ -413,38 +413,91 @@
         - nsxt is defined
         - item.name == nsxt.network_data.0.name
 
-    - name: Set IP details of Vip Network - NSXT
+    - name: Define Network Range IP Begin - NSXT
       set_fact:
-        configured_subnets_vip:
+        ipBegin: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipStartPool) }}"
+      when:
+        - nsxt.networks_data.0.defaultGateway is defined
+        - nsxt.networks_data.0.ipStartPool is defined
+
+    - name: Define Network Range IP Begin - NSXT
+      set_fact:
+        ipBegin: "{{ ipBegin.split('/')[0] }}"
+      when:
+        - ipBegin is defined
+
+    - name: Define Network Range IP End - NSXT
+      set_fact:
+        ipEnd:  "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipEndPool) }}"
+      when:
+        - nsxt.networks_data.0.defaultGateway is defined
+        - nsxt.networks_data.0.ipEndPool is defined
+
+    - name: Define Network Range IP End - NSXT
+      set_fact:
+        ipEnd: "{{ ipEnd.split('/')[0] }}"
+      when:
+        - ipEnd is defined
+
+
+    - name: Define configured_subnets for network - NSXT
+      set_fact:
+        configured_subnets:
           - prefix:
-              mask: "{{ nsxt.networks_data.0.cidr.split('/')[1] }}"
+              mask: "{{ nsxt.networks_data.0.defaultGateway | ipv4('prefix') }}"
               ip_addr:
                 type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                addr: "{{ nsxt.networks_data.0.cidr.split('/')[0] }}"
+                addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('network') }}"
             static_ip_ranges:
               - range:
                   begin:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networks_data.0.ipStartPool }}"
+                    addr: "{{ ipBegin }}"
                   end:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networks_data.0.ipEndPool }}"
-      tags:
-        - cloud
-        - nsxtApi
+                    addr: "{{ ipEnd }}"
       when:
-        - networks_data is defined
-        - nsxt.network_vip.ipStartPool is defined
-        - nsxt.network_vip.ipEndPool is defined
+        - nsxt.networks_data.0.defaultGateway is defined
+        - ipBegin is defined
+        - ipEnd is defined
 
-    - name: set vrf Vip - NSXT
-      set_fact:
-        vrfNsxt: "/api/vrfcontext/?name={{ nsxt.networks_data.0.tier1 }}"
-      tags:
-        - cloud
-        - nsxtApi
-      when:
-        - nsxt.network_vip.tier1 is defined
+
+
+#
+#
+#
+#    - name: Set IP details of Vip Network - NSXT
+#      set_fact:
+#        configured_subnets_vip:
+#          - prefix:
+#              mask: "{{ nsxt.networks_data.0.cidr.split('/')[1] }}"
+#              ip_addr:
+#                type: "{{ nsxt.networks_data.0.type | default('V4') }}"
+#                addr: "{{ nsxt.networks_data.0.cidr.split('/')[0] }}"
+#            static_ip_ranges:
+#              - range:
+#                  begin:
+#                    type: "{{ nsxt.networks_data.0.type | default('V4') }}"
+#                    addr: "{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networks_data.0.ipStartPool }}"
+#                  end:
+#                    type: "{{ nsxt.networks_data.0.type | default('V4') }}"
+#                    addr: "{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.0.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.networks_data.0.ipEndPool }}"
+#      tags:
+#        - cloud
+#        - nsxtApi
+#      when:
+#        - networks_data is defined
+#        - nsxt.network_vip.ipStartPool is defined
+#        - nsxt.network_vip.ipEndPool is defined
+
+#    - name: set vrf Vip - NSXT
+#      set_fact:
+#        vrfNsxt: "/api/vrfcontext/?name={{ nsxt.networks_data.0.tier1 }}"
+#      tags:
+#        - cloud
+#        - nsxtApi
+#      when:
+#        - nsxt.network_vip.tier1 is defined
 
     - name: Update Vip Network - NSXT
       avi_network:
@@ -455,19 +508,18 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         uuid: "{{ networkVipUuid | default(omit) }}"
-        name: "{{ nsxt.network_vip.name }}"
-        dhcp_enabled: "{{  nsxt.network_vip.dhcp_enabled | default(omit) }}"
-        exclude_discovered_subnets: "{{  nsxt.network_vip.exclude_discovered_subnets | default(omit) }}"
-        vcenter_dvs: "{{  nsxt.network_vip.vcenter_dvs | default(omit) }}"
-        configured_subnets: "{{ configured_subnets_vip | default(omit) }}"
-        vrf_context_ref: "{{ vrfNsxt | default(omit) }}"
+        name: "{{ nsxt.networks_data.0.name }}"
+        dhcp_enabled: "{{  nsxt.networks_data.0.dhcp_enabled | default(omit) }}"
+        exclude_discovered_subnets: "{{  nsxt.networks_data.0.exclude_discovered_subnets | default(omit) }}"
+        vcenter_dvs: "{{  nsxt.networks_data.0.vcenter_dvs | default(omit) }}"
+        configured_subnets: "{{ configured_subnets }}"
+        vrf_context_ref: "/api/vrfcontext/?name={{ nsxt.networks_data.0.tier1 }}"
       register: networkOutput
       when:
-        - nsxt.network_vip.cidr is defined
-        - nsxt.network_vip.ipStartPool is defined
-        - nsxt.network_vip.ipEndPool is defined
         - nsxt.name is defined
-        - nsxt.network_vip.name is defined
+        - nsxt.networks_data.0.name is defined
+        - configured_subnets is defined
+        - nsxt.networks_data.0.tier1 is defined
       tags:
         - cloud
 
@@ -481,7 +533,7 @@
         name: "{{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
         type: IPAMDNS_TYPE_INTERNAL
       when:
-        - nsxt.network_vip.name is defined
+        - networkOutput.obj.uuid is defined
       tags:
         - cloud
 
@@ -493,7 +545,7 @@
         - cloud
         - nsxtApi
 
-    - name: Update vrf with default route for VIP network
+    - name: Update vrf with default route for VIP network - NSXT
       avi_vrfcontext:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -501,20 +553,20 @@
         avi_api_update_method: patch
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        name: "{{ nsxt.network_vip.tier1 }}"
+        name: "{{ nsxt.networks_data.0.tier1 }}"
         static_routes:
           - prefix:
               ip_addr:
                 addr: "0.0.0.0"
-                type: "{{ nsxt.network_vip.type | default('V4') }}"
+                type: "{{ nsxt.networks_data.0.type | default('V4') }}"
               mask: "0"
             next_hop:
-              addr: "{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentVip.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_vip.gateway | default('1') }}"
-              type: "{{ nsxt.network_vip.type | default('V4') }}"
+              addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('address') }}"
+              type: "{{ nsxt.networks_data.0.type | default('V4') }}"
             route_id: "1"
       when:
         - nsxt.name is defined
-        - nsxt.network_vip.tier1 is defined
+        - nsxt.networks_data.0.tier1 is defined
       tags:
         - cloud
 
@@ -536,9 +588,7 @@
           tier1_segment_config:
             segment_config_mode: TIER1_SEGMENT_MANUAL
             manual:
-              tier1_lrs:
-                - tier1_lr_id: "{{ nsxtTier1sVip.id }}"
-                  segment_id: "{{ nsxtSegmentVip.id }}"
+              tier1_lrs: "{{ tier1_lrs }}"
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
@@ -548,8 +598,10 @@
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
       when:
         - nsxt.name is defined
-        - nsxt.server is defined
+        - nsx_server is defined
         - nsxt.dhcp_enabled is defined
+        - nsxt.network_vip is defined
+        - nsxt.management_network is defined
       tags:
         - cloud
         - nsxtApi
