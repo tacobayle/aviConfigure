@@ -54,7 +54,7 @@
         vip:
           - auto_allocate_ip: true
             ipam_network_subnet:
-              network_ref: "/api/network/?name={{ nsxt.network_vip.name }}"
+              network_ref: "/api/network/?name={{ nsxt.networks_data.0.name }}"
               subnet:
                 mask: "{{ nsxtSegmentVip.cidr.split('/')[1] }}"
                 ip_addr:

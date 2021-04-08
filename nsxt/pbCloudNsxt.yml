@@ -621,7 +621,8 @@
       delay: 120
       ignore_errors: yes
       when:
-        - nsxt.name is defined
+        - controller.aviCredsJsonFile is defined
+        - cloud_nsxt_uuid is defined
       tags:
         - cloud
 

@@ -59,15 +59,15 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: credsVcenter
         vcenter_credentials:
-          username: "{{ nsx_vsphere_user }}"
-          password: "{{ nsx_vsphere_password }}"
+          username: "{{ vsphere_username }}"
+          password: "{{ vsphere_password }}"
       register: vcenterUserOutput
       tags:
         - cloud
       when:
         - nsxt is defined
-        - nsx_vsphere_user is defined
-        - nsx_vsphere_password is defined
+        - vsphere_username is defined
+        - vsphere_password is defined
 
     - name: Debug
       debug:
