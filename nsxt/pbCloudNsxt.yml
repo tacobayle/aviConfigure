@@ -95,7 +95,7 @@
 
     - set_fact:
         nsxtTier1sVip: "{{ nsxtTier1sVip | default([]) + [item.stdout | from_json] }}"
-      loop: "{{ nsxtTier1sVipJson.stdout }}"
+      loop: "{{ nsxtTier1sVipJson.results }}"
       tags:
         - cloud
         - nsxtApi
