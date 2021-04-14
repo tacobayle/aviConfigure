@@ -81,6 +81,8 @@
       command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ item.tier1 }}"
       ignore_errors: no
       loop: "{{ nsxt.networks_data }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: nsxtTier1sVipJson
       tags:
         - cloud
@@ -93,7 +95,9 @@
 
     - set_fact:
         nsxtTier1sVip: "{{ nsxtTier1sVip | default([]) + [item.stdout | from_json] }}"
-      loop: "{{ nsxtTier1sVipJson.results }}"
+      loop: "{{ nsxtTier1sVipJson.stdout }}"
+      loop_control:
+        label: "{{ item.stdout }}"
       tags:
         - cloud
         - nsxtApi
@@ -142,6 +146,10 @@
         - nsxtUserOutput.obj.uuid is defined
         - nsxtTransportZoneId.stdout is defined
         - nsxt.networks_data is defined
+
+    - name: Debug
+      debug:
+        msg: "{{ nsxtSegmentVipJson }}"
 
     - set_fact:
         nsxtSegmentVip: "{{ nsxtSegmentVip | default([]) + [item.stdout | from_json] }}"
