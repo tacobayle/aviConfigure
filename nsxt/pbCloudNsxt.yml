@@ -150,7 +150,7 @@
         msg: "{{ nsxtSegmentVipJson }}"
 
     - set_fact:
-        nsxtSegmentVip: "{{ nsxtSegmentVip | default([]) + [item.stdout | from_json] }}"
+        nsxtSegmentVip: "{{ nsxtSegmentVip | default([]) + [item.stdout] }}"
         loop: "{{ nsxtSegmentVipJson.results }}"
       tags:
         - cloud
