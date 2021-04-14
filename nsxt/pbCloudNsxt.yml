@@ -57,7 +57,7 @@
         - nsxt.nsxt.transport_zone.name is defined
 
     - name: python workaround to retrieve tier1s for mgt - NSXT
-      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.management_network.tier1 }}"
+      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.network_management.tier1 }}"
       ignore_errors: no
       register: nsxtTier1sMgtJson
       tags:
@@ -67,7 +67,7 @@
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
         - nsxtUserOutput.obj.uuid is defined
-        - nsxt.management_network.tier1 is defined
+        - nsxt.network_management.tier1 is defined
 
     - set_fact:
         nsxtTier1sMgt: "{{ nsxtTier1sMgtJson.stdout | from_json }}"
@@ -107,7 +107,7 @@
         - nsxtTier1sVip is defined
 
     - name: python workaround to retrieve segment details for avi management - NSXT
-      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.management_network.name }}"
+      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_management.name }}"
       ignore_errors: no
       register: nsxtSegmentMgtJson
       tags:
@@ -118,7 +118,7 @@
         - nsx_server is defined
         - nsxtUserOutput.obj.uuid is defined
         - nsxtTransportZoneId.stdout is defined
-        - nsxt.management_network.name is defined
+        - nsxt.network_management.name is defined
 
     - set_fact:
         nsxtSegmentMgt: "{{ nsxtSegmentMgtJson.stdout | from_json }}"
@@ -227,7 +227,7 @@
         - nsx_server is defined
         - nsxt.dhcp_enabled is defined
         - nsxt.network_vip is defined
-        - nsxt.management_network is defined
+        - nsxt.network_management is defined
       tags:
         - cloud
 
@@ -335,29 +335,29 @@
         - nsxtApi
       when:
         - nsxt is defined
-        - item.name == nsxt.management_network.name
+        - item.name == nsxt.network_management.name
 
     - name: Set IP details of Mgmt Network - NSXT
       set_fact:
         configured_subnets_mgmt:
           - prefix:
-              mask: "{{ nsxt.management_network.cidr.split('/')[1] }}"
+              mask: "{{ nsxt.network_management.cidr.split('/')[1] }}"
               ip_addr:
-                type: "{{ nsxt.management_network.type | default('V4') }}"
-                addr: "{{ nsxt.management_network.cidr.split('/')[0] }}"
+                type: "{{ nsxt.network_management.type | default('V4') }}"
+                addr: "{{ nsxt.network_management.cidr.split('/')[0] }}"
             static_ip_ranges:
               - range:
                   begin:
-                    type: "{{ nsxt.management_network.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.management_network.ipStartPool }}"
+                    type: "{{ nsxt.network_management.type | default('V4') }}"
+                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_management.ipStartPool }}"
                   end:
-                    type: "{{ nsxt.management_network.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.management_network.ipEndPool }}"
+                    type: "{{ nsxt.network_management.type | default('V4') }}"
+                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_management.ipEndPool }}"
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.management_network.cidr is defined
+        - nsxt.network_management.cidr is defined
         - nsxt.network_vip.ipStartPool is defined
         - nsxt.network_vip.ipEndPool is defined
 
@@ -370,16 +370,16 @@
         avi_api_patch_op : add
         avi_api_update_method: patch
         uuid: "{{ networkMgtUuid | default(omit) }}"
-        name: "{{ nsxt.management_network.name }}"
-        dhcp_enabled: "{{ nsxt.management_network.dhcp_enabled | default(omit) }}"
-        exclude_discovered_subnets: "{{ nsxt.management_network.exclude_discovered_subnets | default(omit) }}"
-        vcenter_dvs: "{{ nsxt.management_network.vcenter_dvs | default(omit) }}"
+        name: "{{ nsxt.network_management.name }}"
+        dhcp_enabled: "{{ nsxt.network_management.dhcp_enabled | default(omit) }}"
+        exclude_discovered_subnets: "{{ nsxt.network_management.exclude_discovered_subnets | default(omit) }}"
+        vcenter_dvs: "{{ nsxt.network_management.vcenter_dvs | default(omit) }}"
         configured_subnets: "{{ configured_subnets_mgmt | default(omit) }}"
       when:
-        - nsxt.management_network.cidr is defined
-        - nsxt.management_network.ipStartPool is defined
-        - nsxt.management_network.ipEndPool is defined
-        - nsxt.management_network.name is defined
+        - nsxt.network_management.cidr is defined
+        - nsxt.network_management.ipStartPool is defined
+        - nsxt.network_management.ipEndPool is defined
+        - nsxt.network_management.name is defined
         - nsxt.name is defined
       tags:
         - cloud
@@ -601,7 +601,7 @@
         - nsx_server is defined
         - nsxt.dhcp_enabled is defined
         - nsxt.network_vip is defined
-        - nsxt.management_network is defined
+        - nsxt.network_management is defined
       tags:
         - cloud
         - nsxtApi
