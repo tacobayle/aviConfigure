@@ -231,8 +231,12 @@
       when:
         - nsxt.name is defined
         - nsx_server is defined
+        - nsxtTransportZoneId.stdout is defined
+        - nsxtTier1sMgt.id is defined
+        - nsxtSegmentMgt.id is defined
+        - tier1_lrs is defined
+        - nsxtUserOutput.obj.uuid is defined
         - nsxt.dhcp_enabled is defined
-        - nsxt.network_vip is defined
         - nsxt.network_management is defined
       tags:
         - cloud
@@ -240,7 +244,7 @@
     - set_fact:
         cloud_nsxt_uuid: "{{ output_cloud_nsxt.obj.uuid }}"
       when:
-        - output_cloud_nsxt is defined
+        - output_cloud_nsxt.obj.uuid is defined
       tags:
         - cloud
 
@@ -248,7 +252,7 @@
       debug:
         msg: "{{ cloud_nsxt_uuid }}"
       when:
-        - output_cloud_nsxt is defined
+        - cloud_nsxt_uuid is defined
 
     - pause:
         minutes: 1
@@ -303,7 +307,7 @@
     - set_fact:
         nsxt_vcenter_uuid: "{{ output_nsxt_vcenter.obj.uuid }}"
       when:
-        - output_nsxt_vcenter is defined
+        - output_nsxt_vcenter.obj.uuid is defined
       tags:
         - cloud
 
@@ -347,25 +351,25 @@
       set_fact:
         configured_subnets_mgmt:
           - prefix:
-              mask: "{{ nsxt.network_management.cidr.split('/')[1] }}"
+              mask: "{{ nsxt.network_management.defaultGateway.split('/')[1] }}"
               ip_addr:
                 type: "{{ nsxt.network_management.type | default('V4') }}"
-                addr: "{{ nsxt.network_management.cidr.split('/')[0] }}"
+                addr: "{{ nsxt.network_management.defaultGateway | ipv4('network') }}"
             static_ip_ranges:
               - range:
                   begin:
                     type: "{{ nsxt.network_management.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_management.ipStartPool }}"
+                    addr: "{{ nsxt.network_management.defaultGateway | ipaddr(nsxt.network_management.ipStartPool) }}"
                   end:
                     type: "{{ nsxt.network_management.type | default('V4') }}"
-                    addr: "{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[0] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[1] }}.{{ nsxtSegmentMgt.cidr.split('/')[0].split('.')[2] }}.{{ nsxt.network_management.ipEndPool }}"
+                    addr: "{{ nsxt.network_management.defaultGateway | ipaddr(nsxt.network_management.ipEndPool) }}"
       tags:
         - cloud
         - nsxtApi
       when:
-        - nsxt.network_management.cidr is defined
-        - nsxt.network_vip.ipStartPool is defined
-        - nsxt.network_vip.ipEndPool is defined
+        - nsxt.network_management.defaultGateway is defined
+        - nsxt.network_management.ipStartPool is defined
+        - nsxt.network_management.ipEndPool is defined
 
     - name: Update Mgmt Network - NSXT
       avi_network:
@@ -380,13 +384,11 @@
         dhcp_enabled: "{{ nsxt.network_management.dhcp_enabled | default(omit) }}"
         exclude_discovered_subnets: "{{ nsxt.network_management.exclude_discovered_subnets | default(omit) }}"
         vcenter_dvs: "{{ nsxt.network_management.vcenter_dvs | default(omit) }}"
-        configured_subnets: "{{ configured_subnets_mgmt | default(omit) }}"
+        configured_subnets: "{{ configured_subnets_mgmt }}"
       when:
-        - nsxt.network_management.cidr is defined
-        - nsxt.network_management.ipStartPool is defined
-        - nsxt.network_management.ipEndPool is defined
-        - nsxt.network_management.name is defined
         - nsxt.name is defined
+        - nsxt.network_management.name
+        - configured_subnets_mgmt
       tags:
         - cloud
 
@@ -419,31 +421,31 @@
         - nsxt is defined
         - item.name == nsxt.network_data.0.name
 
-    - name: Define Network Range IP Begin - NSXT
-      set_fact:
-        ipBegin: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipStartPool) }}"
-      when:
-        - nsxt.networks_data.0.defaultGateway is defined
-        - nsxt.networks_data.0.ipStartPool is defined
-
-    - name: Define Network Range IP Begin - NSXT
-      set_fact:
-        ipBegin: "{{ ipBegin.split('/')[0] }}"
-      when:
-        - ipBegin is defined
-
-    - name: Define Network Range IP End - NSXT
-      set_fact:
-        ipEnd:  "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipEndPool) }}"
-      when:
-        - nsxt.networks_data.0.defaultGateway is defined
-        - nsxt.networks_data.0.ipEndPool is defined
-
-    - name: Define Network Range IP End - NSXT
-      set_fact:
-        ipEnd: "{{ ipEnd.split('/')[0] }}"
-      when:
-        - ipEnd is defined
+#    - name: Define Network Range IP Begin - NSXT
+#      set_fact:
+#        ipBegin: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipStartPool) }}"
+#      when:
+#        - nsxt.networks_data.0.defaultGateway is defined
+#        - nsxt.networks_data.0.ipStartPool is defined
+#
+#    - name: Define Network Range IP Begin - NSXT
+#      set_fact:
+#        ipBegin: "{{ ipBegin.split('/')[0] }}"
+#      when:
+#        - ipBegin is defined
+#
+#    - name: Define Network Range IP End - NSXT
+#      set_fact:
+#        ipEnd:  "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.networks_data.0.ipEndPool) }}"
+#      when:
+#        - nsxt.networks_data.0.defaultGateway is defined
+#        - nsxt.networks_data.0.ipEndPool is defined
+#
+#    - name: Define Network Range IP End - NSXT
+#      set_fact:
+#        ipEnd: "{{ ipEnd.split('/')[0] }}"
+#      when:
+#        - ipEnd is defined
 
 
     - name: Define configured_subnets for network - NSXT
@@ -458,16 +460,14 @@
               - range:
                   begin:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ ipBegin }}"
+                    addr: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.network_management.ipStartPool) }}"
                   end:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ ipEnd }}"
+                    addr: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.network_management.ipEndPool) }}"
       when:
         - nsxt.networks_data.0.defaultGateway is defined
-        - ipBegin is defined
-        - ipEnd is defined
-
-
+        - nsxt.network_management.ipStartPool is defined
+        - nsxt.network_management.ipEndPool is defined
 
 #
 #
@@ -572,6 +572,7 @@
             route_id: "1"
       when:
         - nsxt.name is defined
+        - nsxt.networks_data.0.defaultGateway is defined
         - nsxt.networks_data.0.tier1 is defined
       tags:
         - cloud
@@ -606,7 +607,6 @@
         - nsxt.name is defined
         - nsx_server is defined
         - nsxt.dhcp_enabled is defined
-        - nsxt.network_vip is defined
         - nsxt.network_management is defined
       tags:
         - cloud
@@ -681,10 +681,10 @@
       loop_control:
         label: "Modifying/creating SE group called {{ item.0.name }}"
       when:
-        - nsxt.vcenter.serviceEngineGroup is defined
-        - nsxt.vcenter.name is defined
         - nsxt.name is defined
+        - nsxt.vcenter.serviceEngineGroup is defined
         - vcenterFolders is defined
+        - nsxt.vcenter.name is defined
         - item.0.vcenter_folder == item.1.name
       tags:
         - serviceEngineGroup
