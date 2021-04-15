@@ -584,7 +584,7 @@
         name: "{{ nsxt.name }}"
         vtype: CLOUD_NSXT
         nsxt_configuration:
-          nsxt_url: "{{ nsxt.server }}"
+          nsxt_url: "{{ nsx_server }}"
           transport_zone: "{{ nsxtTransportZoneId.stdout }}"
           # site_id: default
           # enforcementpoint_id: default
@@ -606,11 +606,15 @@
       when:
         - nsxt.name is defined
         - nsx_server is defined
+        - nsxtTransportZoneId.stdout is defined
+        - nsxtTier1sMgt.id is defined
+        - nsxtSegmentMgt.id is defined
+        - tier1_lrs is defined
+        - nsxtUserOutput.obj.uuid is defined
         - nsxt.dhcp_enabled is defined
         - nsxt.network_management is defined
       tags:
         - cloud
-        - nsxtApi
 
     - name: sleep for 120 seconds and continue with play
       wait_for: timeout=120
