@@ -137,6 +137,7 @@
     - name: retrieve details for NSXT Group - NSXT
       command: python3 ../python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
       ignore_errors: no
+      loop: "{{ nsxt.vcenters }}"
       register: nsxtGroupsJson
       when:
         - controller.aviCredsJsonFile is defined
@@ -145,6 +146,13 @@
       tags:
         - pool
         - vs
+
+    - name: NSXT Group - Saving folders detail to variable
+      set_fact:
+        nsxtGroups: "{{ nsxtGroups | default([]) + [item.stdout | from_json] }}"
+      loop: "{{ nsxtGroupsJson.results }}"
+      when:
+        - nsxtGroupsJson.results is defined
 
     - name: save NsxT details for avi_pool_nsxtGroup
       set_fact:
