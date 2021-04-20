@@ -135,14 +135,16 @@
     #
 
     - name: retrieve details for NSXT Group - NSXT
-      command: python3 ../python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
+      command: python3 ../python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "EasyAvi-Backend-vCenter-{{ my_idx }}"
       ignore_errors: no
       loop: "{{ nsxt.vcenters }}"
+      loop_control:
+        index_var: my_idx
       register: nsxtGroupsJson
       when:
         - controller.aviCredsJsonFile is defined
-        - nsxt.pool_nsxt_group is defined
         - cloud_nsxt_uuid is defined
+        - item.application == true
       tags:
         - pool
         - vs
@@ -154,39 +156,38 @@
       when:
         - nsxtGroupsJson.results is defined
 
-    - name: save NsxT details for avi_pool_nsxtGroup
-      set_fact:
-        nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
-      when:
-        - nsxtGroupsJson.stdout is defined
-      tags:
-        - pool
-        - vs
+#    - name: save NsxT details for avi_pool_nsxtGroup
+#      set_fact:
+#        nsxtGroups: "{{ nsxtGroupsJson.stdout | from_json }}"
+#      when:
+#        - nsxtGroupsJson.stdout is defined
+#      tags:
+#        - pool
+#        - vs
 
     - name: create pool based on NSXT group - NSXT
       avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ nsxt.pool_nsxt_group.name }}"
+        name: "NSXT-Group-{{ my_idx }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         lb_algorithm: "{{ item.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
         tier1_lr: "{{ nsxtTier1sVip.0.id }}"
         nsx_securitygroup:
-          - "{{ item.id }}"
+          - "{{ item.1.id }}"
         application_persistence_profile_ref: "/api/applicationpersistenceprofile?name={{ item.application_persistence_profile_ref | default('System-Persistence-Client-IP') }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ item.health_monitor_refs | default('hm1') }}"
-      loop: "{{ nsxtGroups.resource.nsxt_groups }}"
+      loop: "{{ nsxt.vcenters | zip(nsxtGroups) | list }}"
       loop_control:
-        label: "{{ item.name }}"
+        index_var: my_idx
       ignore_errors: yes
       when:
-        - nsxt.pool_nsxt_group.name is defined
         - nsxt.name is defined
         - nsxtTier1sVip.0.id is defined
-        - nsxtGroups.resource.nsxt_groups is defined
-        - item.name == nsxt.pool_nsxt_group.nsxt_group_name
+        - nsxtGroups is defined
+        - item.application == true
       tags:
         - pool
         - vs
