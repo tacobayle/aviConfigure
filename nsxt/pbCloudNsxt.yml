@@ -31,7 +31,7 @@
         internal_profile:
           dns_service_domain:
             - domain_name: "{{ item.name }}"
-              num_dns_ip: 1
+#              num_dns_ip: 1
               pass_through: true
               record_ttl: 100
           ttl: 300
@@ -44,7 +44,7 @@
         - dns
 
     - name: python workaround to retrieve transport zone id - NSXT
-      command: python3 ../python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.nsxt.transport_zone.name }}"
+      command: python3 ../python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxt.nsxt.transport_zone.name }}"
       ignore_errors: no
       register: nsxtTransportZoneId
       tags:
@@ -53,11 +53,11 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxt.nsxt.transport_zone.name is defined
 
     - name: python workaround to retrieve tier1s for mgt - NSXT
-      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxt.network_management.tier1 }}"
+      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxt.network_management.tier1 }}"
       ignore_errors: no
       register: nsxtTier1sMgtJson
       tags:
@@ -66,7 +66,7 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxt.network_management.tier1 is defined
 
     - set_fact:
@@ -78,7 +78,7 @@
         - nsxtTier1sMgtJson.stdout is defined
 
     - name: python workaround to retrieve tier1s for avi vip - NSXT
-      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ item.tier1 }}"
+      command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ item.tier1 }}"
       ignore_errors: no
       loop: "{{ nsxt.networks_data }}"
       loop_control:
@@ -90,7 +90,7 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxt.networks_data is defined
 
     - set_fact:
@@ -109,7 +109,7 @@
         - nsxtTier1sVip is defined
 
     - name: python workaround to retrieve segment details for avi management - NSXT
-      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_management.name }}"
+      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_management.name }}"
       ignore_errors: no
       register: nsxtSegmentMgtJson
       tags:
@@ -118,7 +118,7 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxtTransportZoneId.stdout is defined
         - nsxt.network_management.name is defined
 
@@ -131,7 +131,7 @@
         - nsxtSegmentMgtJson.stdout is defined
 
     - name: python workaround to retrieve segment details for avi vip - NSXT
-      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ item.name }}"
+      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ item.name }}"
       ignore_errors: no
       loop: "{{ nsxt.networks_data }}"
       register: nsxtSegmentVipJson
@@ -141,7 +141,7 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxtTransportZoneId.stdout is defined
         - nsxt.networks_data is defined
 
@@ -166,7 +166,7 @@
 
 
     - name: python workaround to retrieve segment details for backend network - NSXT
-      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtUserOutput.obj.uuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_backend.name }}"
+      command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_backend.name }}"
       ignore_errors: no
       register: nsxtSegmentBacJson
       tags:
@@ -175,7 +175,7 @@
       when:
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxtTransportZoneId.stdout is defined
         - nsxt.network_backend.name is defined
 
@@ -223,7 +223,7 @@
 #                - tier1_lr_id: "{{ nsxtTier1sVip.id }}"
 #                  segment_id: "{{ nsxtSegmentVip.id }}"
           #automate_dfw_rules: false
-          nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
+          nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtCredsUuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
@@ -235,7 +235,7 @@
         - nsxtTier1sMgt.id is defined
         - nsxtSegmentMgt.id is defined
         - tier1_lrs is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxt.dhcp_enabled is defined
         - nsxt.network_management is defined
       tags:
@@ -262,61 +262,57 @@
         - cloud
 
     - name: python workaround to retrieve vcenter content library info - NSXT
-      command: python3 ../python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ vsphere_server }}" "{{ vcenterUserOutput.obj.uuid }}" "{{ nsxt.vcenter.content_library.name }}"
+      command: python3 ../python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ item.0.vsphere_server }}" "{{ item.1 }}" "{{ item.0.content_library.name }}"
       ignore_errors: no
       register: vcenterContentLibraryJson
+      loop: "{{ nsxt.vcenters | zip(vcenterCreds) | list }}"
       tags:
-        - cloud
         - nsxtApi
       when:
         - controller.aviCredsJsonFile is defined
-        - vsphere_server is defined
-        - vcenterUserOutput.obj.uuid is defined
-        - nsxt.vcenter.content_library.name is defined
+        - nsxt.vcenters is defined
+        - vcenterCreds is defined
 
     - set_fact:
-        vcenterContentLibrary: "{{ vcenterContentLibraryJson.stdout | from_json }}"
-      tags:
-        - cloud
-        - nsxtApi
+        vcenterContentLibrary: "{{ vcenterContentLibrary | default([]) + [item.stdout | from_json] }}"
+      loop: "{{ vcenterContentLibraryJson.results }}"
       when:
-        - vcenterContentLibraryJson.stdout is defined
+        - vcenterContentLibraryJson.results is defined
 
     - name: Configure Vcenter Server for NSXT cloud - NSXT
       avi_vcenterserver:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ nsxt.vcenter.name }}"
+        name: "vcenter-{{ my_idx }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
-        vcenter_url: "{{ vsphere_server }}"
+        vcenter_url: "{{ item.0.vsphere_server }}"
         content_lib:
-          id: "{{ vcenterContentLibrary.id }}"
-        vcenter_credentials_ref: "/api/cloudconnectoruser/{{ vcenterUserOutput.obj.uuid }}"
+          id: "{{ item.1.id }}"
+        vcenter_credentials_ref: "/api/cloudconnectoruser/{{ item.2 }}"
       register: output_nsxt_vcenter
+      loop: "{{ nsxt.vcenters | zip(vcenterContentLibrary) | zip(vcenterCreds) | list }}"
+      loop_control:
+        index_var: my_idx
       tags:
         - cloud
-        - nsxtApi
       when:
-        - nsxt.vcenter.name is defined
         - nsxt.name is defined
-        - vsphere_server is defined
-        - vcenterContentLibrary.id is defined
-        - vcenterUserOutput.obj.uuid is defined
+        - nsxt.vcenters is defined
+        - vcenterContentLibrary is defined
+        - vcenterCreds is defined
 
     - set_fact:
-        nsxt_vcenter_uuid: "{{ output_nsxt_vcenter.obj.uuid }}"
+        nsxt_vcenter_uuid: "{{ nsxt_vcenter_uuid | default([]) + [item.obj.uuid] }}"
+      loop: "{{ output_nsxt_vcenter.results }}"
       when:
-        - output_nsxt_vcenter.obj.uuid is defined
-      tags:
-        - cloud
+        - output_nsxt_vcenter.results is defined
 
     - pause:
         minutes: 1
       when:
         - nsxt is defined
-      tags:
-        - cloud
+
 
     - name: get Network details - NSXT
       avi_api_session:
@@ -597,7 +593,7 @@
             manual:
               tier1_lrs: "{{ tier1_lrs }}"
           #automate_dfw_rules: false
-          nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtUserOutput.obj.uuid }}"
+          nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtCredsUuid }}"
         dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
@@ -610,7 +606,7 @@
         - nsxtTier1sMgt.id is defined
         - nsxtSegmentMgt.id is defined
         - tier1_lrs is defined
-        - nsxtUserOutput.obj.uuid is defined
+        - nsxtCredsUuid is defined
         - nsxt.dhcp_enabled is defined
         - nsxt.network_management is defined
       tags:
@@ -637,24 +633,43 @@
         - cloud
 
     - name: python workaround to retrieve folders uuid  - NSXT
-      command: python3 ../python/retrieveNsxtVcenterFolders.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "{{ nsxt_vcenter_uuid }}"
+      command: python3 ../python/retrieveNsxtVcenterFolders.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "{{ nsxt_vcenter_uuid | to_yaml }}" "{{ item.vcenter_folder }}"
       ignore_errors: no
       register: vcenterFoldersJson
+      loop: "{{ nsxt.serviceEngineGroup }}"
       tags:
         - cloud
         - nsxtApi
       when:
+        -
         - controller.aviCredsJsonFile is defined
         - cloud_nsxt_uuid is defined
         - nsxt_vcenter_uuid is defined
 
-    - set_fact:
-        vcenterFolders: "{{ vcenterFoldersJson.stdout | from_json }}"
-      tags:
-        - cloud
-        - nsxtApi
+    - name: Folders - Saving folders detail variable
+      set_fact:
+        vcenterFolders: "{{ vcenterFolders | default([]) + [item.stdout | from_json] }}"
+      loop: "{{ vcenterFoldersJson.results }}"
       when:
-        - vcenterFoldersJson.stdout is defined
+        - centerFoldersJson.results is defined
+
+#    - name: Folders - Filtering only the seg folder group
+#      set_fact:
+#        vcenterFoldersSeGroup: "{{ vcenterFoldersSeGroup | default([]) + [\"vcenter_folder\": item.1.vc_mobj_id ] }}"
+#      loop: "{{ nsxt.serviceEngineGroup | product(vcenterFolders) | list }}"
+#      when:
+#        - nsxt.serviceEngineGroup is defined
+#        - vcenterFolders is defined
+#        - item.0.vcenter_folder == item.1.name
+#
+#    - name: Folders - Adding vCenter info
+#      set_fact:
+#        vcenters: "{{ vcenters | default([]) + [\"vcenter_folder\": item.1.vc_mobj_id ] }}"
+#      loop: "{{ nsxt.vcenters | product(vcenterFoldersSeGroup) }}"
+#      when:
+#        - nsxt.serviceEngineGroup is defined
+#        - vcenterFolders is defined
+#        - item.0.vcenter_folder == item.1.name
 
     - name: Modify/Creating SE group - NSXT
       avi_serviceenginegroup:
@@ -670,9 +685,9 @@
         min_cpu_usage: "{{ item.0.min_cpu_usage | default(omit) }}"
         vs_scaleout_timeout: "{{ item.0.vs_scaleout_timeout | default(omit) }}"
         buffer_se: "{{ item.0.buffer_se | default(omit) }}"
-        vcenters:
-          - vcenter_ref: "/api/vcenterserver?name={{ nsxt.vcenter.name }}"
-            vcenter_folder: "{{ item.1.vc_mobj_id }}"
+        vcenters: "{{ item.1 }}"
+#          - vcenter_ref: "/api/vcenterserver?name=vcenter-{{ my_idx }}"
+#            vcenter_folder: "{{ item.1.vc_mobj_id }}"
         extra_shared_config_memory: "{{ item.0.extra_shared_config_memory | default(omit) }}"
         vcpus_per_se: "{{ item.0.vcpus_per_se | default(omit) }}"
         memory_per_se: "{{ item.0.memory_per_se | default(omit) }}"
@@ -681,14 +696,12 @@
         auto_rebalance: "{{ item.0.auto_rebalance | default(omit) }}"
         auto_rebalance_interval: "{{ item.0.auto_rebalance_interval | default(omit) }}"
         auto_rebalance_criteria: "{{ item.0.auto_rebalance_criteria | default(omit) }}"
-      loop: "{{ nsxt.vcenter.serviceEngineGroup | product(vcenterFolders)|list}}"
+      loop: "{{ nsxt.serviceEngineGroup | zip(vcenterFolders) | list }}"
       loop_control:
         label: "Modifying/creating SE group called {{ item.0.name }}"
       when:
         - nsxt.name is defined
-        - nsxt.vcenter.serviceEngineGroup is defined
+        - nsxt.serviceEngineGroup is defined
         - vcenterFolders is defined
-        - nsxt.vcenter.name is defined
-        - item.0.vcenter_folder == item.1.name
       tags:
         - serviceEngineGroup

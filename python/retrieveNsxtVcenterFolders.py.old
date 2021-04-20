@@ -5,9 +5,7 @@ import sys, json, yaml
 #
 fileCredential = sys.argv[1]
 path = 'vcenter/folders'
-cloud_uuid = sys.argv[2]
-vcenter_uuids = yaml.load(sys.argv[3])
-folder = sys.argv[4]
+data = {"cloud_uuid": sys.argv[2], "vcenter_uuid": sys.argv[3]}
 tenant = "admin"
 #
 # Avi class
@@ -33,14 +31,5 @@ if __name__ == '__main__':
     with open(fileCredential, 'r') as stream:
         credential = json.load(stream)
     stream.close
-    listResults = []
-    for vcenter_uuid in vcenter_uuids:
-      my_dict_result = {}
-      data = {"cloud_uuid": cloud_uuid, "vcenter_uuid": vcenter_uuid}
-      defineClass = aviSession(credential['avi_credentials']['controller'], credential['avi_credentials']['username'], credential['avi_credentials']['password'], tenant)
-      for item in defineClass.postObject(path, data)["resource"]["vcenter_folders"]:
-        if item['name'] == folder:
-          my_dict_result['vcenter_folder'] = item['vc_mobj_id']
-          my_dict_result['vcenter_ref'] = "/api/vcenterserver/" + vcenter_uuid
-          listResults.append(my_dict_result)
-    print(json.dumps(listResults))
+    defineClass = aviSession(credential['avi_credentials']['controller'], credential['avi_credentials']['username'], credential['avi_credentials']['password'], tenant)
+    print(json.dumps(defineClass.postObject(path, data)["resource"]["vcenter_folders"]))

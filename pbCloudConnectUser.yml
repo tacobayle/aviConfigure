@@ -45,7 +45,7 @@
         nsxt_credentials:
           username: "{{ nsx_username }}"
           password: "{{ nsx_password }}"
-      register: nsxtUserOutput
+      register: nsxtCredsOutput
       tags:
         - cloud
       when:
@@ -57,30 +57,46 @@
       avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: credsVcenter
+        name: "creds-vcenter-{{ my_idx }}"
         vcenter_credentials:
-          username: "{{ vsphere_username }}"
-          password: "{{ vsphere_password }}"
-      register: vcenterUserOutput
+          username: "{{ item.username }}"
+          password: "{{ item.password }}"
+      loop: "{{ vcenter_credentials }}"
+      loop_control:
+        index_var: my_idx
+      register: vcenterCredsOutput
       tags:
         - cloud
       when:
         - nsxt is defined
-        - vsphere_username is defined
-        - vsphere_password is defined
+        - vcenter_credentials is defined
+
+    - name: Saving vCenter Creds uuid in a list - NSX-T
+      set_fact:
+        vcenterCreds: "{{ vcenterCreds | default([]) + [item.obj.uuid | from_json] }}"
+      loop: "{{ vcenterCredsOutput.results }}"
+      when:
+        - vcenterCredsOutput.results is defined
+
+    - name: Saving NSXT Creds uuid - NSX-T
+      set_fact:
+        nsxtCredsUuid: "{{ nsxtCredsOutput.obj.uuid }}"
+      loop: "{{ vcenterCredsOutput.results }}"
+      when:
+        - vcenterCredsOutput.results is defined
 
     - name: Debug
       debug:
-        msg: "{{ nsxtUserOutput.obj.uuid }}"
+        msg: "{{ nsxtCredsUuid }}"
       tags:
         - debug
       when:
-        - nsxt is defined
+        - nsxtCredsUuid is defined
 
     - name: Debug
       debug:
-        msg: "{{ vcenterUserOutput.obj.uuid }}"
+        msg: "{{ vcenterCreds }}"
       tags:
         - debug
       when:
-        - nsxt is defined
+        - vcenterCreds is defined
