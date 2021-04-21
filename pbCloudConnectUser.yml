@@ -67,7 +67,7 @@
         vcenter_credentials:
           username: "{{ item.username }}"
           password: "{{ item.password }}"
-      loop: "{{ vcenter_credentials.vcenter_credentials | from_json }}"
+      loop: "{{ vcenter_credentials.vcenter_credentials }}"
       loop_control:
         index_var: my_idx
       register: vcenterCredsOutput
