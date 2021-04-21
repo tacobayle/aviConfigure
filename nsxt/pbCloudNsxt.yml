@@ -262,7 +262,7 @@
         - cloud
 
     - name: python workaround to retrieve vcenter content library info - NSXT
-      command: python3 ../python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ item.0.vsphere_server }}" "{{ item.1 }}" "{{ item.0.content_library.name }}"
+      command: python3 ../python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ item.0.vsphere_server }}" "{{ item.1 }}" "{{ nsxt.cl_se_name }}"
       ignore_errors: no
       register: vcenterContentLibraryJson
       loop: "{{ nsxt.vcenters | zip(vcenterCreds) | list }}"
@@ -272,6 +272,7 @@
         - controller.aviCredsJsonFile is defined
         - nsxt.vcenters is defined
         - vcenterCreds is defined
+        - nsxt.cl_se_name is defined
 
     - set_fact:
         vcenterContentLibrary: "{{ vcenterContentLibrary | default([]) + [item.stdout | from_json] }}"
