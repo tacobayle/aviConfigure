@@ -53,6 +53,12 @@
         - nsx_username is defined
         - nsx_password is defined
 
+    - name: Debug
+      debug:
+        msg: "{{ vcenter_credentials }}"
+      tags:
+        - debug
+
     - name: Create a Cloud connector user for NSX-T (vcenter)
       avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -61,7 +67,7 @@
         vcenter_credentials:
           username: "{{ item.username }}"
           password: "{{ item.password }}"
-      loop: "{{ vcenter_credentials.vcenter_credentials }}"
+      loop: "{{ vcenter_credentials.vcenter_credentials | from_json }}"
       loop_control:
         index_var: my_idx
       register: vcenterCredsOutput
