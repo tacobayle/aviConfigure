@@ -85,7 +85,7 @@
 
     - name: Saving vCenter Creds uuid in a list - NSX-T
       set_fact:
-        vcenterCreds: "{{ vcenterCreds | default([]) + [item.uuid | from_json] }}"
+        vcenterCreds: "{{ vcenterCreds | default([]) + [ item.obj.uuid ] }}"
       loop: "{{ vcenterCredsOutput.results }}"
       when:
         - vcenterCredsOutput.results is defined
