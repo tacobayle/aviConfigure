@@ -79,11 +79,9 @@
 
     - name: Debug
       debug:
-        msg: "{{ vcenterCredsOutput.results }}"
+        msg: "{{ vcenterCredsOutput }}"
       tags:
         - debug
-      when:
-        - nsxtCredsUuid is defined
 
     - name: Saving vCenter Creds uuid in a list - NSX-T
       set_fact:
