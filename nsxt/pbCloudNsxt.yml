@@ -652,7 +652,7 @@
         vcenterFolders: "{{ vcenterFolders | default([]) + [item.stdout | from_json] }}"
       loop: "{{ vcenterFoldersJson.results }}"
       when:
-        - centerFoldersJson.results is defined
+        - vcenterFoldersJson.results is defined
 
 #    - name: Folders - Filtering only the seg folder group
 #      set_fact:
