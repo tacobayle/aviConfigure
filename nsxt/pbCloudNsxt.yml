@@ -292,7 +292,7 @@
           id: "{{ item.1.id }}"
         vcenter_credentials_ref: "/api/cloudconnectoruser/{{ item.2 }}"
       register: output_nsxt_vcenter
-      loop: "{{ nsxt.vcenters | zip(vcenterContentLibrary) | zip(vcenterCreds) | list }}"
+      loop: "{{ nsxt.vcenters | zip(vcenterContentLibrary, vcenterCreds) | list }}"
       loop_control:
         index_var: my_idx
       tags:
