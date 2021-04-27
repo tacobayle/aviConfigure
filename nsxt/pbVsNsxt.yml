@@ -171,7 +171,7 @@
     #
 
     - name: retrieve details for NSXT Group - NSXT
-      command: python3 ../python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "EasyAvi-Backend-vCenter-{{ my_idx }}"
+      command: python3 ../python/retrieveNsxtGroups.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}" "{{ nsxt.nsxt_backend_prefix_group_name }}-{{ my_idx }}"
       ignore_errors: no
       loop: "{{ nsxt.vcenters }}"
       loop_control:
@@ -181,6 +181,7 @@
         - controller.aviCredsJsonFile is defined
         - nsxt.vcenters is defined
         - cloud_nsxt_uuid is defined
+        - nsxt.nsxt_backend_prefix_group_name is defined
         - item.application == true
       tags:
         - pool
@@ -383,7 +384,7 @@
             enable_ssl: false
           - port: 443
             enable_ssl: true
-        pool_ref: "/api/pool?name=NSXT-Group-{{ my_idx }}"
+        pool_ref: "/api/pool?name={{ nsxt.nsxt_backend_prefix_group_name }}-{{ my_idx }}"
         enable_rhi: "{{ item.enable_rhi | default('false') }}"
         vsvip_ref: "/api/vsvip/?name=vsvip-nsxt-group-{{ my_idx }}"
         se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
@@ -405,6 +406,7 @@
       when:
         - nsxt.vcenters is defined
         - nsxt.name is defined
+        - nsxt.nsxt_backend_prefix_group_name is defined
         - item.application == true
       tags:
         - vsHttp
