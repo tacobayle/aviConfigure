@@ -137,7 +137,7 @@
         - nsxt.domains.0.name is defined
         - nsxt.networks_data.0.name is defined
         - nsxt.networks_data.0.ipamCidr is defined
-        - item.application == true
+        - item.0.application == true
       tags:
         - vsvip
         - vs
