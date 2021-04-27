@@ -326,6 +326,7 @@
           page_size: -1
       register: networkOutput
       tags:
+        - nsxt.dhcp_enabled == false
         - cloud
         - nsxtApi
       when:
@@ -341,6 +342,7 @@
         - cloud
         - nsxtApi
       when:
+        - nsxt.dhcp_enabled == false
         - nsxt is defined
         - item.name == nsxt.network_management.name
 
@@ -364,6 +366,7 @@
         - cloud
         - nsxtApi
       when:
+        - nsxt.dhcp_enabled == false
         - nsxt.network_management.defaultGateway is defined
         - nsxt.network_management.ipStartPool is defined
         - nsxt.network_management.ipEndPool is defined
@@ -383,6 +386,7 @@
         vcenter_dvs: "{{ nsxt.network_management.vcenter_dvs | default(omit) }}"
         configured_subnets: "{{ configured_subnets_mgmt }}"
       when:
+        - nsxt.dhcp_enabled == false
         - nsxt.name is defined
         - nsxt.network_management.name
         - configured_subnets_mgmt
