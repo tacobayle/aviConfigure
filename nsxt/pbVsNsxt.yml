@@ -56,10 +56,10 @@
             ipam_network_subnet:
               network_ref: "/api/network/?name={{ nsxt.networks_data.0.name }}"
               subnet:
-                mask: "{{ nsxt.networks_data.0.defaultGateway.split('/')[1] }}"
+                mask: "{{ nsxt.networks_data.0.ipamCidr.split('/')[1] }}"
                 ip_addr:
                   type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                  addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('network') }}"
+                  addr: "{{ nsxt.networks_data.0.ipamCidr | ipv4('network') }}"
       loop: "{{ nsxt.virtualservices.dns }}"
       loop_control:
         label: "{{ item.name }}"
@@ -68,7 +68,7 @@
         - nsxt.name is defined
         - nsxt.domains is defined
         - nsxt.networks_data.0.name is defined
-        - nsxt.networks_data.0.defaultGateway is defined
+        - nsxt.networks_data.0.ipamCidr is defined
       tags:
         - vsvip
         - vs
@@ -89,10 +89,10 @@
             ipam_network_subnet:
               network_ref: "/api/network/?name={{ nsxt.networks_data.0.name }}"
               subnet:
-                mask: "{{ nsxt.networks_data.0.defaultGateway.split('/')[1] }}"
+                mask: "{{ nsxt.networks_data.0.ipamCidr.split('/')[1] }}"
                 ip_addr:
                   type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                  addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('network') }}"
+                  addr: "{{ nsxt.networks_data.0.ipamCidr | ipv4('network') }}"
       loop: "{{ nsxt.virtualservices.http }}"
       loop_control:
         label: "{{ item.name }}"
@@ -101,7 +101,7 @@
         - nsxt.name is defined
         - nsxt.domains.0.name is defined
         - nsxt.networks_data.0.name is defined
-        - nsxt.networks_data.0.defaultGateway is defined
+        - nsxt.networks_data.0.ipamCidr is defined
       tags:
         - vsvip
         - vs
@@ -110,7 +110,7 @@
       avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "vsvip-nsxt-group-{{ my_idx }}"
+        name: "vsvip-nsxt-group-{{ my_idx }}-{{ item.1 }}"
         cloud_ref: "/api/cloud/?name={{ nsxt.name }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
         tier1_lr: "{{ nsxtTier1sVip.0.id }}"
@@ -122,20 +122,21 @@
             ipam_network_subnet:
               network_ref: "/api/network/?name={{ nsxt.networks_data.0.name }}"
               subnet:
-                mask: "{{ nsxt.networks_data.0.defaultGateway.split('/')[1] }}"
+                mask: "{{ nsxt.networks_data.0.ipamCidr.split('/')[1] }}"
                 ip_addr:
                   type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                  addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('network') }}"
-      loop: "{{ nsxt.vcenters }}"
+                  addr: "{{ nsxt.networks_data.0.ipamCidr | ipv4('network') }}"
+      loop: "{{ nsxt.vcenters | product(nsxt.application_ports) | list }}"
       loop_control:
         index_var: my_idx
       when:
         - nsxt.name is defined
         - nsxt.vcenters is defined
+        - nsxt.application_ports is defined
         - nsxtTier1sVip.0.id is defined
         - nsxt.domains.0.name is defined
         - nsxt.networks_data.0.name is defined
-        - nsxt.networks_data.0.defaultGateway is defined
+        - nsxt.networks_data.0.ipamCidr is defined
         - item.application == true
       tags:
         - vsvip
