@@ -388,7 +388,7 @@
             enable_ssl: true
         pool_ref: "/api/pool?name=NSXT-Group-{{ my_idx }}-{{ item.1 }}"
         enable_rhi: "{{ item.0.enable_rhi | default('false') }}"
-        vsvip_ref: "/api/vsvip/?name=vsvip-nsxt-group-{{ my_idx }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-nsxt-group-{{ my_idx }}-{{ item.1 }}"
         se_group_ref:  "/api/serviceenginegroup/?name={{ item.0.se_group_ref | default('Default-Group') }}"
         analytics_policy:
           udf_log_throttle: 10
