@@ -218,14 +218,14 @@
         default_server_port: "{{ item.1 }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ item.health_monitor_refs | default('hm1') }}"
-      loop: "{{ nsxt.vcenters | zip(nsxtGroups) | product(nsxt.vcenters.application_ports) | list }}"
+      loop: "{{ nsxt.vcenters | zip(nsxtGroups) | product(nsxt.application_ports) | list }}"
       loop_control:
         index_var: my_idx
       when:
         - nsxt.name is defined
         - nsxtTier1sVip.0.id is defined
         - nsxtGroups is defined
-        - nsxt.vcenters.application_ports is defined
+        - nsxt.application_ports is defined
         - item.0.0.application == true
       tags:
         - pool
@@ -401,12 +401,12 @@
             throttle: 10
             enabled: true
           all_headers: true
-      loop: "{{ nsxt.vcenters | product(nsxt.vcenters.application_ports) | list }}"
+      loop: "{{ nsxt.vcenters | product(nsxt.application_ports) | list }}"
       loop_control:
         index_var: my_idx
       when:
         - nsxt.vcenters is defined
-        - nsxt.vcenters.application_ports
+        - nsxt.application_ports
         - nsxt.name is defined
         - item.0.application == true
       tags:
