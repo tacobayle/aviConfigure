@@ -25,6 +25,8 @@
   when: aws is defined
 - import_playbook: nsxt/pbCloudNsxt.yml
   when: nsxt is defined
+- import_playbook: nsxt/pbVsNsxt.yml
+  when: nsxt is defined
 - import_playbook: vmc/pbCloudVmc.yml
   when: vmc is defined
 - import_playbook: no_access_vcenter/pbCloud.yml
@@ -40,8 +42,6 @@
   when: gcp is defined
 - import_playbook: vmw/pbVsVmw.yml
   when: vmw is defined
-- import_playbook: nsxt/pbVsNsxt.yml
-  when: nsxt is defined
 - import_playbook: vmc/pbVsVmc.yml
   when: vmc is defined
 - import_playbook: pbVs.yml
