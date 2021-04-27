@@ -453,20 +453,20 @@
       set_fact:
         configured_subnets:
           - prefix:
-              mask: "{{ nsxt.networks_data.0.ipamCidr | ipv4('prefix') }}"
+              mask: "{{ nsxt.networks_data.0.defaultGateway | ipv4('prefix') }}"
               ip_addr:
                 type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                addr: "{{ nsxt.networks_data.0.ipamCidr | ipv4('network') }}"
+                addr: "{{ nsxt.networks_data.0.defaultGateway | ipv4('network') }}"
             static_ip_ranges:
               - range:
                   begin:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ nsxt.networks_data.0.ipamCidr | ipaddr(nsxt.network_management.ipStartPool) | ipv4('address') }}"
+                    addr: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.network_management.ipStartPool) | ipv4('address') }}"
                   end:
                     type: "{{ nsxt.networks_data.0.type | default('V4') }}"
-                    addr: "{{ nsxt.networks_data.0.ipamCidr | ipaddr(nsxt.network_management.ipEndPool) | ipv4('address') }}"
+                    addr: "{{ nsxt.networks_data.0.defaultGateway | ipaddr(nsxt.network_management.ipEndPool) | ipv4('address') }}"
       when:
-        - nsxt.networks_data.0.ipamCidr is defined
+        - nsxt.networks_data.0.defaultGateway is defined
         - nsxt.network_management.ipStartPool is defined
         - nsxt.network_management.ipEndPool is defined
 
