@@ -8,13 +8,13 @@
 
   tasks:
 
-    - name: Debug
-      debug:
-        msg: "{{ avi_credentials }}"
-      tags:
-        - debug
-      when:
-        - nsxt is defined or lsc is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ avi_credentials }}"
+#      tags:
+#        - debug
+#      when:
+#        - nsxt is defined or lsc is defined
 
     - name: Create a Cloud connector user for LSC
       avi_cloudconnectoruser:
@@ -29,13 +29,13 @@
       when:
         - lsc is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ lscUserOutput.obj.uuid }}"
-      tags:
-        - debug
-      when:
-        - lsc is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ lscUserOutput.obj.uuid }}"
+#      tags:
+#        - debug
+#      when:
+#        - lsc is defined
 
     - name: Create a Cloud connector user for NSX-T
       avi_cloudconnectoruser:
@@ -53,11 +53,11 @@
         - nsx_username is defined
         - nsx_password is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ vcenter_credentials }}"
-      tags:
-        - debug
+#    - name: Debug
+#      debug:
+#        msg: "{{ vcenter_credentials }}"
+#      tags:
+#        - debug
 
     - name: Create a Cloud connector user for NSX-T (vcenter)
       avi_cloudconnectoruser:
@@ -77,11 +77,11 @@
         - nsxt is defined
         - vcenter_credentials.vcenter_credentials is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ vcenterCredsOutput }}"
-      tags:
-        - debug
+#    - name: Debug
+#      debug:
+#        msg: "{{ vcenterCredsOutput }}"
+#      tags:
+#        - debug
 
     - name: Saving vCenter Creds uuid in a list - NSX-T
       set_fact:
@@ -97,18 +97,18 @@
       when:
         - vcenterCredsOutput.results is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ nsxtCredsUuid }}"
-      tags:
-        - debug
-      when:
-        - nsxtCredsUuid is defined
-
-    - name: Debug
-      debug:
-        msg: "{{ vcenterCreds }}"
-      tags:
-        - debug
-      when:
-        - vcenterCreds is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ nsxtCredsUuid }}"
+#      tags:
+#        - debug
+#      when:
+#        - nsxtCredsUuid is defined
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ vcenterCreds }}"
+#      tags:
+#        - debug
+#      when:
+#        - vcenterCreds is defined

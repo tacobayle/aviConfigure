@@ -102,11 +102,11 @@
       when:
         - nsxtTier1sVipJson.results is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ nsxtTier1sVip }}"
-      when:
-        - nsxtTier1sVip is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ nsxtTier1sVip }}"
+#      when:
+#        - nsxtTier1sVip is defined
 
     - name: python workaround to retrieve segment details for avi management - NSXT
       command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ nsxt.network_management.name }}"
@@ -145,9 +145,9 @@
         - nsxtTransportZoneId.stdout is defined
         - nsxt.networks_data is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ nsxtSegmentVipJson }}"
+#    - name: Debug
+#      debug:
+#        msg: "{{ nsxtSegmentVipJson }}"
 
     - set_fact:
         nsxtSegmentVip: "{{ nsxtSegmentVip | default([]) + [item.stdout | from_json] }}"
@@ -158,11 +158,11 @@
       when:
         - nsxtSegmentVipJson.results is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ nsxtSegmentVip }}"
-      when:
-        - nsxtSegmentVip is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ nsxtSegmentVip }}"
+#      when:
+#        - nsxtSegmentVip is defined
 
 
     - name: python workaround to retrieve segment details for backend network - NSXT
@@ -195,11 +195,11 @@
         - nsxtTier1sVip is defined
         - nsxtSegmentVip is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ tier1_lrs }}"
-      when:
-        - tier1_lrs is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ tier1_lrs }}"
+#      when:
+#        - tier1_lrs is defined
 
     - name: Configure Avi Cloud - NSXT
       avi_cloud:
@@ -248,11 +248,11 @@
       tags:
         - cloud
 
-    - name: Debug
-      debug:
-        msg: "{{ cloud_nsxt_uuid }}"
-      when:
-        - cloud_nsxt_uuid is defined
+#    - name: Debug
+#      debug:
+#        msg: "{{ cloud_nsxt_uuid }}"
+#      when:
+#        - cloud_nsxt_uuid is defined
 
     - pause:
         minutes: 1

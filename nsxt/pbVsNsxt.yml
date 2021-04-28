@@ -28,17 +28,17 @@
       when:
         - item.name == nsxt.name
 
-    - name: Debug
-      debug:
-        msg: "{{ cloud_nsxt_uuid }}"
-      when:
-        - nsxt.name is defined
-
-    - name: Debug
-      debug:
-        msg: "{{ avi_credentials }}"
-      tags:
-        - debug
+#    - name: Debug
+#      debug:
+#        msg: "{{ cloud_nsxt_uuid }}"
+#      when:
+#        - nsxt.name is defined
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ avi_credentials }}"
+#      tags:
+#        - debug
 
     - name: Create vsvip for dns - NSXT
       avi_vsvip:
