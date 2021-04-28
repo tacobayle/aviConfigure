@@ -7,11 +7,11 @@
 
   tasks:
 
-    - name: Debug - no_access_vcenter
-      debug:
-        msg: "{{ avi_credentials }}"
-      tags:
-        - debug
+#    - name: Debug - no_access_vcenter
+#      debug:
+#        msg: "{{ avi_credentials }}"
+#      tags:
+#        - debug
 
     - name: get Networks to retrieve Uuid - no_access_vcenter
       avi_api_session:

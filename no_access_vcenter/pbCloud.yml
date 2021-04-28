@@ -491,46 +491,46 @@
         - vsphere_server is defined
         - ova_path is defined
 
-    - name: Debug
-      debug:
-        msg: "{{ avi_credentials | to_yaml }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ item | to_yaml }}"
-      loop: "{{ no_access_vcenter.serviceEngineGroup }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ cloud_no_access_vcenter_uuid }}"
+#    - name: Debug
+#      debug:
+#        msg: "{{ avi_credentials | to_yaml }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ item | to_yaml }}"
+#      loop: "{{ no_access_vcenter.serviceEngineGroup }}"
 
 #    - name: Debug
 #      debug:
-#        msg: "{{ no_access_vcenter.network_management | to_yaml }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ no_access_vcenter.network_vip.name }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ no_access_vcenter.vcenter | to_yaml }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ vsphere_username }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ vsphere_password }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ vsphere_server }}"
-
-    - name: Debug
-      debug:
-        msg: "{{ ova_path | to_json }}"
+#        msg: "{{ cloud_no_access_vcenter_uuid }}"
+#
+##    - name: Debug
+##      debug:
+##        msg: "{{ no_access_vcenter.network_management | to_yaml }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ no_access_vcenter.network_vip.name }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ no_access_vcenter.vcenter | to_yaml }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ vsphere_username }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ vsphere_password }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ vsphere_server }}"
+#
+#    - name: Debug
+#      debug:
+#        msg: "{{ ova_path | to_json }}"
 
     - name: Run a playbook against SE group (SE Creation and SE Group Assignement) - this takes several minutes
       #      command: python3 seCreation.py "avi_credentials.json"
@@ -541,11 +541,11 @@
       when:
         - no_access_vcenter.name is defined
 
-    - name: debugging SE creation
-      debug:
-        msg: "{{ logPbSeCreation }}"
-      when:
-        - logPbSeCreation is defined
+#    - name: debugging SE creation
+#      debug:
+#        msg: "{{ logPbSeCreation }}"
+#      when:
+#        - logPbSeCreation is defined
 
     - name: Remove Content Library - Easy-Avi-CL-SE-NoAccess
       shell: |
