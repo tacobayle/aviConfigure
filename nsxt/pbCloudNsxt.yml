@@ -44,7 +44,7 @@
         - dns
 
     - name: python workaround to retrieve transport zone id - NSXT
-      command: python3 ../python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxt.nsxt.transport_zone.name }}"
+      command: python3 ../python/retrieveNsxtTransportZoneId.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxt.transport_zone.name }}"
       ignore_errors: no
       register: nsxtTransportZoneId
       tags:
@@ -54,7 +54,7 @@
         - controller.aviCredsJsonFile is defined
         - nsx_server is defined
         - nsxtCredsUuid is defined
-        - nsxt.nsxt.transport_zone.name is defined
+        - nsxt.transport_zone.name is defined
 
     - name: python workaround to retrieve tier1s for mgt - NSXT
       command: python3 ../python/retrieveNsxtTier1s.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxt.network_management.tier1 }}"
@@ -96,6 +96,7 @@
     - set_fact:
         nsxtTier1sVip: "{{ nsxtTier1sVip | default([]) + [item.stdout | from_json] }}"
       loop: "{{ nsxtTier1sVipJson.results }}"
+      no_log: True
       tags:
         - cloud
         - nsxtApi
@@ -131,6 +132,7 @@
         - nsxtSegmentMgtJson.stdout is defined
 
     - name: python workaround to retrieve segment details for avi vip - NSXT
+      no_log: True
       command: python3 ../python/retrieveNsxtSegment.py "{{ controller.aviCredsJsonFile }}" "{{ nsx_server }}" "{{ nsxtCredsUuid }}" "{{ nsxtTransportZoneId.stdout }}" "{{ item.name }}"
       ignore_errors: no
       loop: "{{ nsxt.networks_data }}"
@@ -152,6 +154,7 @@
     - set_fact:
         nsxtSegmentVip: "{{ nsxtSegmentVip | default([]) + [item.stdout | from_json] }}"
       loop: "{{ nsxtSegmentVipJson.results }}"
+      no_log: True
       tags:
         - cloud
         - nsxtApi
@@ -191,6 +194,7 @@
       set_fact:
         tier1_lrs: "{{ tier1_lrs | default([]) + [{ 'tier1_lr_id': item.0.id, 'segment_id': item.1.id }] }}"
       loop: "{{ nsxtTier1sVip | zip(nsxtSegmentVip) | list }}"
+      no_log: True
       when:
         - nsxtTier1sVip is defined
         - nsxtSegmentVip is defined
@@ -200,6 +204,32 @@
 #        msg: "{{ tier1_lrs }}"
 #      when:
 #        - tier1_lrs is defined
+
+
+    - name: Defining dhcp cloud parameter as an empty list
+      set_fact:
+        dhcp_cloud: "{{ dhcp_cloud | default([]) }}"
+
+    - name: Checking dhcp parameters for each data network
+      no_log: True
+      set_fact:
+        dhcp_cloud: "{{ dhcp_cloud | default([]) + ['static'] }}"
+      loop: "{{ nsxt.networks_data }}"
+      when:
+        - item.dhcp == false
+
+    - name: Defining dhcp_enabled if static
+      set_fact:
+        dhcp_enabled: false
+      when:
+        - nsxt.network_management.dhcp == false or "'static' in dhcp_cloud"
+
+    - name: Defining dhcp_enabled if dhcp
+      set_fact:
+        dhcp_enabled: true
+      when:
+        - nsxt.network_management.dhcp == true
+        - "'static' not in dhcp_cloud"
 
     - name: Configure Avi Cloud - NSXT
       avi_cloud:
@@ -224,7 +254,7 @@
 #                  segment_id: "{{ nsxtSegmentVip.id }}"
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtCredsUuid }}"
-        dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
+        dhcp_enabled: "{{ dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         obj_name_prefix: "{{ nsxt.obj_name_prefix | default('AVINSXT') }}"
       register: output_cloud_nsxt
@@ -236,7 +266,7 @@
         - nsxtSegmentMgt.id is defined
         - tier1_lrs is defined
         - nsxtCredsUuid is defined
-        - nsxt.dhcp_enabled is defined
+        - dhcp_enabled is defined
         - nsxt.network_management is defined
       tags:
         - cloud
@@ -254,12 +284,19 @@
 #      when:
 #        - cloud_nsxt_uuid is defined
 
-    - pause:
-        minutes: 1
+    - name: sleep for 20 seconds and continue with play
+      wait_for: timeout=20
       when:
-        - nsxt is defined
+        - nsxt.name is defined
       tags:
         - cloud
+
+#    - pause:
+#        minutes: 1
+#      when:
+#        - nsxt is defined
+#      tags:
+#        - cloud
 
     - name: python workaround to retrieve vcenter content library info - NSXT
       command: python3 ../python/retrieveNsxtVcentersLibrary.py "{{ controller.aviCredsJsonFile }}" "{{ item.0.vsphere_server }}" "{{ item.1 }}" "{{ nsxt.cl_se_name }}"
@@ -276,6 +313,7 @@
 
     - set_fact:
         vcenterContentLibrary: "{{ vcenterContentLibrary | default([]) + [item.stdout | from_json] }}"
+      no_log: True
       loop: "{{ vcenterContentLibraryJson.results }}"
       when:
         - vcenterContentLibraryJson.results is defined
@@ -305,15 +343,22 @@
 
     - set_fact:
         nsxt_vcenter_uuid: "{{ nsxt_vcenter_uuid | default([]) + [item.obj.uuid] }}"
+      no_log: True
       loop: "{{ output_nsxt_vcenter.results }}"
       when:
         - output_nsxt_vcenter.results is defined
 
-    - pause:
-        minutes: 1
-      when:
-        - nsxt is defined
+#    - pause:
+#        minutes: 1
+#      when:
+#        - nsxt is defined
 
+    - name: sleep for 20 seconds and continue with play
+      wait_for: timeout=20
+      when:
+        - nsxt.name is defined
+      tags:
+        - cloud
 
     - name: get Network details - NSXT
       avi_api_session:
@@ -326,7 +371,7 @@
           page_size: -1
       register: networkOutput
       tags:
-        - nsxt.dhcp_enabled == false
+        - dhcp_enabled == false
         - cloud
         - nsxtApi
       when:
@@ -342,7 +387,7 @@
         - cloud
         - nsxtApi
       when:
-        - nsxt.dhcp_enabled == false
+        - dhcp_enabled == false
         - nsxt is defined
         - item.name == nsxt.network_management.name
 
@@ -366,7 +411,7 @@
         - cloud
         - nsxtApi
       when:
-        - nsxt.dhcp_enabled == false
+        - dhcp_enabled == false
         - nsxt.network_management.defaultGateway is defined
         - nsxt.network_management.ipStartPool is defined
         - nsxt.network_management.ipEndPool is defined
@@ -386,7 +431,7 @@
         vcenter_dvs: "{{ nsxt.network_management.vcenter_dvs | default(omit) }}"
         configured_subnets: "{{ configured_subnets_mgmt }}"
       when:
-        - nsxt.dhcp_enabled == false
+        - dhcp_enabled == false
         - nsxt.name is defined
         - nsxt.network_management.name
         - configured_subnets_mgmt
@@ -544,13 +589,20 @@
       tags:
         - cloud
 
-    - pause:
-        minutes: 1
+    - name: sleep for 20 seconds and continue with play
+      wait_for: timeout=20
       when:
-        - nsxt is defined
+        - nsxt.name is defined
       tags:
         - cloud
-        - nsxtApi
+
+#    - pause:
+#        minutes: 1
+#      when:
+#        - nsxt is defined
+#      tags:
+#        - cloud
+#        - nsxtApi
 
     - name: Update vrf with default route for VIP network - NSXT
       avi_vrfcontext:
@@ -599,7 +651,7 @@
               tier1_lrs: "{{ tier1_lrs }}"
           #automate_dfw_rules: false
           nsxt_credentials_ref: "/api/cloudconnectoruser/{{ nsxtCredsUuid }}"
-        dhcp_enabled: "{{ nsxt.dhcp_enabled }}"
+        dhcp_enabled: "{{ dhcp_enabled }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.dns_provider_ref | default('dns-avi-nsxt') }}"
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ nsxt.ipam_provider_ref | default('ipam-avi-nsxt') }}"
         se_group_template_ref: "/api/serviceenginegroup?name=Default-Group"
@@ -612,17 +664,24 @@
         - nsxtSegmentMgt.id is defined
         - tier1_lrs is defined
         - nsxtCredsUuid is defined
-        - nsxt.dhcp_enabled is defined
+        - dhcp_enabled is defined
         - nsxt.network_management is defined
       tags:
         - cloud
 
-    - name: sleep for 120 seconds and continue with play
-      wait_for: timeout=120
+    - name: sleep for 20 seconds and continue with play
+      wait_for: timeout=20
       when:
         - nsxt.name is defined
       tags:
         - cloud
+
+#    - name: sleep for 120 seconds and continue with play
+#      wait_for: timeout=120
+#      when:
+#        - nsxt.name is defined
+#      tags:
+#        - cloud
 
     - name: Run a python script against a specific cloud - this takes several minutes
       command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_nsxt_uuid }}"
@@ -652,6 +711,7 @@
         - nsxt_vcenter_uuid is defined
 
     - name: Folders - Saving folders detail variable
+      no_log: True
       set_fact:
         vcenterFolders: "{{ vcenterFolders | default([]) + [item.stdout | from_json] }}"
       loop: "{{ vcenterFoldersJson.results }}"

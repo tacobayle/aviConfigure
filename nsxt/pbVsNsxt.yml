@@ -17,6 +17,7 @@
       register: cloudResults
 
     - name: retrieve cloud uuid
+      no_log: True
       set_fact:
         cloud_nsxt_uuid: "{{ item.uuid }}"
       tags:
@@ -189,6 +190,7 @@
         - vs
 
     - name: NSXT Group - Saving Groups detail to variable
+      no_log: True
       set_fact:
         nsxtGroups: "{{ nsxtGroups | default([]) + [item.stdout | from_json] }}"
       loop: "{{ nsxtGroupsJson.results }}"
