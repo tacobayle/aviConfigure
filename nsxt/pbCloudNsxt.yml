@@ -433,8 +433,8 @@
       when:
         - dhcp_enabled == false
         - nsxt.name is defined
-        - nsxt.network_management.name
-        - configured_subnets_mgmt
+        - nsxt.network_management.name is defined
+        - configured_subnets_mgmt is defined
       tags:
         - cloud
 

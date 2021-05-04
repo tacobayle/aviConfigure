@@ -33,6 +33,7 @@ if __name__ == '__main__':
   vsphere_server = sys.argv[7]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = sys.argv[8]
+  deployment_id = sys.argv[9]
   tenant = "admin"
   vsphere_url="https://" + vsphere_username + ":" + vsphere_password + "@" + vsphere_server
   defineClass = aviSession(avi_credentials['controller'], avi_credentials['username'], avi_credentials['password'], tenant)
@@ -91,7 +92,7 @@ if __name__ == '__main__':
       vm_inventory = json.load(vm_json)
     while True:
         countVm = 0
-        se_name = 'EasyAvi-se-' + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+        se_name = 'EasyAvi-se-' + str(deployment_id) + '-' + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
         duplicate = False
         for item in vm_inventory:
           if se_name == item.split('/')[-1]:
