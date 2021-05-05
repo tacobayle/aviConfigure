@@ -74,10 +74,10 @@ if __name__ == '__main__':
 #   print(networks)
 #   # Create a content library and import the SE ova - exit if it fails
 #   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
-  if govc_result != 0:
-#     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
-    print('Error when creating content library or importing item in the content library')
-    exit()
+#   if govc_result != 0:
+# #     os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#     print('Error when creating content library or importing item in the content library')
+#     exit()
   # Spin up SE from Content library
   seCount = 0
   for se in range (1, seg['numberOfSe'] + 1):
