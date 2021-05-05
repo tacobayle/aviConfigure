@@ -71,7 +71,7 @@ if __name__ == '__main__':
         except:
           pass
         networks.append(network)
-  print(networks)
+#   print(networks)
 #   # Create a content library and import the SE ova - exit if it fails
 #   govc_result = os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_DATASTORE={2} ; export GOVC_INSECURE=true; govc library.create {3} ; govc library.import {3} {4}'.format(vcenter['dc'], vsphere_url, vcenter['datastore'], cl_name, ova_path))
   if govc_result != 0:
