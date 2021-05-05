@@ -1,0 +1,329 @@
+---
+- hosts: localhost
+  connection: local
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+
+    - name: Set variable avi_credentials
+      set_fact:
+        avi_credentials: >
+          {'api_version': "{{ avi_version }}",
+           'controller': "{{ controllerPrivateIps.0 }}",
+           'password': "{{ avi_password }}",
+           'username': "{{ avi_username }}"}
+      tags:
+        - creds
+      when:
+        - avi_version is defined
+        - controllerPrivateIps is defined
+        - avi_password is defined
+        - avi_username is defined
+
+#    - name: Debug - no_access_vcenter
+#      debug:
+#        msg: "{{ avi_credentials }}"
+#      tags:
+#        - debug
+
+    - name: get Networks to retrieve Uuid - no_access_vcenter
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: network
+      register: networkUuid
+      when:
+        - no_access_vcenter.network_vip.defaultGateway is defined
+        - no_access_vcenter.application is true
+      tags:
+        - ipam
+
+    - name: Append Network uuid to the list - no_access_vcenter
+      set_fact:
+        listNetworkUuid: "{{ listNetworkUuid | default([]) }} + [ '{{ item.uuid }}' ]"
+      loop: "{{ networkUuid.obj.results }}"
+      loop_control:
+        label: "{{ item.uuid }}"
+      when:
+        - no_access_vcenter.network_vip.defaultGateway is defined
+        - no_access_vcenter.application is true
+      tags:
+        - ipam
+
+    - name: Define vip data - no_access_vcenter
+      set_fact:
+        vip_no_access_vcenter:
+          - ipam_network_subnet:
+              network_ref: "{{ listNetworkUuid.0 | default('Null') }}"
+              subnet:
+                mask: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('prefix') }}"
+                ip_addr:
+                  type: "{{ no_access_vcenter.network_vip.type | default('V4') }}"
+                  addr: "{{ no_access_vcenter.network_vip.defaultGateway | ipv4('network') }}"
+            avi_allocated_fip: true
+            auto_allocate_ip: true
+            auto_allocate_floating_ip: true
+      when:
+        - no_access_vcenter.network_vip.defaultGateway is defined
+        - listNetworkUuid is defined
+        - no_access_vcenter.application is true
+
+    - name: Create vsvip for http VS - no_access_vcenter
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + no_access_vcenter.domains.0.name) }}"
+            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vip_no_access_vcenter }}"
+      loop: "{{ no_access_vcenter.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.domains.0.name is defined
+        - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
+      tags:
+        - vsvip
+        - vsHttp
+        - vs
+
+    - name: Create vsvip for dns VS - no_access_vcenter
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + no_access_vcenter.domains.0.name) }}"
+            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vip_no_access_vcenter }}"
+      loop: "{{ no_access_vcenter.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.domains.0.name is defined
+        - no_access_vcenter.virtualservices.dns is defined
+        - no_access_vcenter.application is true
+      tags:
+        - vsvip
+        - vsHttp
+        - vs
+
+#    - name: Create pool without server - no_access_vcenter
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        name: "{{ no_access_vcenter.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#      when:
+#        - no_access_vcenter.name is defined
+#        - no_access_vcenter.pool.name is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+#
+#    - name: update pool with servers - no_access_vcenter
+#      avi_pool:
+#        avi_credentials: "{{ avi_credentials | default(omit) }}"
+#        api_context: "{{ avi_api_context | default(omit) }}"
+#        avi_api_patch_op : add
+#        avi_api_update_method: patch
+#        name: "{{ no_access_vcenter.pool.name }}"
+#        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+#        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+#        lb_algorithm: "{{ avi_pool.lb_algorithm | default('LB_ALGORITHM_ROUND_ROBIN') }}"
+#        health_monitor_refs:
+#          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+#        servers:
+#          - ip:
+#              addr: "{{ item.0 }}"
+#              type: 'V4'
+#      loop: "{{ avi_backend_servers_no_access_vcenter }}"
+#      when:
+#        - no_access_vcenter.name is defined
+#        - no_access_vcenter.pool.name is defined
+#        - avi_backend_servers_no_access_vcenter is defined
+#      tags:
+#        - pool
+#        - vsHttp
+#        - vs
+
+
+    - name: Create pools without server - no_access_vcenter
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+      loop: "{{ no_access_vcenter.pools }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.pools is defined
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
+      tags:
+        - pool
+
+    - name: update pool with servers - no_access_vcenter
+      avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ item.0.name }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
+        default_server_port: "{{ item.0.default_server_port | default(omit) }}"
+        servers:
+          - ip:
+              addr: "{{ item.1.0 }}"
+              type: 'V4'
+      loop: "{{ no_access_vcenter.pools | product(avi_backend_servers_no_access_vcenter)|list }}"
+      loop_control:
+        label: "pool {{ item.0.name }} patch with {{ item.1.0 }}"
+      when:
+        - avi_backend_servers_no_access_vcenter is defined
+        - no_access_vcenter.pools is defined
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.application is true
+      tags:
+        - pool
+
+    - name: Create HTTP Policy(ies) - no_access_vcenter
+      avi_httppolicyset:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        http_request_policy: "{{ item.http_request_policy | default(omit) }}"
+      loop: "{{ no_access_vcenter.httppolicyset }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.httppolicyset is defined
+        - no_access_vcenter.application is true
+
+    - name: Create HTTP Virtualservice (based on vsvip)
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ no_access_vcenter.virtualservices.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
+      register: outputVsHttp
+      tags:
+        - vsHttp
+        - vs
+
+    - name: Create DNS Virtualservice
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-DNS') }}"
+        network_profile_ref: "/api/networkprofile/?name={{ item.network_profile_ref | default('System-UDP-Per-Pkt') }}"
+        cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        services: "{{ item.services }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+      loop: "{{ no_access_vcenter.virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - no_access_vcenter.name is defined
+        - no_access_vcenter.virtualservices.dns is defined
+        - no_access_vcenter.application is true
+      register: outputVsDns
+      tags:
+        - vsDns
+        - vs
+
+    - name: Update system config with first DNS VS
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        dns_virtualservice_refs: "/api/virtualservice/?name={{ no_access_vcenter.virtualservices.dns.0.name }}"
+      tags:
+        - vsDns
+        - vs
+      when:
+        - no_access_vcenter.virtualservices.dns.0.name is defined
+        - no_access_vcenter.application is true
+
+
+
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns }}"
+    #
+    # - name: Debug
+    #   debug:
+    #     msg: "{{ outputVsDns.results.1.obj.uuid }}"
+
+    - name: Wait for the VS Http to be ready
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice-inventory
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+      register: statusVs
+      until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
+      retries: 120
+      delay: 10
+      when:
+        - no_access_vcenter.virtualservices.http is defined
+        - no_access_vcenter.application is true
+      ignore_errors: yes
+      tags:
+        - vsHttp
+        - vs

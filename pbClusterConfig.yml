@@ -1,0 +1,150 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars_files:
+    - "vars/params.yml"
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Set variable avi_credentials
+      set_fact:
+        avi_credentials: >
+          {'api_version': "{{ avi_version }}",
+           'controller': "{{ controllerPrivateIps.0 }}",
+           'password': "{{ avi_password }}",
+           'username': "{{ avi_username }}"}
+      tags:
+        - creds
+      when:
+        - avi_version is defined
+        - controllerPrivateIps is defined
+        - avi_password is defined
+        - avi_username is defined
+
+    - name: Wait for the Controller cluster to finish - if cluster has been configured
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: cluster/status
+      register: statusCluster
+      ignore_errors: yes
+      until:
+        - statusCluster.obj.cluster_state.state == "CLUSTER_UP_HA_ACTIVE"
+        - statusCluster.obj.node_states.0.state == "CLUSTER_ACTIVE"
+        - statusCluster.obj.node_states.1.state == "CLUSTER_ACTIVE"
+        - statusCluster.obj.node_states.2.state == "CLUSTER_ACTIVE"
+      retries: 120
+      delay: 10
+      when:
+        - controller.cluster is true
+        - controller.environment == "VMWARE"
+      tags:
+        - cluster
+
+    - name: Create Backup Configuration passphrase
+      avi_backupconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        state: present
+        backup_passphrase: "{{ avi_credentials.password }}"
+        name: Backup-Configuration
+        save_local: true
+      tags:
+        - system
+
+    - name: Define ntp_servers
+      set_fact:
+        ntp_servers: "{{ ntp_servers | default([]) + [{ 'server': {'type': 'V4', 'addr': item}}] }}"
+      loop: "{{ controller.ntp }}"
+      when:
+        - controller.ntp is defined
+
+    - name: Define dns_servers
+      set_fact:
+        server_list: "{{ server_list | default([]) + [{'type': 'V4', 'addr': item}] }}"
+      loop: "{{ controller.dns }}"
+      when:
+        - controller.dns is defined
+
+    - name: Define avi_systemconfiguration
+      set_fact:
+        avi_systemconfiguration:
+          global_tenant_config:
+            se_in_provider_context: "{{ controller.se_in_provider_context | default('false') }}"
+            tenant_access_to_provider_se: "{{ controller.tenant_access_to_provider_se | default('true') }}"
+            tenant_vrf: "{{ controller.tenant_vrf | default('false') }}"
+          welcome_workflow_complete: true
+          ntp_configuration:
+            ntp_servers: "{{ ntp_servers }}"
+          dns_configuration:
+            search_domain: ''
+            server_list: "{{ server_list }}"
+          email_configuration:
+            from_email: "{{ controller.email_configuration | default('test@avicontroller.net') }}"
+            smtp_type: SMTP_LOCAL_HOST
+      when:
+        - ntp_servers is defined
+        - server_list is defined
+
+    - name: Configure Avi System parameters
+      avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        global_tenant_config: "{{ avi_systemconfiguration.global_tenant_config }}"
+        dns_configuration: "{{ avi_systemconfiguration.dns_configuration }}"
+        ntp_configuration: "{{ avi_systemconfiguration.ntp_configuration }}"
+        email_configuration: "{{ avi_systemconfiguration.email_configuration }}"
+        welcome_workflow_complete: "{{ avi_systemconfiguration.welcome_workflow_complete }}"
+      when:
+        - avi_systemconfiguration is defined
+      tags:
+        - system
+
+    - name: Create HTTP health monitor
+      avi_healthmonitor:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        http_monitor:
+          http_request: "{{ item.http_request }}"
+          http_response_code: "{{ item.http_response_code }}"
+        receive_timeout: "{{ item.receive_timeout }}"
+        failed_checks: "{{ item.failed_checks }}"
+        send_interval: "{{ item.send_interval }}"
+        successful_checks: "{{ item.successful_checks }}"
+        type: "{{ item.type }}"
+      loop: "{{ healthMonitor }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - healthMonitor is defined
+        - item.type == "HEALTH_MONITOR_HTTP"
+      tags:
+        - vsHttp
+        - hm
+        - pool
+        - vs
+
+    - name: Modify Default Network TCP Profile - reorder threshold
+      avi_networkprofile:
+        avi_api_update_method: "patch"
+        avi_api_patch_op: "replace"
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        tenant: "{{ tenant_ref | default('admin') }}"
+        name: "System-TCP-Proxy"
+        profile:
+          type: PROTOCOL_TYPE_TCP_PROXY
+          tcp_proxy_profile:
+            automatic: False
+            reorder_threshold: 8
+      when:
+        - no_access_vcenter.environment == "vmc"
