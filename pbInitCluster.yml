@@ -182,16 +182,13 @@
       tags:
         - cluster
 
-#    - name: sleep for 300 seconds and continue with play - if cluster has been configured
-#      wait_for: timeout=300
-#      when:
-#        - controller.cluster is true
-#        - controller.floating_ip is true
-#        - controller.environment == "VMWARE"
-#        - controllerDefaultGateway is defined
-#        - controllerFloatingIp is defined
-#      tags:
-#        - cluster
+    - name: sleep for 300 seconds and continue with play - if cluster has been configured
+      wait_for: timeout=300
+      when:
+        - controller.cluster is true
+        - controller.environment == "VMWARE"
+      tags:
+        - cluster
 
     # - name: Avi credentials
     #   debug:
