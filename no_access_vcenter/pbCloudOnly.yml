@@ -23,19 +23,19 @@
         - avi_password is defined
         - avi_username is defined
 
-    - name: Remove Content Library - "{{ no_access_vcenter.vcenter.contentLibrary.name }}"
+    - name: Remove Content Library - "{{ no_access_vcenter.cl_avi_name }}"
       shell: |
         export GOVC_DATACENTER="{{ no_access_vcenter.vcenter.dc }}"
         export GOVC_URL="https://{{ vsphere_username }}:{{ vsphere_password }}@{{ vsphere_server }}"
         export GOVC_INSECURE=true
         env | grep GOVC
-        govc library.rm '{{ no_access_vcenter.vcenter.contentLibrary.name }}'
+        govc library.rm '{{ no_access_vcenter.cl_avi_name }}'
       when:
         - no_access_vcenter.vcenter.dc is defined
         - vsphere_username is defined
         - vsphere_password is defined
         - vsphere_server is defined
-        - no_access_vcenter.vcenter.contentLibrary.name is defined
+        - no_access_vcenter.cl_avi_name is defined
 
 
     - name: Create Avi DNS provider Without donain names - no_access_vcenter
