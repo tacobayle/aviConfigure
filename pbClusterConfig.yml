@@ -25,17 +25,17 @@
         - avi_password is defined
         - avi_username is defined
 
-    - name: Debug variable
-      debug:
-        msg: "{{ controller.cluster }}"
-      tags:
-        - debug
-
-    - name: Debug variable
-      debug:
-        msg: "{{ controller.environment }}"
-      tags:
-        - debug
+#    - name: Debug variable
+#      debug:
+#        msg: "{{ controller.cluster }}"
+#      tags:
+#        - debug
+#
+#    - name: Debug variable
+#      debug:
+#        msg: "{{ controller.environment }}"
+#      tags:
+#        - debug
 
     - name: Wait for the Controller cluster to finish - if cluster has been configured
       avi_api_session:

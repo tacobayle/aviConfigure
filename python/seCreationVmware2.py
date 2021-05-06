@@ -234,21 +234,21 @@ if __name__ == '__main__':
       ip = file.read().replace('\n', '')
 #     print(ip)
     params = {'name': ip}
-    time.sleep(120)
+    time.sleep(60)
     se_connected = ''
     count = 0
     while defineClass.getObject('serviceengine', params)['count'] == 0:
-      time.sleep(20)
+      time.sleep(5)
       count += 1
-      if count == 10:
+      if count == 40:
         print('timeout for SE to be seen after deployment')
 #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
-      time.sleep(20)
+      time.sleep(5)
       count += 1
-      if count == 10:
+      if count == 40:
         print('timeout for SE to be connected after deployment')
 #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
@@ -305,17 +305,17 @@ if __name__ == '__main__':
     count = 0
     params = {'name': ip}
     while defineClass.getObject('serviceengine', params)['count'] == 0:
-      time.sleep(10)
+      time.sleep(5)
       count += 1
-      if count == 20:
+      if count == 40:
         print('timeout for SE to be seen after seg update')
 #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
     count = 0
     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
-      time.sleep(20)
+      time.sleep(5)
       count += 1
-      if count == 10:
+      if count == 40:
         print('timeout for SE to be connected after seg update')
 #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
         exit()
