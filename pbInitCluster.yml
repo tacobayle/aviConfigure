@@ -182,8 +182,8 @@
       tags:
         - cluster
 
-    - name: sleep for 300 seconds and continue with play - if cluster has been configured
-      wait_for: timeout=300
+    - name: sleep for 180 seconds and continue with play - if cluster has been configured
+      wait_for: timeout=180
       when:
         - controller.cluster is true
         - controller.environment == "VMWARE"
