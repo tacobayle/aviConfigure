@@ -255,13 +255,29 @@ if __name__ == '__main__':
     #
     # seg update name update and IP update if needed.
     #
-    params = {'name': ip}
-    se_data = defineClass.getObject('serviceengine', params)['results'][0]
-    se_data['name'] = se_name
     if seg['name'] != 'Default-Group':
+      # to be tested
+      count = 0
+      while defineClass.getObject('serviceengine', params)['count'] == 0:
+        time.sleep(5)
+        count += 1
+        if count == 40:
+          print('timeout for SE to be seen after deployment')
+          exit()
+      count = 0
+      while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+        time.sleep(5)
+        count += 1
+        if count == 40:
+          print('timeout for SE to be connected after deployment')
+          exit()
+      params = {'name': ip}
+      se_data = defineClass.getObject('serviceengine', params)['results'][0]
+      se_data['name'] = se_name
       params = {'name': seg['name'], 'cloud_uuid': cloud_no_access_vcenter_uuid}
       seg_uuid = defineClass.getObject('serviceenginegroup', params)['results'][0]['uuid']
       se_data['se_group_ref'] = '/api/serviceenginegroup/' + seg_uuid
+      # end of to be tested
     # discover VM device if DHCP is false for data networks
     if any(network['dhcp'] == False for network in seg['data_networks']):
       govc_result = os.system('''export GOVC_DATACENTER={0}
