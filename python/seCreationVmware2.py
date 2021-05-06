@@ -233,25 +233,25 @@ if __name__ == '__main__':
     with open('ip.txt', 'r') as file:
       ip = file.read().replace('\n', '')
 #     print(ip)
-    params = {'name': ip}
-    time.sleep(60)
-    se_connected = ''
-    count = 0
-    while defineClass.getObject('serviceengine', params)['count'] == 0:
-      time.sleep(5)
-      count += 1
-      if count == 40:
-        print('timeout for SE to be seen after deployment')
-#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
-        exit()
-    count = 0
-    while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
-      time.sleep(5)
-      count += 1
-      if count == 40:
-        print('timeout for SE to be connected after deployment')
-#         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
-        exit()
+#     params = {'name': ip}
+# #     time.sleep(60)
+#     se_connected = ''
+#     count = 0
+#     while defineClass.getObject('serviceengine', params)['count'] == 0:
+#       time.sleep(5)
+#       count += 1
+#       if count == 40:
+#         print('timeout for SE to be seen after deployment')
+# #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         exit()
+#     count = 0
+#     while defineClass.getObject('serviceengine', params)['results'][0]['se_connected'] != True:
+#       time.sleep(5)
+#       count += 1
+#       if count == 40:
+#         print('timeout for SE to be connected after deployment')
+# #         os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
+#         exit()
     #
     # seg update name update and IP update if needed.
     #
@@ -300,7 +300,7 @@ if __name__ == '__main__':
             se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[int(network['ips'][seCount])]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}]
             se_data['data_vnics'][count_vnic]['dhcp_enabled'] = False
     update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
-    time.sleep(60)
+#     time.sleep(60)
     se_connected = ''
     count = 0
     params = {'name': ip}
