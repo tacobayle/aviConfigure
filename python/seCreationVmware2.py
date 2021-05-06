@@ -33,6 +33,7 @@ if __name__ == '__main__':
   vsphere_server = sys.argv[7]
   seg_folder = 'Avi-SE-' + seg['name']
   cl_name = sys.argv[8]
+  deployment_id = sys.argv[9]
   tenant = "admin"
   vsphere_url="https://" + vsphere_username + ":" + vsphere_password + "@" + vsphere_server
   defineClass = aviSession(avi_credentials['controller'], avi_credentials['username'], avi_credentials['password'], tenant)
@@ -209,8 +210,9 @@ if __name__ == '__main__':
                                govc library.deploy -folder=/{0}/vm/\'{4}\' -options=./properties.json /{5}/se \'{6}\'
                                govc vm.change -vm \'{6}\' -c {7} -m {8}; govc vm.disk.change -vm \'{6}\' -size {9}G
                                govc vm.power -on \'{6}\'
+                               govc tags.attach {10} /{0}/vm/\'{4}\'/\'{6}\'
                                sleep 180
-                               govc vm.ip \'{6}\' | tee ip.txt'''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg_folder, cl_name, se_name, seg['vcpus_per_se'], seg['memory_per_se'], seg['disk_per_se']))
+                               govc vm.ip \'{6}\' | tee ip.txt'''.format(vcenter['dc'], vsphere_url, vcenter['datastore'], vcenter['resource_pool'], seg_folder, cl_name, se_name, seg['vcpus_per_se'], seg['memory_per_se'], seg['disk_per_se'], deployment_id))
     if govc_result != 0:
     #       os.system('export GOVC_DATACENTER={0}; export GOVC_URL={1}; export GOVC_INSECURE=true; govc library.rm {2}'.format(vcenter['dc'], vsphere_url, cl_name))
       print('Error when creating the SE')
