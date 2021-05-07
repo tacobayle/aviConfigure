@@ -315,7 +315,8 @@ if __name__ == '__main__':
             print([{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[int(network['ips'][seCount])]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}])
             se_data['data_vnics'][count_vnic]['vnic_networks'] = [{'ctrl_alloc': False, 'ip': {'ip_addr': {'addr': str(IPv4Network(IPv4Interface(network['defaultGateway']).network)[int(network['ips'][seCount])]), 'type': 'V4'}, 'mask': network['defaultGateway'].split('/')[1]}, 'mode': 'STATIC'}]
             se_data['data_vnics'][count_vnic]['dhcp_enabled'] = False
-    update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
+    if any(network['dhcp'] == False for network in seg['data_networks']) or seg['name'] != 'Default-Group':
+      update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
 #     time.sleep(60)
     se_connected = ''
     count = 0
