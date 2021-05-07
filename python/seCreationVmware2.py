@@ -255,7 +255,7 @@ if __name__ == '__main__':
     #
     # seg update name update and IP update if needed.
     #
-    if seg['name'] != 'Default-Group':
+    if seg['name'] != 'Default-Group' or seg['name'] != 'Default-Group':
       # to be tested
       count = 0
       while defineClass.getObject('serviceengine', params)['count'] == 0:
@@ -317,7 +317,7 @@ if __name__ == '__main__':
             se_data['data_vnics'][count_vnic]['dhcp_enabled'] = False
     if any(network['dhcp'] == False for network in seg['data_networks']) or seg['name'] != 'Default-Group':
       update_se = defineClass.putObject('serviceengine/' + se_data['uuid'], se_data)
-#     time.sleep(60)
+      time.sleep(60)
     se_connected = ''
     count = 0
     params = {'name': ip}
