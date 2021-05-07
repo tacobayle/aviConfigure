@@ -255,7 +255,7 @@ if __name__ == '__main__':
     #
     # seg update name update and IP update if needed.
     #
-    if seg['name'] != 'Default-Group' or seg['name'] != 'Default-Group':
+    if seg['name'] != 'Default-Group' or any(network['dhcp'] == False for network in seg['data_networks']):
       # to be tested
       count = 0
       while defineClass.getObject('serviceengine', params)['count'] == 0:
