@@ -15,7 +15,7 @@
 
     - name: Define vip data (Multi AZ) - AWS
       set_fact:
-        vipAwsMultiAz: "{{ vipAwsMultiAz | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': item.2, 'subnet': {'mask': item.1.cidr.split('/')[1], 'type': 'V4', 'addr': item.1.cidr.split('/')[0] }}}}] }}"
+        vipAwsMultiAz: "{{ vipAwsMultiAz | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ip_addr': {'addr': item.1.cidr.split('/')[0], 'type': 'V4'}, 'mask': item.1.cidr.split('/')[1]}, 'ipam_network_subnet': {'subnet': {'ip_addr': {'addr': item.1.cidr.split('/')[0], 'type': 'V4' }, 'mask': item.1.cidr.split('/')[1]}, 'subnet_uuid': item.2 }}] }}"
       loop: "{{ awsZones | zip(aws.network_vip, awsSubnetAviVsIds) | list }}"
       loop_control:
         index_var: my_idx
@@ -38,7 +38,7 @@
 
     - name: Define vip data (Single AZ) - AWS
       set_fact:
-        vipAwsSingleAz: "{{ vipAwsSingleAz | default([]) + [{ 'vip_id': '0', 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ipam_network_subnet': {'subnet_uuid': awsSubnetAviVsIds.1, 'subnet': {'mask': aws.network_vip.0.cidr.split('/')[1], 'type': 'V4', 'addr': aws.network_vip.0.cidr.split('/')[0] }}}}] }}"
+        vipAwsSingleAz: "{{ vipAwsSingleAz | default([]) + [{ 'vip_id': '0', 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'subnet': {'ip_addr': {'addr': aws.network_vip.0.cidr.split('/')[0], 'type': 'V4'}, 'mask': aws.network_vip.0.cidr.split('/')[1]}, 'ipam_network_subnet': {'subnet': {'ip_addr': {'addr': aws.network_vip.0.cidr.split('/')[0], 'type': 'V4' }, 'mask': aws.network_vip.0.cidr.split('/')[1]}, 'subnet_uuid': awsSubnetAviVsIds.0 }}] }}"
       when:
         - aws is defined
         - awsZones is defined
