@@ -23,10 +23,10 @@
   when: azure is defined
 - import_playbook: aws/pbCloudAws.yml
   when: aws is defined
-- import_playbook: nsxt/pbCloudNsxt.yml
-  when: nsxt is defined
-- import_playbook: nsxt/pbVsNsxt.yml
-  when: nsxt is defined
+#- import_playbook: nsxt/pbCloudNsxt.yml
+#  when: nsxt is defined
+#- import_playbook: nsxt/pbVsNsxt.yml
+#  when: nsxt is defined
 - import_playbook: vmc/pbCloudVmc.yml
   when: vmc is defined
 - import_playbook: no_access_vcenter/pbCloud.yml
