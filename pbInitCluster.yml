@@ -154,8 +154,8 @@
         name: cluster-0-1
         uuid: "{{ cluster_uuid }}"
       when:
-        - controller.cluster is true
-        - controller.floating_ip is false
+        - controller.cluster | bool
+        - not controller.floating_ip
         - controller.environment == "VMWARE"
         - cluster_uuid is defined
       tags:
@@ -184,8 +184,8 @@
             addr: "{{ controllerDefaultGateway | ipaddr(controllerFloatingIp) | ipv4('address') }}"
             type: V4
       when:
-        - controller.cluster is true
-        - controller.floating_ip is true
+        - controller.cluster | bool
+        - controller.floating_ip | bool
         - controller.environment == "VMWARE"
         - controllerDefaultGateway is defined
         - controllerFloatingIp is defined
@@ -193,13 +193,52 @@
       tags:
         - cluster
 
-    - name: sleep for 480 seconds and continue with play - if cluster has been configured
-      wait_for: timeout=480
+    - name: "Wait for Controller to be up..."
+      uri:
+        url: '{{ "https://" + controllerPrivateIps.0 + "/api/cluster/runtime" }}'
+        return_content: "yes"
+        validate_certs: "no"
+      delegate_to: "localhost"
+      register: result
+      until: "result.content.find('CLUSTER_UP') != -1"
+      retries: 30
+      delay: 30
       when:
-        - controller.cluster is true
+        - controller.cluster | bool
         - controller.environment == "VMWARE"
       tags:
         - cluster
+
+    - name: Wait for the Controller cluster to finish - if cluster has been configured
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: cluster/status
+      register: statusCluster
+      ignore_errors: yes
+      until:
+        - statusCluster.obj.cluster_state.state == "CLUSTER_UP_HA_ACTIVE"
+        - statusCluster.obj.node_states.0.state == "CLUSTER_ACTIVE"
+        - statusCluster.obj.node_states.1.state == "CLUSTER_ACTIVE"
+        - statusCluster.obj.node_states.2.state == "CLUSTER_ACTIVE"
+      retries: 120
+      delay: 10
+      when:
+        - controller.cluster | bool
+        - controller.environment == "VMWARE"
+      tags:
+        - cluster
+
+
+#    - name: sleep for 480 seconds and continue with play - if cluster has been configured
+#      wait_for: timeout=480
+#      when:
+#        - controller.cluster is true
+#        - controller.environment == "VMWARE"
+#      tags:
+#        - cluster
 
     # - name: Avi credentials
     #   debug:
