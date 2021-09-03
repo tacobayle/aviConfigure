@@ -9,7 +9,7 @@
   tasks:
 
     - name: Configure Avi Cloud for OpenStack
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ avi_cloud.name | default('cloudOpenStack') }}"

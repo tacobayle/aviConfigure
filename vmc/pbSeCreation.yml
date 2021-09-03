@@ -17,7 +17,7 @@
 # This playbook has been tested only for VMC with DHCP enabled in the segment.
 
     - name: Get main Cluster Information
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -55,7 +55,7 @@
     #     - debug
 
     - name: Generate Auth Token for SE(s)
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get

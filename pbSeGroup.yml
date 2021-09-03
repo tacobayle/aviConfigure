@@ -8,7 +8,7 @@
   tasks:
 
     - name: Modify/Creating SE group
-      avi_serviceenginegroup:
+      community.network.avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"

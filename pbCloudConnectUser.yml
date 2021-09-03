@@ -18,7 +18,7 @@
 
     - name: Create a Cloud connector user for LSC
       no_log: True
-      avi_cloudconnectoruser:
+      community.network.avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         private_key: "{{ lookup('file', '{{ lsc.serviceEngineGroup.private_key_path }}') }}"
@@ -40,7 +40,7 @@
 
     - name: Create a Cloud connector user for NSX-T
       no_log: True
-      avi_cloudconnectoruser:
+      community.network.avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: credsNsxt
@@ -63,7 +63,7 @@
 
     - name: Create a Cloud connector user for NSX-T (vcenter)
       no_log: True
-      avi_cloudconnectoruser:
+      community.network.avi_cloudconnectoruser:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "creds-vcenter-{{ my_idx }}"

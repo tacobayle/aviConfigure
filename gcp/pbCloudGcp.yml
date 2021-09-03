@@ -9,7 +9,7 @@
   tasks:
 
     - name: Create Avi DNS provider Without donain names - GCP
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ gcp.dns.name | default('dns-avi-gcp')}}"
@@ -20,7 +20,7 @@
         - dns
 
     - name: Update Avi DNS provider With donain names - GCP
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op: add

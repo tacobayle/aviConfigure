@@ -12,7 +12,7 @@
   tasks:
 
     - name: Create Backup Configuration passphrase
-      avi_backupconfiguration:
+      community.network.avi_backupconfiguration:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         state: present
@@ -38,7 +38,7 @@
 
     - name: Define avi_systemconfiguration
       set_fact:
-        avi_systemconfiguration:
+        community.network.avi_systemconfiguration:
           global_tenant_config:
             se_in_provider_context: "{{ controller.se_in_provider_context | default('false') }}"
             tenant_access_to_provider_se: "{{ controller.tenant_access_to_provider_se | default('true') }}"
@@ -57,7 +57,7 @@
         - server_list is defined
 
     - name: Configure Avi System parameters
-      avi_systemconfiguration:
+      community.network.avi_systemconfiguration:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         global_tenant_config: "{{ avi_systemconfiguration.global_tenant_config }}"

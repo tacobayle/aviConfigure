@@ -14,7 +14,7 @@
 #        - debug
 
     - name: get Networks to retrieve Uuid - no_access_vcenter
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -58,7 +58,7 @@
         - no_access_vcenter.application is true
 
     - name: Create vsvip for http VS - no_access_vcenter
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
@@ -82,7 +82,7 @@
         - vs
 
     - name: Create vsvip for dns VS - no_access_vcenter
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
