@@ -42,7 +42,7 @@
 #        - debug
 
     - name: Create vsvip for dns - NSXT
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"

@@ -40,7 +40,7 @@
         - debug
 
     - name: Create vsvip for http VS (Azure)
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
@@ -65,7 +65,7 @@
         - vs
 
     - name: Create vsvip for dns VS (Azure)
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"

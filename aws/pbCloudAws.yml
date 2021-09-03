@@ -27,7 +27,7 @@
         - aws is defined
 
     - name: Configure Avi Cloud for AWS (using IAM role or secret key)
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ aws.name }}"
@@ -77,7 +77,7 @@
         - cloud
 
     - name: Modify/Creating SE group - AWS
-      avi_serviceenginegroup:
+      community.network.avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ aws.name }}"

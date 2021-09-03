@@ -38,7 +38,7 @@
 
     - name: Define avi_systemconfiguration
       set_fact:
-        community.network.avi_systemconfiguration:
+        avi_systemconfiguration:
           global_tenant_config:
             se_in_provider_context: "{{ controller.se_in_provider_context | default('false') }}"
             tenant_access_to_provider_se: "{{ controller.tenant_access_to_provider_se | default('true') }}"

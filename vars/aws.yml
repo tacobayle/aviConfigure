@@ -6,7 +6,7 @@ controller:
   name: Avi-Controller-20.1.1-9071-ad51eb59-8ccb-43f7-9a40-9c18fc0ecd61-ami-0e758cccfbf7049fd.4
   count: 1
 
-community.network.avi_systemconfiguration:
+avi_systemconfiguration:
   global_tenant_config:
     se_in_provider_context: false
     tenant_access_to_provider_se: true
