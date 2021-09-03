@@ -155,7 +155,7 @@
         - lsc is defined
 
     - name: Create Network for IPAM - LSC
-      avi_network:
+      community.network.avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ lsc.network_vip.name }}"
@@ -169,7 +169,7 @@
         - ipam
 
     - name: Create Avi IPAM with Network configured - LSC
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:
@@ -184,7 +184,7 @@
         - ipam
 
     - name: Updating LSC Cloud with IPAM - LSC
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         vtype: CLOUD_LINUXSERVER

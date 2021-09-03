@@ -35,7 +35,7 @@
         - debug
 
     - name: Update user admin password
-      avi_useraccount:
+      community.network.avi_useraccount:
         controller: "{{ avi_credentials.controller }}"
         username: "{{ avi_credentials.username }}"
         password: "{{ avi_credentials.password }}"
@@ -65,7 +65,7 @@
     #   when: my_pass is defined
 
     - name: user creation
-      avi_user:
+      community.network.avi_user:
         avi_credentials: "{{ avi_credentials }}"
         name: "{{ item.0.name }}"
         obj_username: "{{ item.0.name }}"
@@ -102,7 +102,7 @@
 
 
     - name: Get main Cluster Information
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         http_method: get
         path: cluster
@@ -135,7 +135,7 @@
         - clusterInfo['obj'].uuid is defined
 
     - name: Configure Cluster object without ClusterIP - if cluster has been configured
-      avi_cluster:
+      community.network.avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         api_version: "{{ avi_credentials.api_version }}"
         nodes:
@@ -162,7 +162,7 @@
         - cluster
 
     - name: Configure Cluster object with ClusterIP - if cluster has been configured
-      avi_cluster:
+      community.network.avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         api_version: "{{ avi_credentials.api_version }}"
         nodes:
@@ -210,7 +210,7 @@
         - cluster
 
     - name: Wait for the Controller cluster to finish - if cluster has been configured
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         api_version: "{{ avi_credentials.api_version }}"
         http_method: get

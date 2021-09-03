@@ -12,7 +12,7 @@
   tasks:
 
     - name: Create an Application Profile for HTTP application enabled for SSL traffic
-      avi_applicationprofile:
+      community.network.avi_applicationprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"

@@ -36,7 +36,7 @@
       ignore_errors: yes
 
     - name: Wait for the cloud 1 to be ready // this is expected to fail for vmc
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -54,7 +54,7 @@
         - debug
 
     - name: Wait for the cloud 2 to be ready // this is expected to fail for vmc
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get

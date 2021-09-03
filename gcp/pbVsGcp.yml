@@ -14,7 +14,7 @@
         - debug
 
     - name: get Networks to retrieve Uuid - GCP
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -55,7 +55,7 @@
         - listNetworkUuid is defined
 
     - name: Create vsvip for dns VS - GCP
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
@@ -79,7 +79,7 @@
         - vs
 
     - name: Create vsvip for http VS - GCP
-      avi_vsvip:
+      community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
@@ -103,7 +103,7 @@
         - vs
 
     - name: Create pools without server - GCP
-      avi_pool:
+      community.network.avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
@@ -119,7 +119,7 @@
         - pool
 
     - name: update pool with servers - GCP
-      avi_pool:
+      community.network.avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
@@ -180,7 +180,7 @@
 #        - pool
 
     - name: Create HTTP Policy(ies)
-      avi_httppolicyset:
+      community.network.avi_httppolicyset:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
@@ -194,7 +194,7 @@
     # VS creation
     #
     - name: Create HTTP Virtualservice (based on vsvip) - GCP
-      avi_virtualservice:
+      community.network.avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
@@ -234,7 +234,7 @@
         - vs
 
     - name: Create DNS Virtualservice
-      avi_virtualservice:
+      community.network.avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
@@ -257,7 +257,7 @@
         - vs
 
     - name: Update system config with first DNS VS
-      avi_systemconfiguration:
+      community.network.avi_systemconfiguration:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
@@ -279,7 +279,7 @@
     #     msg: "{{ outputVsDns.results.1.obj.uuid }}"
 
     - name: Wait for the First VS Http to be ready
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get

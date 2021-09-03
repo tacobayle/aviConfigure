@@ -71,7 +71,7 @@
         - system
 
     - name: Create HTTP health monitor
-      avi_healthmonitor:
+      community.network.avi_healthmonitor:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ item.name }}"
@@ -99,7 +99,7 @@
         - vs
 
     - name: Modify Default Network TCP Profile - reorder threshold
-      avi_networkprofile:
+      community.network.avi_networkprofile:
         avi_api_update_method: "patch"
         avi_api_patch_op: "replace"
         avi_credentials: "{{ avi_credentials | default(omit) }}"

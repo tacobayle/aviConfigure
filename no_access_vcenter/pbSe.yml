@@ -29,7 +29,7 @@
         - no_access_vcenter.name is defined
 
     - name: Get Clouds list
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get

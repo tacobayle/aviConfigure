@@ -12,7 +12,7 @@
   tasks:
 
     - name: Create Avi DNS provider setting (for OpenStack)
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:

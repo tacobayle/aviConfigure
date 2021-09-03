@@ -63,7 +63,7 @@
         - NetworkSeMgmt is defined
 
     - name: Configure Cloud for GCP
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ gcp.name }}"
@@ -147,7 +147,7 @@
         - gcp.network_vip.cidr is defined
 
     - name: Create Network for IPAM - GCP
-      avi_network:
+      community.network.avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ gcp.network_vip.name | default('net-avi')}}"
@@ -185,7 +185,7 @@
 #        - ipam
 
     - name: Update Avi IPAM - GCP
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
@@ -220,7 +220,7 @@
         - cloud
 
     - name: Modify/Creating SE group - GCP
-      avi_serviceenginegroup:
+      community.network.avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ gcp.name }}"

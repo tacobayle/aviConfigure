@@ -15,7 +15,7 @@
   tasks:
 
     - name: Create Avi DNS provider setting - no access
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:
@@ -34,7 +34,7 @@
         - dns
 
     - name: Create Network for IPAM
-      avi_network:
+      community.network.avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ network.name }}"
@@ -47,7 +47,7 @@
         - ipam
 
     - name: get Networks to retrieve Uuid
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -77,7 +77,7 @@
     #     msg: "/api/network/{{ listNetworkUuid.0 }}"
 
     - name: Create Avi IPAM
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:

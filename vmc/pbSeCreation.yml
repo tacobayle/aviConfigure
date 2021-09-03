@@ -213,7 +213,7 @@
     #     - seg.numberOfSe is defined
 
     - name: Wait for the SE(s) to be seen by Controller
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -231,7 +231,7 @@
         - seg.numberOfSe is defined
 
     - name: Wait for the SE(s) to connect to Controller
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -249,7 +249,7 @@
         - seg.numberOfSe is defined
 
     - name: Retrieve SE Group info (if not Default-Group)
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -269,7 +269,7 @@
         - seg_results.obj.count == 1
 
     - name: Assigning SE Group (if not Default-Group)
-      avi_serviceengine:
+      community.network.avi_serviceengine:
         avi_api_update_method: patch
         avi_api_patch_op: replace
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -291,7 +291,7 @@
         - cloud
 
     - name: Wait for the SE(s) to be seen by Controller (if not Default-Group)
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get
@@ -310,7 +310,7 @@
         - seg.name != 'Default-Group'
 
     - name: Wait for the SE(s) to connect to Controller (if not Default-Group)
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: get

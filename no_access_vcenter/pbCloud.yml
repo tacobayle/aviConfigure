@@ -24,7 +24,7 @@
 
 
     - name: Create Avi DNS provider Without donain names - no_access_vcenter
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.dns_provider_ref | default('dns-avi-no_access_vcenter')}}"
@@ -35,7 +35,7 @@
         - dns
 
     - name: Update Avi DNS provider With donain names - no_access_vcenter
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op: add
@@ -57,7 +57,7 @@
         - dns
 
     - name: Configure Avi Cloud without IPAM - no_access_vcenter
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
@@ -83,7 +83,7 @@
         - no_access_vcenter.application is true
 
     - name: Configure Avi Cloud without IPAM without DNS - no_access_vcenter
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
@@ -179,7 +179,7 @@
         - no_access_vcenter.application is true
 
     - name: Create Network for IPAM - no_access_vcenter
-      avi_network:
+      community.network.avi_network:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.network_vip.name | default('net-avi')}}"
@@ -194,7 +194,7 @@
         - ipam
 
     - name: Create Avi IPAM - no_access_vcenter
-      avi_ipamdnsproviderprofile:
+      community.network.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         internal_profile:
@@ -209,7 +209,7 @@
         - ipam
 
     - name: Update Avi Cloud with IPAM - no_access_vcenter
-      avi_cloud:
+      community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
@@ -252,7 +252,7 @@
 #        - no_access_vcenter.network_vip.defaultGatewaySe is true
 
     - name: Update vrf global with default route for each se group - no_access_vcenter
-      avi_vrfcontext:
+      community.network.avi_vrfcontext:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         avi_api_patch_op : add
@@ -301,7 +301,7 @@
         - no_access_vcenter.nsxt_exclusion_list is false
 
     - name: Modify/Creating SE group - no_access_vcenter
-      avi_serviceenginegroup:
+      community.network.avi_serviceenginegroup:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         cloud_ref: "/api/cloud/?name={{ no_access_vcenter.name }}"
@@ -345,7 +345,7 @@
 
     - block:
         - name: Retrieve Avi Version Info
-          avi_api_session:
+          community.network.avi_api_session:
             avi_credentials: "{{ avi_credentials | default(omit) }}"
             api_context: "{{ avi_api_context | default(omit) }}"
             http_method: get
@@ -373,7 +373,7 @@
 
     - block:
         - name: Retrieve Avi Version Info
-          avi_api_session:
+          community.network.avi_api_session:
             avi_credentials: "{{ avi_credentials | default(omit) }}"
             api_context: "{{ avi_api_context | default(omit) }}"
             http_method: get
@@ -396,7 +396,7 @@
     #### end of block
 
     - name:  Generate SE image on controller
-      avi_api_session:
+      community.network.avi_api_session:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         http_method: post
