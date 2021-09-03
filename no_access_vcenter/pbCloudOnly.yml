@@ -77,7 +77,7 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
         vtype: CLOUD_NONE
-        apic_mode: false
+        #apic_mode: false
         dhcp_enabled: "{{ no_access_vcenter.dhcp_enabled | default('true') }}"
         mtu: 1500
         prefer_static_routes: false
@@ -103,7 +103,7 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
         vtype: CLOUD_NONE
-        apic_mode: false
+        #apic_mode: false
         dhcp_enabled: "{{ no_access_vcenter.dhcp_enabled | default('true') }}"
         mtu: 1500
         prefer_static_routes: false
@@ -229,7 +229,7 @@
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "{{ no_access_vcenter.name }}"
         vtype: CLOUD_NONE
-        apic_mode: false
+        #apic_mode: false
         dhcp_enabled: "{{ no_access_vcenter.dhcp_enabled | default('true') }}"
         mtu: 1500
         prefer_static_routes: false

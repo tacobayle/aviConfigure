@@ -7,7 +7,7 @@ results:
   tenant_ref: https://10.0.0.201/api/tenant/admin
   _last_modified: '1598427454457024'
   vtype: CLOUD_NONE
-  apic_mode: false
+  #apic_mode: false
   dhcp_enabled: false
   mtu: 1500
   prefer_static_routes: false
@@ -25,7 +25,7 @@ results:
   tenant_ref: https://10.0.0.201/api/tenant/admin
   _last_modified: '1598431904099471'
   vtype: CLOUD_NSXT
-  apic_mode: false
+  #apic_mode: false
   nsxt_configuration:
     nsxt_url: n1-nsx-manager-vip.altherr.info
     transport_zone: addfd8d5-67af-494c-bc89-6662ed974b50

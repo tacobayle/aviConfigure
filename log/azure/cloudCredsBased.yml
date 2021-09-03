@@ -7,7 +7,7 @@ results:
   tenant_ref: https://51.138.119.48/api/tenant/admin
   _last_modified: '1602570387999147'
   vtype: CLOUD_NONE
-  apic_mode: false
+  #apic_mode: false
   dhcp_enabled: false
   mtu: 1500
   prefer_static_routes: false
@@ -25,7 +25,7 @@ results:
   tenant_ref: https://51.138.119.48/api/tenant/admin
   _last_modified: '1602571660988525'
   vtype: CLOUD_AZURE
-  apic_mode: false
+  #apic_mode: false
   azure_configuration:
     subscription_id: b37d5cfa-0c68-422c-84af-82d99bb0ffd5
     location: westeurope

@@ -7,7 +7,7 @@ results:
   tenant_ref: https://18.202.167.8/api/tenant/admin
   _last_modified: '1600961897237233'
   vtype: CLOUD_NONE
-  apic_mode: false
+  #apic_mode: false
   dhcp_enabled: false
   mtu: 1500
   prefer_static_routes: false
@@ -50,7 +50,7 @@ results:
     s3_encryption:
       mode: AWS_ENCRYPTION_MODE_NONE
     publish_vip_to_public_zone: false
-  apic_mode: false
+  #apic_mode: false
   dhcp_enabled: true
   mtu: 1500
   prefer_static_routes: false

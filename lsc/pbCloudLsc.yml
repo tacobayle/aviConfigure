@@ -83,7 +83,7 @@
         prefer_static_routes: false
         license_type: LIC_CORES
         mtu: 1500
-        apic_mode: false
+        #apic_mode: false
         state_based_dns_registration: true
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi-lsc') }}"
         name: "{{ lsc.name }}"
@@ -201,7 +201,7 @@
         prefer_static_routes: false
         license_type: LIC_CORES
         mtu: 1500
-        apic_mode: false
+        #apic_mode: false
         state_based_dns_registration: true
         ipam_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.ipam_provider_ref | default('ipam-avi-lsc') }}"
         dns_provider_ref: "/api/ipamdnsproviderprofile/?name={{ lsc.dns_provider_ref | default('dns-avi-lsc') }}"

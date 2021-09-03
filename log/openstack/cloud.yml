@@ -7,7 +7,7 @@ results:
     tenant_ref: https://100.64.129.68/api/tenant/admin
     _last_modified: '1605514688151126'
     vtype: CLOUD_NONE
-    apic_mode: false
+    #apic_mode: false
     dhcp_enabled: false
     mtu: 1500
     prefer_static_routes: false
@@ -55,7 +55,7 @@ results:
       contrail_plugin: false
       name_owner: true
       contrail_disable_policy: false
-    apic_mode: false
+    #apic_mode: false
     dhcp_enabled: true
     mtu: 1500
     prefer_static_routes: false
