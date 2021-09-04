@@ -155,7 +155,7 @@
         uuid: "{{ cluster_uuid }}"
       when:
         - controller.cluster | bool
-        - not controller.floating_ip
+        - controller.floating_ip is not defined
         - controller.environment == "VMWARE"
         - cluster_uuid is defined
       tags:
@@ -181,14 +181,12 @@
         name: cluster-0-1
         uuid: "{{ cluster_uuid }}"
         virtual_ip:
-            addr: "{{ controllerDefaultGateway | ipaddr(controllerFloatingIp) | ipv4('address') }}"
+            addr: "{{ controller.floating_ip }}"
             type: V4
       when:
         - controller.cluster | bool
-        - controller.floating_ip | bool
+        - controller.floating_ip is defined
         - controller.environment == "VMWARE"
-        - controllerDefaultGateway is defined
-        - controllerFloatingIp is defined
         - cluster_uuid is defined
       tags:
         - cluster
