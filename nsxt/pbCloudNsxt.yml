@@ -319,7 +319,7 @@
         - vcenterContentLibraryJson.results is defined
 
     - name: Configure Vcenter Server for NSXT cloud - NSXT
-      community.network.avi_vcenterserver:
+      avi_vcenterserver:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vcenter-{{ my_idx }}"
