@@ -78,14 +78,18 @@
         - cloud
         - vmw
 
-    - name: Pause for 1 minute  - VMW
-      pause:
-        minutes: 1
-      when:
-        - vmw is defined
-      tags:
-        - cloud
-        - vmw
+    - name: Wait for network sync for cloud to complete...
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: "get"
+        path: "cloudruntime"
+        params:
+          name: "{{ vmw.name }}"
+      register: cloudruntime
+      until: cloudruntime.obj.results[0].network_sync_complete
+      retries: 30
+      delay: 5
 
     - name: get Network details  - VMW
       community.network.avi_api_session:
