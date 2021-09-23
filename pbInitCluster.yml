@@ -49,7 +49,7 @@
 
     - name: Setting up Random password for users
       set_fact:
-        my_pass: "{{ my_pass | default([]) +  [ lookup('password', '/dev/null length=4 chars==letters') + '_' + lookup('password', '/dev/null length=4 chars==letters') | upper ] }}"
+        my_pass: "{{ my_pass | default([]) +  [ lookup('password', '/dev/null length=4 chars=ascii_lowercase') + '_' + lookup('password', '/dev/null length=4 chars=ascii_uppercase') + '-' + lookup('password', '/dev/null length=4 chars=digits') | upper ] }}"
       loop: "{{ aviUser }}"
       loop_control:
         label: "Configuring {{ item.name }}"
