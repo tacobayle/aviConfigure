@@ -55,6 +55,10 @@
         - cloud
         - vmw
 
+    - name: Debug
+      debug:
+        msg: "{{ vcenter_configuration }}"
+
     - name: Configure Avi Cloud - VMW
       community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
