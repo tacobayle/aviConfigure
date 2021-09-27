@@ -282,6 +282,8 @@
       community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_update_method: patch
+        avi_api_patch_op: add
         name: "{{ vmw.name }}"
         vtype: CLOUD_VCENTER
         vcenter_configuration: "{{ vcenter_configuration }}"
