@@ -105,7 +105,8 @@
             vcenter_configuration:
               management_network: '{{ "/api/vimgrnwruntime/?name=" + vmw.management_network.name }}'
       when:
-        - avi.cloud.vcenter.management_network.name is defined
+        - vmw.management_network.name is defined
+        - cloud_vmw_uuid is defined
 
     - name: get Network details  - VMW
       community.network.avi_api_session:
