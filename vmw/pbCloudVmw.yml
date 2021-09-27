@@ -48,7 +48,6 @@
           vcenter_url: "{{ avi_vsphere_server }}"
           privilege: WRITE_ACCESS
           datacenter: "{{ vmw.datacenter }}"
-          management_network: "/api/vimgrnwruntime/?name={{ vmw.management_network.name }}"
       when:
         - vmw is defined
       tags:
@@ -94,6 +93,19 @@
       until: cloudruntime.obj.results[0].network_sync_complete
       retries: 30
       delay: 5
+
+    - name: Configure cloud management network
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: "patch"
+        path: '{{ "cloud/" + cloud_vmw_uuid }}'
+        data:
+          replace:
+            vcenter_configuration:
+              management_network: '{{ "/api/vimgrnwruntime/?name=" + vmw.management_network.name }}'
+      when:
+        - avi.cloud.vcenter.management_network.name is defined
 
     - name: get Network details  - VMW
       community.network.avi_api_session:
