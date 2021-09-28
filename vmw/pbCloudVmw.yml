@@ -40,6 +40,13 @@
       tags:
         - dns
 
+    - pause:
+        minutes: 5
+      when:
+        - vmw is defined
+      tags:
+        - cloud
+
     - name: Defining variable vcenter_configuration - VMW
       set_fact:
         vcenter_configuration:
