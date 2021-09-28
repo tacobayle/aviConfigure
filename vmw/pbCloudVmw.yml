@@ -40,19 +40,19 @@
       tags:
         - dns
 
-    - pause:
-        minutes: 5
-      when:
-        - vmw is defined
-      tags:
-        - cloud
+#    - pause:
+#        minutes: 5
+#      when:
+#        - vmw is defined
+#      tags:
+#        - cloud
 
     - name: Defining variable vcenter_configuration - VMW
       set_fact:
         vcenter_configuration:
           username: "{{ avi_vsphere_user }}"
           password: "{{ avi_vsphere_password }}"
-          vcenter_url: "wdc-06-vc12.oc.vmware.com"
+          vcenter_url: "{{ avi_vsphere_server }}"
           privilege: WRITE_ACCESS
           datacenter: "{{ vmw.datacenter }}"
       when:
