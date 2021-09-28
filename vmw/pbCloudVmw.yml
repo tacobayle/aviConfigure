@@ -45,7 +45,7 @@
         vcenter_configuration:
           username: "{{ avi_vsphere_user }}"
           password: "{{ avi_vsphere_password }}"
-          vcenter_url: "{{ avi_vsphere_server }}"
+          vcenter_url: "wdc-06-vc12.oc.vmware.com"
           privilege: WRITE_ACCESS
           datacenter: "{{ vmw.datacenter }}"
       when:
