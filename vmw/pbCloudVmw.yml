@@ -356,9 +356,11 @@
         auto_rebalance: "{{ item.serviceEngineGroup.auto_rebalance | default(omit) }}"
         auto_rebalance_interval: "{{ item.serviceEngineGroup.auto_rebalance_interval | default(omit) }}"
         auto_rebalance_criteria: "{{ item.serviceEngineGroup.auto_rebalance_criteria | default(omit) }}"
+        se_name_prefix: "se_cluster{{ my_idx }}"
       loop: "{{ vmw.kubernetes.clusters }}"
       loop_control:
         label: "Modifying SE group called {{ item.serviceEngineGroup.name }}"
+        index_var: my_idx
       when:
         - vmw.kubernetes.clusters is defined
         - vmw.name is defined
