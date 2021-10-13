@@ -356,7 +356,7 @@
         auto_rebalance: "{{ item.serviceEngineGroup.auto_rebalance | default(omit) }}"
         auto_rebalance_interval: "{{ item.serviceEngineGroup.auto_rebalance_interval | default(omit) }}"
         auto_rebalance_criteria: "{{ item.serviceEngineGroup.auto_rebalance_criteria | default(omit) }}"
-        se_name_prefix: "{{ item.se_name_prefix }} | default(omit) }}"
+        se_name_prefix: "{{ item.se_name_prefix | default(omit) }}"
       loop: "{{ vmw.kubernetes.clusters }}"
       loop_control:
         label: "Modifying SE group called {{ item.serviceEngineGroup.name }}"
