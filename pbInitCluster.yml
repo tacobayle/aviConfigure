@@ -125,8 +125,11 @@
     - name: Debug variable
       debug:
         msg: "{{ controller.floating_ip }}"
+      when:
+        - controller.floating_ip is defined
       tags:
         - debug
+
 
     - name: Set fact cluster_uuid
       set_fact:
