@@ -278,12 +278,12 @@
       tags:
         - ipam
 
-    - pause:
-        minutes: 1
-      when:
-        - vmw is defined
-      tags:
-        - cloud
+#    - pause:
+#        minutes: 1
+#      when:
+#        - vmw is defined
+#      tags:
+#        - cloud
 
     - name: Update Avi Cloud (Vcenter)
       community.network.avi_cloud:
