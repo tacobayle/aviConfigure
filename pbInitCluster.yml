@@ -39,7 +39,7 @@
         controller: "{{ avi_credentials.controller }}"
         username: "{{ avi_credentials.username }}"
         password: "{{ avi_credentials.password }}"
-        old_password: 58NFaGDJm(PJH0G
+        old_password: "{{ avi_old_password }}"
         api_version: "{{ avi_credentials.api_version }}"
       ignore_errors: yes
       tags:
