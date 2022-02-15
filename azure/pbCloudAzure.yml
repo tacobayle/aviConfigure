@@ -10,11 +10,10 @@
 
     - name: Defining Azure datas structure
       set_fact:
-        network_info: "{{ network_info | default([]) + [{ 'se_network_id': item.se_network_id, 'virtual_network_id': item.virtual_network_id }] }}"
-      loop: "{{ azureSubnets.mgt }}"
+        network_info: "{{ network_info | default([]) + [{ 'se_network_id': subnet_mgmt_name, 'virtual_network_id': vnet_id }] }}"
       when:
-        - azure is defined
-        - azureSubnets.mgt
+        - subnet_mgmt_name is defined
+        - vnet_id is defined
       tags:
         - cloud
 
@@ -22,42 +21,89 @@
       debug:
         msg: "{{ network_info }}"
       when:
-        - azure is defined
-        - azureSubnets.mgt
+        - network_info is defined
       tags:
         - cloud
         - debug
 
-    # network_info:
-    #   - se_network_id: subnet1
-    #     virtual_network_id: "/subscriptions/{{ azure.subscriptionId }}/resourceGroups/rg-avi/providers/Microsoft.Network/virtualNetworks/vnet-avi"
+    - name: Get Clouds list
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        path: cloud
+      register: cloud_results
+      ignore_errors: yes
 
     - name: Configure Avi Cloud for Azure
       community.network.avi_cloud:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
-        name: "{{ azure.cloudName }}"
+        name: "dc-{{ cloud_results.obj.count }}-azure"
         vtype: CLOUD_AZURE
         azure_configuration:
-          use_managed_disks: "{{ azure.use_managed_disks }}"
-          resource_group: "{{ azure.resource_group }}"
-          use_enhanced_ha: "{{ azure.use_enhanced_ha }}"
-          use_azure_dns: "{{ azure.use_azure_dns }}"
-          location: "{{ azure.location }}"
-          subscription_id: "{{ azure.subscription_id }}"
-          use_standard_alb: "{{ azure.use_standard_alb }}"
+          use_managed_disks: true
+          resource_group: "{{ azure.rg.name }}"
+          use_enhanced_ha: false
+          use_azure_dns: true
+          location: "{{ azure_location }}"
+          subscription_id: "{{ azure_subscription_id }}"
+          use_standard_alb: false
           network_info: "{{ network_info }}"
-      register: aviCloudAzure
+      register: cloud_azure
       when:
         - azure is defined
+        - azure_location is defined
+        - azure_subscription_id is defined
       tags:
         - cloud
 
     - name: save avi Cloud Azure Uuid
       set_fact:
-        aviCloudAzureUuid: "{{ aviCloudAzure.obj.uuid }}"
+        cloud_azure_uuid: "{{ cloud_azure.obj.uuid }}"
       when:
         - azure is defined
       tags:
         - cloud
 
+    - name: Run a python script against a specific cloud - this takes several minutes
+      command: python3 ../python/retrieveCloudStatus.py "{{ controller.aviCredsJsonFile }}" "{{ cloud_azure_uuid }}"
+      register: logCloudStatus
+      until: logCloudStatus.stdout == "IMG_GEN_COMPLETE"
+      retries: 6 # should be 30 # gcp bug // 'HTTP Error: 400 Error Msg {\"error\": \"Versioning failed converting from 16.4.2 to 20.1.3\"}', <Response [400]>)"], "stdout": "", "stdout_lines": []
+      delay: 120
+      ignore_errors: yes
+      when:
+        - cloud_azure_uuid is defined
+      tags:
+        - cloud
+
+    - name: Modify/Creating SE group
+      community.network.avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        avi_api_update_method: put
+        name: "{{ item.name }}"
+        ha_mode: "{{ item.ha_mode | default('HA_MODE_SHARED') }}"
+        min_scaleout_per_vs: "{{ item.min_scaleout_per_vs | default(omit) }}"
+        buffer_se: "{{ item.buffer_se | default(omit) }}"
+        extra_shared_config_memory: "{{ item.extra_shared_config_memory | default(omit) }}"
+        vcenter_folder: "{{ item.vcenter_folder | default(omit) }}"
+        vcpus_per_se: "{{ item.vcpus_per_se | default(omit) }}"
+        memory_per_se: "{{ item.memory_per_se | default(omit) }}"
+        disk_per_se: "{{ item.disk_per_se | default(omit) }}"
+        realtime_se_metrics: "{{ item.realtime_se_metrics | default(omit) }}"
+        auto_rebalance: "{{ item.auto_rebalance | default(omit) }}"
+        auto_rebalance_interval: "{{ item.auto_rebalance_interval | default(omit) }}"
+        auto_rebalance_criteria: "{{ item.auto_rebalance_criteria | default(omit) }}"
+        instance_flavor: "{{ item.instance_flavor | default(omit) }}"
+        accelerated_networking: "{{ item.accelerated_networking | default(omit) }}"
+      when:
+        - serviceEngineGroup is defined
+      loop: "{{ azure.avi.service_engine_groups }}"
+      loop_control:
+        label: "Modifying SE group called {{ item.name }}"
+      tags:
+        - service_engine_group
+        - cloud

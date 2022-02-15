@@ -2,9 +2,6 @@
 - hosts: localhost
   connection: local
 
-  # vars_files:
-  #   - "vars/params.yml"
-
   roles:
     - role: "avinetworks.avisdk"
 
@@ -15,50 +12,42 @@
         msg: "{{ avi_credentials }}"
       tags:
         - debug
+        - vs
 
     - name: Define vip data for AZURE
       set_fact:
-        vipAzure: "{{ vipAzure | default([]) + [{ 'vip_id': my_idx, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'ipam_network_subnet': {'subnet_uuid': item.vip_network_id, 'subnet': {'mask': item.vip_network_cidr.split('/')[1], 'ip_addr': {'type': item.type, 'addr': item.vip_network_cidr.split('/')[0]}}}}] }}"
-      loop: "{{ azureSubnets.vip }}"
-      loop_control:
-        index_var: my_idx
+        vip_data: "{{ vip_data | default([]) + [{ 'vip_id': 0, 'auto_allocate_floating_ip': 'true', 'auto_allocate_ip': 'true', 'avi_allocated_fip': 'true', 'ipam_network_subnet': {'subnet_uuid': subnet_vip_name, 'subnet': {'mask': subnet_vip_cidr.split('/')[1], 'ip_addr': {'type': 'V4', 'addr': subnet_vip_cidr.split('/')[0]}}}}] }}"
       when:
-        - azure is defined
-        - azureSubnets.vip is defined
+        - subnet_vip_name is defined
+        - subnet_vip_cidr is defined
       tags:
-        - vsVip
-        - vsDns
         - vs
 
     - name: Debug VIP data for Azure
       debug:
-        msg: "{{ vipAzure }}"
+        msg: "{{ vip_data }}"
       when:
-        - azure is defined
-        - azureSubnets.vip is defined
+        - vip_data is defined
       tags:
         - debug
+        - vs
 
     - name: Create vsvip for http VS (Azure)
       community.network.avi_vsvip:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
-        dns_info:
-          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
-            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipAzure }}"
-      loop: "{{ avi_virtualservice.http }}"
-      retries: 3
-      delay: 10
-      ignore_errors: yes
+#        dns_info:
+#          - fqdn: "{{ item.dns_info.0.fqdn | default(item.name + '.' + domain.name) }}"
+#            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vip_data }}"
+      loop: "{{ azure.avi_virtualservices.http }}"
       loop_control:
         label: "{{ item.name }}"
       when:
-        - avi_virtualservice.http is defined
-        - item.cloud_ref == "cloudAzure"
+        - azure.avi_virtualservices.http is defined
       tags:
         - vsvip
         - vsHttp
@@ -69,16 +58,200 @@
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
         name: "vsvip-{{ item.name }}"
-        cloud_ref: "/api/cloud/?name={{ item.cloud_ref | default('Default-Cloud') }}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
         tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
-        dns_info:
-          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
-            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
-        vip: "{{ vipAzure }}"
-      loop: "{{ avi_virtualservice.dns }}"
+#        dns_info:
+#          - fqdn: "{{ item.dns_info.0 | default(item.name + '.' + domain.name) }}"
+#            type: "{{ item.dns_info.0.type | default('DNS_RECORD_A') }}"
+        vip: "{{ vip_data }}"
+      loop: "{{ azure.avi_virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
       when:
-        - avi_virtualservice.dns is defined
-        - azure is defined
+        - azure.avi_virtualservices.dns is defined
       tags:
-        - vsvip
         - vs
+
+    - name: get pools
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: pool
+      register: pool_results
+      ignore_errors: yes
+      tags:
+        - vs
+
+    - name: Create pool without server (Azure)
+      community.network.avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "pool-1"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+      tags:
+        - vs
+
+    - name: update pool with servers (Azure)
+      community.network.avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "pool-{{ cloud_results.obj.count | int + 1}}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "LB_ALGORITHM_ROUND_ROBIN"
+        health_monitor_refs:
+          - "/api/healthmonitor?name={{ avi_pool.health_monitor_refs | default('hm1') }}"
+        servers:
+          - ip:
+              addr: "{{ item }}"
+              type: 'V4'
+      loop: "{{ avi_backend_servers_azure }}"
+      when:
+        - avi_backend_servers_azure is defined
+      tags:
+        - vs
+
+    - name: create autoscalepolicy for ASG or Scale Set
+      community.network.avi_serverautoscalepolicy:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "autoscalepolicyAsg"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        min_size: "{{ min_size | default('2') }}"
+        max_size: "{{ max_size | default('2') }}"
+        max_scaleout_adjustment_step: "{{ max_scaleout_adjustment_step | default('1') }}"
+        max_scalein_adjustment_step: "{{ max_scalein_adjustment_step | default('1') }}"
+        scaleout_cooldown: "{{ scaleout_cooldown | default('30') }}"
+        scalein_cooldown: "{{ scalein_cooldown | default('30') }}"
+      tags:
+        - vs
+        - asg
+
+    - name: get pools
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: pool
+      register: pool_results
+      ignore_errors: yes
+      tags:
+        - pool
+        - vs
+
+    - name: create pool with servers based on Auto Scaling Group
+      community.network.avi_pool:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "pool-{{ cloud_results.obj.count | int + 1}}"
+        autoscale_launch_config_ref: "/api/autoscalelaunchconfig?name=default-autoscalelaunchconfig"
+        autoscale_policy_ref: "/api/serverautoscalepolicy?name=autoscalepolicyAsg"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        lb_algorithm: "LB_ALGORITHM_ROUND_ROBIN"
+        external_autoscale_groups:
+          - "{{ scale_set }}"
+        application_persistence_profile_ref: "/api/applicationpersistenceprofile?name=System-Persistence-Client-IP"
+        health_monitor_refs:
+          - "/api/healthmonitor?name=hm1"
+      when:
+        - scale_set is defined
+      tags:
+        - pool
+        - vs
+
+    - name: Create HTTP Virtualservice (based on vsvip)
+      community.network.avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ azure.avi_virtualservices.http }}"
+      when:
+        - azure.avi_virtualservices.http is defined
+      register: outputVsHttp
+      tags:
+        - vsHttp
+        - vs
+
+    - name: Create DNS Virtualservice
+      community.network.avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-DNS') }}"
+        network_profile_ref: "/api/networkprofile/?name={{ item.network_profile_ref | default('System-UDP-Per-Pkt') }}"
+        cloud_ref: "/api/cloud/{{ cloud_azure_uuid | default('Default-Cloud') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        services: "{{ item.services }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+      loop: "{{ azure.avi_virtualservices.dns }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: azure.avi_virtualservices.dns is defined
+      register: outputVsDns
+      tags:
+        - vsDns
+        - vs
+
+    - name: Update system config with first DNS VS
+      community.network.avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        dns_virtualservice_refs: "/api/virtualservice/?name={{ avi_virtualservice.dns.0.name }}"
+      tags:
+        - vsDns
+        - vs
+      when:
+        - avi_virtualservice.dns.0.name is defined
+
+    - name: Wait for the VS Http to be ready
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice-inventory
+        tenant: "{{ item.tenant_ref | default('admin') }}"
+      register: statusVs
+      until: statusVs.obj.results.0.runtime.oper_status.state == "OPER_UP"
+      retries: 120
+      delay: 10
+      when: avi_virtualservice.http is defined
+      ignore_errors: yes
+      tags:
+        - vsHttp
+        - vs
+
