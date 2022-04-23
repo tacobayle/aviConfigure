@@ -75,6 +75,37 @@
         - vmw
         - vsvip_http
 
+    - name: Create vsvip for http VS (vCenter)
+      community.network.avi_vsvip:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "vsvip-{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ tenant_ref | default('admin') }}"
+        dns_info:
+          - fqdn: "{{ item.name + '.' + vmw.domains.0.name }}"
+        vip:
+          - auto_allocate_ip: true
+            ipam_network_subnet:
+              network_ref: "/api/network/?name={{ vmw.network_vip.name }}"
+              subnet:
+                mask: "{{ vmw.network_vip.cidr.split('/')[1] }}"
+                ip_addr:
+                  type: "{{ vmw.network_vip.type | default('V4') }}"
+                  addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
+      loop: "{{ vcenter.virtual_services.http | from_json }}"
+      loop_control:
+        label: "creation of vsvip called {{ item.name }}"
+      when:
+        - vcenter.virtual_services.http is defined
+        - vmw.name is defined
+        - vmw.domains.0.name is defined
+        - vmw.network_vip.cidr is defined
+        - vmw.network_vip.name is defined
+      tags:
+        - vmw
+        - vsvip_http
+
     - name: Create pools without server - VMW
       community.network.avi_pool:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
@@ -149,6 +180,33 @@
         - pool
         - vs
 
+    - name: Create a list of pool groups (vCenter)
+      set_fact:
+        vcenter_poolgroups: "{{ vcenter_poolgroups | default([]) + [item] }}"
+      loop: "{{ vcenter.poolgroups | from_json }}"
+      when:
+        - vcenter.poolgroups is defined
+
+    - name: Create/update pool group (vCenter)
+      avi_poolgroup:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        avi_api_patch_op : add
+        avi_api_update_method: patch
+        name: "{{ item.0.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
+        members:
+          ratio: "{{ item.1.ratio | default(omit) }}"
+          pool_ref: "/api/pool?name={{ item.1.name | default(omit) }}"
+      loop: "{{ vcenter_poolgroups | subelements('members') }}"
+      loop_control:
+        label: "pool group {{ item.0.name }} configured ; pool name: {{ item.1.name }}"
+      when:
+        - vcenter_poolgroups is defined
+      tags:
+        - poolgroup
+        - vs
 
     - name: Create HTTP Policy(ies)
       community.network.avi_httppolicyset:
@@ -217,6 +275,45 @@
         label: "{{ item.name }}"
       when:
         - vmw.virtualservices.http is defined
+      tags:
+        - vs
+        - vmw
+
+    - name: Create HTTP Virtualservice (vCenter)
+      community.network.avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref | default(omit) }}"
+        pool_group_ref: "/api/poolgroup?name={{ item.pool_group_ref | default(omit) }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ vcenter.virtual_services.http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - vcenter.virtual_services.http is defined
       tags:
         - vs
         - vmw
