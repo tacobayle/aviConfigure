@@ -309,7 +309,7 @@
             throttle: 10
             enabled: true
           all_headers: true
-      loop: "{{ vcenter.virtual_services.http }}"
+      loop: "{{ vcenter.virtual_services.http | from_json}}"
       loop_control:
         label: "{{ item.name }}"
       when:
