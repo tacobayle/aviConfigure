@@ -197,8 +197,8 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
         members:
-          ratio: "{{ item.1.ratio | default(omit) }}"
-          pool_ref: "/api/pool?name={{ item.1.name | default(omit) }}"
+          - ratio: "{{ item.1.ratio | default(omit) }}"
+            pool_ref: "/api/pool?name={{ item.1.name | default(omit) }}"
       loop: "{{ vcenter_poolgroups | subelements('members') }}"
       loop_control:
         label: "pool group {{ item.0.name }} configured ; pool name: {{ item.1.name }}"
