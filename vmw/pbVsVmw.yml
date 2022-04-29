@@ -279,7 +279,16 @@
         - vs
         - vmw
 
-    - name: Create HTTP Virtualservice (vCenter)
+    - name: Create a list of Virtualservice (vCenter)
+      set_fact:
+        vcenter_virtual_services_http: "{{ vcenter_virtual_services_http | default([]) + [item] }}"
+      loop: "{{ vcenter.virtual_services | from_json | community.general.json_query('http') }}"
+      when:
+        - vcenter.virtual_services | from_json is defined
+
+
+
+    - name: Create HTTP Virtualservice (vCenter) for pool group(s)
       community.network.avi_virtualservice:
         avi_credentials: "{{ avi_credentials | default(omit) }}"
         api_context: "{{ avi_api_context | default(omit) }}"
@@ -292,7 +301,6 @@
         ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
         ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
         services: "{{ item.services }}"
-        pool_ref: "/api/pool?name={{ item.pool_ref | default(omit) }}"
         pool_group_ref: "/api/poolgroup?name={{ item.pool_group_ref | default(omit) }}"
         enable_rhi: "{{ item.enable_rhi | default('false') }}"
         vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
@@ -309,11 +317,51 @@
             throttle: 10
             enabled: true
           all_headers: true
-      loop: "{{ vcenter.virtual_services | from_json | community.general.json_query('http') }}"
+      loop: "{{ vcenter_virtual_services_http }}"
       loop_control:
         label: "{{ item.name }}"
       when:
-        - vcenter.virtual_services | from_json is defined
+        - vcenter.vcenter_virtual_services_http is defined
+        - item.pool_group_ref is defined
+      tags:
+        - vs
+        - vmw
+
+    - name: Create HTTP Virtualservice (vCenter) for pool(s)
+      community.network.avi_virtualservice:
+        avi_credentials: "{{ avi_credentials | default(omit) }}"
+        api_context: "{{ avi_api_context | default(omit) }}"
+        name: "{{ item.name }}"
+        cloud_ref: "/api/cloud/?name={{ vmw.name }}"
+        enabled: "{{ item.enabled | default('true') }}"
+        tenant_ref: "/api/tenant?name={{ item.tenant_ref | default('admin') }}"
+        application_profile_ref: "/api/applicationprofile/?name={{ item.application_profile_ref | default('System-Secure-HTTP') }}"
+        http_policies: "{{ item.http_policies | default(omit) }}"
+        ssl_profile_ref: "/api/sslprofile/?name={{ item.ssl_profile_ref | default('System-Standard') }}"
+        ssl_key_and_certificate_refs: "/api/sslkeyandcertificate/?name={{ item.ssl_key_and_certificate_refs | default('System-Default-Cert') }}"
+        services: "{{ item.services }}"
+        pool_ref: "/api/pool?name={{ item.pool_ref | default(omit) }}"
+        enable_rhi: "{{ item.enable_rhi | default('false') }}"
+        vsvip_ref: "/api/vsvip/?name=vsvip-{{ item.name }}"
+        se_group_ref:  "/api/serviceenginegroup/?name={{ item.se_group_ref | default('Default-Group') }}"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 30
+            throttle: 10
+            enabled: true
+          all_headers: true
+      loop: "{{ vcenter_virtual_services_http }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - vcenter.vcenter_virtual_services_http is defined
+        - item.pool_ref is defined
       tags:
         - vs
         - vmw
