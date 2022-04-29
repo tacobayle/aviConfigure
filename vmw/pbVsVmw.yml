@@ -309,11 +309,11 @@
             throttle: 10
             enabled: true
           all_headers: true
-      loop: "{{ vcenter.virtual_services.http | from_json}}"
+      loop: "{{ vcenter.virtual_services | from_json | community.general.json_query('http') }}"
       loop_control:
         label: "{{ item.name }}"
       when:
-        - vcenter.virtual_services.http is defined
+        - vcenter.virtual_services.http | from_json is defined
       tags:
         - vs
         - vmw
