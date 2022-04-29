@@ -93,11 +93,11 @@
                 ip_addr:
                   type: "{{ vmw.network_vip.type | default('V4') }}"
                   addr: "{{ vmw.network_vip.cidr.split('/')[0] }}"
-      loop: "{{ vcenter.virtual_services.http | from_json }}"
+      loop: "{{ vcenter.virtual_services | from_json | community.general.json_query('http') }}"
       loop_control:
         label: "creation of vsvip called {{ item.name }}"
       when:
-        - vcenter.virtual_services.http is defined
+        - vcenter.virtual_services is defined
         - vmw.name is defined
         - vmw.domains.0.name is defined
         - vmw.network_vip.cidr is defined
@@ -313,7 +313,7 @@
       loop_control:
         label: "{{ item.name }}"
       when:
-        - vcenter.virtual_services.http | from_json is defined
+        - vcenter.virtual_services | from_json is defined
       tags:
         - vs
         - vmw
