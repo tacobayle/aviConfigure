@@ -322,7 +322,6 @@
         label: "{{ item.name }}"
       when:
         - vcenter.vcenter_virtual_services_http is defined
-        - item.pool_group_ref is defined
       tags:
         - vs
         - vmw
@@ -361,7 +360,6 @@
         label: "{{ item.name }}"
       when:
         - vcenter.vcenter_virtual_services_http is defined
-        - item.pool_ref is defined
       tags:
         - vs
         - vmw
