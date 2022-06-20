@@ -137,6 +137,7 @@
           - ip:
               addr: "{{ item.1 }}"
               type: 'V4'
+            hostname: "{{ item.1 }}"
       loop: "{{ vmw.pools | product(avi_servers_vmw)|list }}"
       loop_control:
         label: "pool {{ item.0.name }} patch with {{ item.1 }}"
@@ -164,13 +165,14 @@
         cloud_ref: "/api/cloud/?name={{ vmw.name }}"
         tenant_ref: "/api/tenant?name={{ item.0.tenant_ref | default('admin') }}"
         default_server_port: "{{ item.0.default_server_port }}"
-        lb_algorithm: "{{ item.0.lb_algorithm }}"
+        lb_algorithm: "{{ item.0.lb_algorithm | default(omit) }}"
         health_monitor_refs:
           - "/api/healthmonitor?name={{ item.0.health_monitor_refs | default('hm1') }}"
         servers:
           - ip:
               addr: "{{ item.1 }}"
               type: 'V4'
+            hostname: "{{ item.1 }}"
       loop: "{{ vcenter_pools | subelements('avi_app_server_ips') }}"
       loop_control:
         label: "pool {{ item.0.name }} configured ; server IP: {{ item.1 }}"
